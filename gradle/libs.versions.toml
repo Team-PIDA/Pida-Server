@@ -1,0 +1,196 @@
+[versions]
+
+# Kotlin
+kotlin = "2.1.0"
+ktlint = "12.1.2"
+ktlint_version_set = "1.5.0"
+
+# Arrow-kt
+arrow_fx = "1.2.1"
+
+# JWT
+jwt = "0.12.6"
+
+# Spring
+spring_boot = "3.4.3"
+spring_dependency_management = "1.1.7"
+spring_cloud_dependencies = "2024.0.0"
+
+# Redis version
+redisson = "3.30.0"
+
+# DB version
+mysql = "8.2.0"
+
+# Test Version
+assertj = "3.24.2"
+fixture_monkey = "1.0.13"
+kotest = "5.6.2"
+kotest_extension = "1.1.3"
+
+# Api-Docs version
+asciidoctor_convert = "3.3.2"
+epages_restdocs_api_spec = "0.17.1"
+hidetake_swagger_generator = "2.18.2"
+swaggerVersion = "2.8.5"
+
+# Sentry version
+sentry = "7.3.0"
+
+# AWS version
+aws = "2.25.47"
+
+# Slack Version
+slack = "1.39.2"
+
+# JDSL
+line_kotlin_jdsl = "3.4.1"
+
+# External version
+spring_mockk = "4.0.2"
+
+# firebase
+firebase = "9.2.0"
+
+# OpenFeign
+spring_cloud_openfeign = "4.2.0"
+openfeign_hc5 = "13.1"
+openfeign_micrometer = "13.1"
+
+[plugins]
+# Kotlin Plugins
+kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin_kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+kotlin_spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin_jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+
+# Lint Plugins
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+
+# Spring Plugins
+spring_boot = { id = "org.springframework.boot", version.ref = "spring_boot" }
+spring_dependency_management = { id = "io.spring.dependency-management", version.ref = "spring_dependency_management" }
+
+# Api-Docs Plugins
+asciidoctor_convert = { id = "org.asciidoctor.jvm.convert", version.ref = "asciidoctor_convert" }
+epages_restdocs_api_spec = { id = "com.epages.restdocs-api-spec", version.ref = "epages_restdocs_api_spec" }
+hidetake_swagger_generator = { id = "org.hidetake.swagger.generator", version.ref = "hidetake_swagger_generator" }
+
+[libraries]
+
+# Kotlin
+kotlin_reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+kotlin_stdlib_jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
+
+# Spring Libraries
+spring_context = { module = "org.springframework:spring-context" }
+spring_tx = { module = "org.springframework:spring-tx" }
+ spring_cloud_dependencies = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "spring_cloud_dependencies" }
+spring_boot_starter_web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring_boot_starter_data_jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring_boot_starter_actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring_boot" }
+spring_boot_starter_aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref = "spring_boot" }
+spring_boot_configuration_processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "spring_boot" }
+spring_boot_starter_test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring_boot_starter_thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "spring_boot"}
+spring_restdocs_mockmvc = { module = "org.springframework.restdocs:spring-restdocs-mockmvc" }
+spring_restdocs_restassured = { module = "org.springframework.restdocs:spring-restdocs-restassured" }
+spring_boot_starter_redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+spring_doc_openapi_starter_webmvc_ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "swaggerVersion" }
+spring_boot_starter_security = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring_security_test = { module = "org.springframework.security:spring-security-test" }
+
+# JWT
+jjwt_api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jwt" }
+jjwt_impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jwt" }
+jjwt_jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jwt" }
+
+# Coroutine Libraries
+kotlinx_coroutine_core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
+kotlinx_coroutine_reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor" }
+kotlinx_coroutine_slf4j = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j" }
+
+reactor_kotlin = { module = "io.projectreactor.kotlin:reactor-kotlin-extensions" }
+
+# arrow-kt Libraries
+arrow_fx_coroutine = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow_fx" }
+arrow_fx_stm = { module = "io.arrow-kt:arrow-fx-stm", version.ref = "arrow_fx" }
+
+
+# TestContainers Libraries
+spring_boot_testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
+test_containers_junit_jupiter = { module = "org.testcontainers:junit-jupiter" }
+test_containers_mysql = { module = "org.testcontainers:mysql" }
+test_containers_localstack = { module = "org.testcontainers:localstack" }
+
+# FixtureMonkey Library
+fixture_monkey_starter_kotlin = { module = "com.navercorp.fixturemonkey:fixture-monkey-starter-kotlin", version.ref = "fixture_monkey" }
+
+# Redisson Library
+redisson = { module = "org.redisson:redisson-spring-boot-starter", version.ref = "redisson" }
+
+# Jackson Libraries
+jackson_kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+jackson_datatype_jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
+
+# DataBase Libraries
+mysql_connector = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
+h2 = { module = "com.h2database:h2" }
+
+# DataBase Migration Libraries
+# flyway_core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+# flyway_mysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
+
+# LINE Kotlin-JDSL Libraries
+line_kotlin_jdsl_jpql_dsl = { module = "com.linecorp.kotlin-jdsl:jpql-dsl", version.ref = "line_kotlin_jdsl" }
+line_kotlin_jdsl_jpql_render = { module = "com.linecorp.kotlin-jdsl:jpql-render", version.ref = "line_kotlin_jdsl" }
+line_kotlin_jdsl_spring_data_jpa_support = { module = "com.linecorp.kotlin-jdsl:spring-data-jpa-support", version.ref = "line_kotlin_jdsl" }
+
+# OpenFeign Libraries
+spring_cloud_openfeign = { module = "org.springframework.cloud:spring-cloud-starter-openfeign", version.ref = "spring_cloud_openfeign" }
+openfeign_hc5 = { module = "io.github.openfeign:feign-hc5", version.ref = "openfeign_hc5" }
+openfeign_micrometer = { module = "io.github.openfeign:feign-micrometer", version.ref = "openfeign_micrometer" }
+
+# Test Libraries
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+spring_mockk = { module = "com.ninja-squad:springmockk", version.ref = "spring_mockk" }
+kotest_runner_junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+junit_platform = { module = "org.junit.platform:junit-platform-launcher" }
+kotest_assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest_property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+kotest_extensions = { module = "io.kotest.extensions:kotest-extensions-spring", version.ref = "kotest_extension" }
+
+# Api-Docs Libraries
+jakarta_servlet_api = { module = "jakarta.servlet:jakarta.servlet-api" }
+restassured_spring_mock_mvc = { module = "io.rest-assured:spring-mock-mvc" }
+epages_restdocs_api_spec_mock_mvc = { module = "com.epages:restdocs-api-spec-mockmvc", version.ref = "epages_restdocs_api_spec" }
+epages_restdocs_api_spec_restassured = { module = "com.epages:restdocs-api-spec-restassured", version.ref = "epages_restdocs_api_spec" }
+
+# Monitoring & Logging Libraries
+micrometer_tracing_bridge_brave = { module = "io.micrometer:micrometer-tracing-bridge-brave" }
+micrometer_registry_prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
+io_sentry = { module = "io.sentry:sentry-logback", version.ref = "sentry" }
+slf4j = { module = "org.slf4j:slf4j-api", version = "2.0.9" }
+
+# AWS Libraries
+aws_sdk_s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
+aws_sdk_lambda = { module = "software.amazon.awssdk:lambda", version.ref = "aws" }
+aws_sdk_dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "aws" }
+aws_sdk_dynamodb_enhanced = { module = "software.amazon.awssdk:dynamodb-enhanced", version.ref = "aws" }
+
+# Firebase
+firebase = { module = "com.google.firebase:firebase-admin", version.ref = "firebase" }
+
+# Slack Client
+slack_client = { module = "com.slack.api:slack-api-client", version.ref = "slack" }
+slack_model_kotlin = { module = "com.slack.api:slack-api-model-kotlin-extension", version.ref = "slack" }
+slack_client_kotlin = { module = "com.slack.api:slack-api-client-kotlin-extension", version.ref = "slack" }
+
+[bundles]
+line_kotlin_jdsl = ["line_kotlin_jdsl_jpql_dsl", "line_kotlin_jdsl_jpql_render", "line_kotlin_jdsl_spring_data_jpa_support"]
+slack_client = ["slack_client", "slack_model_kotlin", "slack_client_kotlin"]
+aws_client = ["aws_sdk_s3", "aws_sdk_lambda"]
+aws_dynamo_db = ["aws_sdk_dynamodb", "aws_sdk_dynamodb_enhanced"]
+openfeign = ["spring_cloud_openfeign", "openfeign_hc5", "openfeign_micrometer"]
+testcontainers_mysql = ["test_containers_mysql", "spring_boot_testcontainers", "test_containers_junit_jupiter", "spring_boot_starter_test"]
+kotest = ["kotest_assertions", "kotest_property", "kotest_extensions"]
