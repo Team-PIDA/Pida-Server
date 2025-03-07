@@ -172,17 +172,13 @@ slf4j = { module = "org.slf4j:slf4j-api", version = "2.0.9" }
 
 # AWS Libraries
 aws_sdk_s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
-aws_sdk_lambda = { module = "software.amazon.awssdk:lambda", version.ref = "aws" }
-aws_sdk_dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "aws" }
-aws_sdk_dynamodb_enhanced = { module = "software.amazon.awssdk:dynamodb-enhanced", version.ref = "aws" }
 
 # Firebase
 firebase = { module = "com.google.firebase:firebase-admin", version.ref = "firebase" }
 
 [bundles]
 line_kotlin_jdsl = ["line_kotlin_jdsl_jpql_dsl", "line_kotlin_jdsl_jpql_render", "line_kotlin_jdsl_spring_data_jpa_support"]
-aws_client = ["aws_sdk_s3", "aws_sdk_lambda"]
-aws_dynamo_db = ["aws_sdk_dynamodb", "aws_sdk_dynamodb_enhanced"]
+aws_client = ["aws_sdk_s3"]
 openfeign = ["spring_cloud_openfeign", "openfeign_hc5", "openfeign_micrometer"]
 testcontainers_mysql = ["test_containers_mysql", "spring_boot_testcontainers", "test_containers_junit_jupiter", "spring_boot_starter_test"]
 kotest = ["kotest_assertions", "kotest_property", "kotest_extensions"]
