@@ -77,7 +77,6 @@ epages_restdocs_api_spec = { id = "com.epages.restdocs-api-spec", version.ref = 
 hidetake_swagger_generator = { id = "org.hidetake.swagger.generator", version.ref = "hidetake_swagger_generator" }
 
 [libraries]
-
 # Kotlin
 kotlin_reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 kotlin_stdlib_jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
@@ -169,7 +168,6 @@ epages_restdocs_api_spec_restassured = { module = "com.epages:restdocs-api-spec-
 # Monitoring & Logging Libraries
 micrometer_tracing_bridge_brave = { module = "io.micrometer:micrometer-tracing-bridge-brave" }
 micrometer_registry_prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
-io_sentry = { module = "io.sentry:sentry-logback", version.ref = "sentry" }
 slf4j = { module = "org.slf4j:slf4j-api", version = "2.0.9" }
 
 # AWS Libraries
@@ -181,14 +179,8 @@ aws_sdk_dynamodb_enhanced = { module = "software.amazon.awssdk:dynamodb-enhanced
 # Firebase
 firebase = { module = "com.google.firebase:firebase-admin", version.ref = "firebase" }
 
-# Slack Client
-slack_client = { module = "com.slack.api:slack-api-client", version.ref = "slack" }
-slack_model_kotlin = { module = "com.slack.api:slack-api-model-kotlin-extension", version.ref = "slack" }
-slack_client_kotlin = { module = "com.slack.api:slack-api-client-kotlin-extension", version.ref = "slack" }
-
 [bundles]
 line_kotlin_jdsl = ["line_kotlin_jdsl_jpql_dsl", "line_kotlin_jdsl_jpql_render", "line_kotlin_jdsl_spring_data_jpa_support"]
-slack_client = ["slack_client", "slack_model_kotlin", "slack_client_kotlin"]
 aws_client = ["aws_sdk_s3", "aws_sdk_lambda"]
 aws_dynamo_db = ["aws_sdk_dynamodb", "aws_sdk_dynamodb_enhanced"]
 openfeign = ["spring_cloud_openfeign", "openfeign_hc5", "openfeign_micrometer"]
