@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class PidaApplication
 
 fun main(args: Array<String>) {
-	runApplication<PidaApplication>(*args)
+    runApplication<PidaApplication>(*args)
 }
