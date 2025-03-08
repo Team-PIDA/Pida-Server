@@ -1,4 +1,4 @@
-package com.partimestudy.support.cache
+package com.pida.support.cache
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -11,16 +11,16 @@ class Cache(
     init {
         cacheAdvice = _cacheAdvice
     }
+
     companion object {
         private lateinit var cacheAdvice: CacheAdvice
+
         fun <T> cache(
             ttl: Long,
             key: String,
             typeReference: TypeReference<T>,
             function: () -> T,
-        ): T {
-            return cacheAdvice.invoke(ttl, key, typeReference, function)
-        }
+        ): T = cacheAdvice.invoke(ttl, key, typeReference, function)
     }
 }
 

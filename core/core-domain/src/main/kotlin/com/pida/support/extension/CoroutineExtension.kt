@@ -1,4 +1,4 @@
-package com.partimestudy.support.extension
+package com.pida.support.extension
 
 import arrow.fx.coroutines.parZip
 import kotlinx.coroutines.CoroutineScope
@@ -14,17 +14,13 @@ const val MDC_KEY_TRACE_ID = "traceId"
 suspend fun <T> withMDCContext(
     context: CoroutineContext = Dispatchers.IO,
     block: suspend () -> T,
-): T {
-    return withContext(context + MDCContext()) { block() }
-}
+): T = withContext(context + MDCContext()) { block() }
 
 suspend fun <T> withJob(
     context: CoroutineContext = Dispatchers.IO,
     job: Job = Job(),
     block: suspend () -> T,
-): T {
-    return withContext(context + job) { block() }
-}
+): T = withContext(context + job) { block() }
 
 fun mdcCoroutineScope(
     context: CoroutineContext = Dispatchers.IO,

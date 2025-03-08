@@ -1,4 +1,4 @@
-package com.partimestudy.support.extension
+package com.pida.support.extension
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -1,4 +1,4 @@
-package com.partimestudy.support.tx
+package com.pida.support.tx
 
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Propagation
@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional
 class Tx(
     _txAdvice: TxAdvice,
 ) {
-
     init {
         txAdvice = _txAdvice
     }
@@ -16,34 +15,22 @@ class Tx(
     companion object {
         private lateinit var txAdvice: TxAdvice
 
-        fun <T> writeable(function: () -> T): T {
-            return txAdvice.writeable(function)
-        }
+        fun <T> writeable(function: () -> T): T = txAdvice.writeable(function)
 
-        fun <T> readable(function: () -> T): T {
-            return txAdvice.readable(function)
-        }
+        fun <T> readable(function: () -> T): T = txAdvice.readable(function)
 
-        fun <T> requiresNew(function: () -> T): T {
-            return txAdvice.requiresNew(function)
-        }
+        fun <T> requiresNew(function: () -> T): T = txAdvice.requiresNew(function)
     }
 
     @Component
     class TxAdvice {
         @Transactional
-        fun <T> writeable(function: () -> T): T {
-            return function()
-        }
+        fun <T> writeable(function: () -> T): T = function()
 
         @Transactional(readOnly = true)
-        fun <T> readable(function: () -> T): T {
-            return function()
-        }
+        fun <T> readable(function: () -> T): T = function()
 
         @Transactional(propagation = Propagation.REQUIRES_NEW)
-        fun <T> requiresNew(function: () -> T): T {
-            return function()
-        }
+        fun <T> requiresNew(function: () -> T): T = function()
     }
 }
