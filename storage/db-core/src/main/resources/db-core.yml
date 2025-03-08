@@ -1,0 +1,58 @@
+spring:
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    show-sql: true
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        show_log: true
+        format_sql: true
+datasource:
+  db:
+    core:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://${DATASOURCE_DB_CORE_JDBC_URL}
+      username: ${DATASOURCE_DB_CORE_USERNAME}
+      password: ${DATASOURCE_DB_CORE_PASSWORD}
+      pool-name: core-db-pool
+      maximum-pool-size: 10
+      connection-timeout: 1500
+      keepalive-time: 30000
+      validation-timeout: 1000
+      max-lifetime: 600000
+      data-source-properties:
+        rewriteBatchedStatements: true
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+datasource:
+  db:
+    core:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://${DATASOURCE_DB_CORE_JDBC_URL}
+      username: ${DATASOURCE_DB_CORE_USERNAME}
+      password: ${DATASOURCE_DB_CORE_PASSWORD}
+      pool-name: core-db-pool
+      maximum-pool-size: 25
+      connection-timeout: 1500
+      keepalive-time: 30000
+      validation-timeout: 1000
+      max-lifetime: 600000
+      data-source-properties:
+        rewriteBatchedStatements: true
