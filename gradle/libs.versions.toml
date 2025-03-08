@@ -84,14 +84,15 @@ kotlin_stdlib_jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
 # Spring Libraries
 spring_context = { module = "org.springframework:spring-context" }
 spring_tx = { module = "org.springframework:spring-tx" }
- spring_cloud_dependencies = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "spring_cloud_dependencies" }
+spring_cloud_dependencies = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "spring_cloud_dependencies" }
 spring_boot_starter_web = { module = "org.springframework.boot:spring-boot-starter-web" }
 spring_boot_starter_data_jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
 spring_boot_starter_actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring_boot" }
 spring_boot_starter_aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref = "spring_boot" }
+# validation
+spring_boot_starter_validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
 spring_boot_configuration_processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "spring_boot" }
 spring_boot_starter_test = { module = "org.springframework.boot:spring-boot-starter-test" }
-spring_boot_starter_thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "spring_boot"}
 spring_restdocs_mockmvc = { module = "org.springframework.restdocs:spring-restdocs-mockmvc" }
 spring_restdocs_restassured = { module = "org.springframework.restdocs:spring-restdocs-restassured" }
 spring_boot_starter_redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
