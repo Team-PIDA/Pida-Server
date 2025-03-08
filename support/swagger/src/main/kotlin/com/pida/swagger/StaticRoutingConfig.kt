@@ -1,4 +1,4 @@
-package com.partimestudy.swagger
+package com.pida.swagger
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
