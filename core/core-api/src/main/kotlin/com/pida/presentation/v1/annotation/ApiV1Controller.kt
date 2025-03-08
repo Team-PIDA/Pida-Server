@@ -9,4 +9,4 @@ import org.springframework.web.bind.annotation.RestController
 @Retention(AnnotationRetention.RUNTIME)
 @RestController
 @RequestMapping("/api/v1")
-annotation class ApiV1Controller()
+annotation class ApiV1Controller

@@ -53,7 +53,10 @@ class LoggingFilter(
         log.info("REQUEST : $json")
     }
 
-    private fun setParameters(request: HttpServletRequest, logData: ObjectNode) {
+    private fun setParameters(
+        request: HttpServletRequest,
+        logData: ObjectNode,
+    ) {
         request.queryString.takeIf { !it.isNullOrBlank() } ?: return
 
         val parametersNode = objectMapper.createObjectNode()
@@ -77,11 +80,15 @@ class LoggingFilter(
         logData.set<JsonNode>("parameters", parametersNode)
     }
 
-    private fun setPayload(request: HttpServletRequest, node: ObjectNode) {
-        val wrapper = WebUtils.getNativeRequest(
-            request,
-            ContentCachingRequestWrapper::class.java,
-        )
+    private fun setPayload(
+        request: HttpServletRequest,
+        node: ObjectNode,
+    ) {
+        val wrapper =
+            WebUtils.getNativeRequest(
+                request,
+                ContentCachingRequestWrapper::class.java,
+            )
         if (wrapper != null) {
             val buf = wrapper.contentAsByteArray
             if (buf.isNotEmpty()) {
@@ -99,28 +106,43 @@ class LoggingFilter(
         }
     }
 
-    private fun setUri(request: HttpServletRequest, logData: ObjectNode) {
+    private fun setUri(
+        request: HttpServletRequest,
+        logData: ObjectNode,
+    ) {
         logData.put("uri", request.requestURI)
     }
 
-    private fun setMethod(request: HttpServletRequest, logData: ObjectNode) {
+    private fun setMethod(
+        request: HttpServletRequest,
+        logData: ObjectNode,
+    ) {
         logData.put("method", request.method)
     }
 
-    private fun setClient(request: HttpServletRequest, logData: ObjectNode) {
+    private fun setClient(
+        request: HttpServletRequest,
+        logData: ObjectNode,
+    ) {
         request.remoteAddr?.takeIf { it.isNotBlank() }?.let { logData.put("client", it) }
         setSession(request, logData)
         setMember(request, logData)
     }
 
-    private fun setSession(request: HttpServletRequest, logData: ObjectNode) {
+    private fun setSession(
+        request: HttpServletRequest,
+        logData: ObjectNode,
+    ) {
         val session = request.getSession(false)
         if (session != null) {
             logData.put("session", session.id)
         }
     }
 
-    private fun setMember(request: HttpServletRequest, logData: ObjectNode) {
+    private fun setMember(
+        request: HttpServletRequest,
+        logData: ObjectNode,
+    ) {
         val remoteMember = request.remoteUser
         if (remoteMember != null) {
             logData.put("member", remoteMember)

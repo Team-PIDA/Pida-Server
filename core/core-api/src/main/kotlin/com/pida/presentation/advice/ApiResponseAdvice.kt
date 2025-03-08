@@ -12,27 +12,27 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
 @RestControllerAdvice
 class ApiResponseAdvice : ResponseBodyAdvice<Any> {
-	override fun supports(
-		returnType: MethodParameter,
-		converterType: Class<out HttpMessageConverter<*>>,
-	): Boolean = true
+    override fun supports(
+        returnType: MethodParameter,
+        converterType: Class<out HttpMessageConverter<*>>,
+    ): Boolean = true
 
-	override fun beforeBodyWrite(
-		body: Any?,
-		returnType: MethodParameter,
-		selectedContentType: MediaType,
-		selectedConverterType: Class<out HttpMessageConverter<*>>,
-		request: ServerHttpRequest,
-		response: ServerHttpResponse,
-	): Any? {
-		val servletResponse = (response as? ServletServerHttpResponse)?.servletResponse ?: return body
-		val status = servletResponse.status
-		val resolve = HttpStatus.resolve(status)
+    override fun beforeBodyWrite(
+        body: Any?,
+        returnType: MethodParameter,
+        selectedContentType: MediaType,
+        selectedConverterType: Class<out HttpMessageConverter<*>>,
+        request: ServerHttpRequest,
+        response: ServerHttpResponse,
+    ): Any? {
+        val servletResponse = (response as? ServletServerHttpResponse)?.servletResponse ?: return body
+        val status = servletResponse.status
+        val resolve = HttpStatus.resolve(status)
 
-		return when {
-			resolve == null || body == null || body is String -> body
-			resolve.is2xxSuccessful -> ApiResponse.success(status, body)
-			else -> body
-		}
-	}
+        return when {
+            resolve == null || body == null || body is String -> body
+            resolve.is2xxSuccessful -> ApiResponse.success(status, body)
+            else -> body
+        }
+    }
 }

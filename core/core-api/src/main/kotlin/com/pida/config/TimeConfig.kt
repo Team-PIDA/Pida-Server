@@ -6,7 +6,6 @@ import java.time.Clock
 
 @Configuration
 class TimeConfig {
-
     @Bean
     fun Clock(): Clock = Clock.systemDefaultZone()
 }
