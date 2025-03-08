@@ -5,32 +5,32 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-data class TestUser(
+data class TestMember(
     val key: String,
     val name: String,
 ) {
     companion object {
-        fun fixture(): TestUser = createFixture()
+        fun fixture(): TestMember = createFixture()
     }
 }
 
 class FixtureTests {
     @Test
-    fun `test user identity`() {
-        val newUsers =
+    fun `test member identity`() {
+        val newMembers =
             (1..5).map {
-                TestUser.fixture()
+                TestMember.fixture()
             }
-        assertThat(newUsers).hasSize(5)
+        assertThat(newMembers).hasSize(5)
     }
 
     @Test
     fun `test arbitrary builder`() {
-        val newUser: TestUser =
+        val newMember: TestMember =
             fixtureBuilder {
-                setExp(TestUser::key, UUID.randomUUID().toString())
+                setExp(TestMember::key, UUID.randomUUID().toString())
             }
 
-        assertThat(newUser).isNotNull
+        assertThat(newMember).isNotNull
     }
 }
