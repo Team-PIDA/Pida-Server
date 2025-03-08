@@ -9,14 +9,17 @@ tasks.getByName("jar") {
 dependencies {
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.aop)
-    implementation(libs.spring.boot.starter.thymeleaf)
+    implementation(libs.spring.boot.starter.validation)
 
     implementation(project(":core:core-domain"))
     implementation(project(":core:auth"))
 
     implementation(project(":clients:aws-client"))
     implementation(project(":clients:notification"))
+    implementation(project(":support:swagger"))
 
+    runtimeOnly(project(":support:logging"))
+    runtimeOnly(project(":support:monitoring"))
     runtimeOnly(project(":storage:db-core"))
     runtimeOnly(project(":storage:redis"))
 
