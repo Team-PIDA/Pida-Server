@@ -11,8 +11,8 @@ dependencies {
     implementation(libs.spring.boot.starter.web)
 
     // Security
-    implementation(libs.spring.boot.starter.security)
-    testImplementation(libs.spring.security.test)
+//    implementation(libs.spring.boot.starter.security)
+//    testImplementation(libs.spring.security.test)
     implementation(libs.jjwt.api)
     runtimeOnly(libs.jjwt.jackson)
     runtimeOnly(libs.jjwt.impl)
