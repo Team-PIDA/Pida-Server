@@ -11,7 +11,7 @@
     </appender>
 
     <logger name="org.springframework" level="WARN"/>
-    <logger name="com.partimestudy" level="INFO"/>
+    <logger name="com.pida" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
