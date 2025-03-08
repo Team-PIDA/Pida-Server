@@ -4,6 +4,9 @@ spring.profiles.active: local
 spring:
   main:
     lazy-initialization: true
+  threads:
+    virtual:
+      enabled: true
   config:
     import:
       - redis.yml
