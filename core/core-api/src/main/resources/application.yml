@@ -2,6 +2,8 @@ spring.application.name: pida-server
 spring.profiles.active: local
 
 spring:
+  main:
+    lazy-initialization: true
   config:
     import:
       - redis.yml
