@@ -43,7 +43,7 @@ enum class ErrorType(
     INVALID_NAME_FORMAT(400, ErrorKind.CLIENT_ERROR, "이름을 제대로 입력해 주세요.", ErrorLevel.INFO),
     INVALID_NICKNAME_FORMAT(400, ErrorKind.CLIENT_ERROR, "닉네임은 6자 이하로 입력해 주세요.", ErrorLevel.INFO),
 
-    /** User */
+    /** Member */
     NOT_FOUND_USER(404, ErrorKind.SERVER_ERROR, "사용자가 존재하지 않습니다.", ErrorLevel.WARN),
     INVALID_PASSWORD(400, ErrorKind.CLIENT_ERROR, "기존 비밀번호가 올바르지 않습니다.", ErrorLevel.WARN),
     INVALID_NEW_PASSWORD(400, ErrorKind.CLIENT_ERROR, "새 비밀번호가 기존 비밀번호와 같을 수 없습니다.", ErrorLevel.WARN),

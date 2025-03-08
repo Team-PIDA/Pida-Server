@@ -19,10 +19,10 @@ interface MySQLTestContainer {
         @DynamicPropertySource
         @JvmStatic
         fun jdbcProperties(registry: DynamicPropertyRegistry) {
-            registry.add("datasource.db.core.driver-class-name") { mySqlContainer.driverClassName }
-            registry.add("datasource.db.core.jdbc-url") { mySqlContainer.jdbcUrl }
-            registry.add("datasource.db.core.username") { mySqlContainer.username }
-            registry.add("datasource.db.core.password") { mySqlContainer.password }
+            registry.add("storage.db.core.driver-class-name") { mySqlContainer.driverClassName }
+            registry.add("storage.db.core.jdbc-url") { mySqlContainer.jdbcUrl }
+            registry.add("storage.db.core.username") { mySqlContainer.username }
+            registry.add("storage.db.core.password") { mySqlContainer.password }
             registry.add("spring.jpa.hibernate.ddl-auto") { "create" }
         }
     }

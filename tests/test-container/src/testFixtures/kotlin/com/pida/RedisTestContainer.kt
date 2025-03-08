@@ -20,10 +20,10 @@ interface RedisTestContainer {
         @DynamicPropertySource
         @JvmStatic
         fun properties(registry: DynamicPropertyRegistry) {
-            registry.add("core.datasource.redis.host") { redis.host }
-            registry.add("auth.datasource.redis.host") { redis.host }
-            registry.add("core.datasource.redis.port") { redis.getMappedPort(6379).toString() }
-            registry.add("auth.datasource.redis.port") { redis.getMappedPort(6379).toString() }
+            registry.add("core.storage.redis.host") { redis.host }
+            registry.add("auth.storage.redis.host") { redis.host }
+            registry.add("core.storage.redis.port") { redis.getMappedPort(6379).toString() }
+            registry.add("auth.storage.redis.port") { redis.getMappedPort(6379).toString() }
         }
     }
 }
