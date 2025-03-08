@@ -3,3 +3,6 @@ management:
     web:
       exposure:
         include: health, prometheus
+  health:
+    defaults:
+      enabled: false
