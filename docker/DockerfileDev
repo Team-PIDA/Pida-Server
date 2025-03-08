@@ -5,10 +5,10 @@ ARG PROFILE
 ENV PROFILE=${PROFILE}
 
 RUN mkdir -p /service/pida
-COPY core/core-api/build/libs/core-api-0.1.0.jar /service/pida/core-api-0.1.0.jar
+COPY core/core-api/build/libs/core-api-0.0.1.jar /service/pida/core-api-0.0.1.jar
 
 EXPOSE 8080
 
 CMD java \
     -Dspring.profiles.active=${PROFILE} \
-    -jar /service/pida/core-api-0.1.0.jar
+    -jar /service/pida/core-api-0.0.1.jar
