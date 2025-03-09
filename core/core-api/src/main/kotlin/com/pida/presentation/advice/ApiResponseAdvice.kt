@@ -1,4 +1,5 @@
 package com.pida.presentation.advice
+
 import com.pida.support.response.ApiResponse
 import org.springframework.core.MethodParameter
 import org.springframework.http.HttpStatus
@@ -12,6 +13,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
 @RestControllerAdvice
 class ApiResponseAdvice : ResponseBodyAdvice<Any> {
+    companion object {
+        private val excludeUrls = listOf("/actuator/prometheus")
+    }
+
     override fun supports(
         returnType: MethodParameter,
         converterType: Class<out HttpMessageConverter<*>>,
@@ -28,6 +33,11 @@ class ApiResponseAdvice : ResponseBodyAdvice<Any> {
         val servletResponse = (response as? ServletServerHttpResponse)?.servletResponse ?: return body
         val status = servletResponse.status
         val resolve = HttpStatus.resolve(status)
+
+        // Exclude /actuator/prometheus from ApiResponse wrapping
+        if (excludeUrls.contains(request.uri.path)) {
+            return body
+        }
 
         return when {
             resolve == null || body == null || body is String -> body
