@@ -8,7 +8,6 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -21,6 +20,10 @@ import java.io.UnsupportedEncodingException
 class LoggingFilter(
     private val objectMapper: ObjectMapper,
 ) : OncePerRequestFilter() {
+    companion object {
+        private val log by lazy { LoggerFactory.getLogger(this::class.java) }
+    }
+
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -147,9 +150,5 @@ class LoggingFilter(
         if (remoteMember != null) {
             logData.put("member", remoteMember)
         }
-    }
-
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(LoggingFilter::class.java)
     }
 }
