@@ -8,6 +8,7 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+    database-platform: org.hibernate.spatial.dialect.mysql.MySQL8SpatialDialect
 ---
 spring:
   config:

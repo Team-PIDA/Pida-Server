@@ -135,6 +135,7 @@ jackson_datatype_jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-dat
 
 # DataBase Libraries
 mysql_connector = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
+hibernate_spatial = { module = "org.hibernate:hibernate-spatial" }
 h2 = { module = "com.h2database:h2" }
 
 # DataBase Migration Libraries
