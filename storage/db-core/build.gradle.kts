@@ -10,8 +10,6 @@ dependencies {
     implementation(libs.hibernate.spatial)
     compileOnly(project(":core:core-domain"))
 
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-
     runtimeOnly(libs.mysql.connector)
     runtimeOnly(libs.h2)
 
