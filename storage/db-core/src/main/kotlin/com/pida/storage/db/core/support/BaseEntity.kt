@@ -17,7 +17,7 @@ import kotlin.reflect.full.isSubclassOf
 abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null
+    val id: Long? = 0
 
     @CreationTimestamp
     @Column(updatable = false)
