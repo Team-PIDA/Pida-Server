@@ -1,14 +1,18 @@
-spring.cloud.openfeign:
-  client:
-    config:
-      kakao-auth-api:
-        connectTimeOut: 2100
-        readTimeout: 5000
-        loggerLevel: full
-      apple-auth-api:
-        connectTimeOut: 2100
-        readTimeout: 5000
-        loggerLevel: full
+spring:
+  cloud:
+    discovery:
+      enabled: false
+    openfeign:
+      client:
+        config:
+          kakao-auth-api:
+            connectTimeOut: 2100
+            readTimeout: 5000
+            loggerLevel: full
+          apple-auth-api:
+            connectTimeOut: 2100
+            readTimeout: 5000
+            loggerLevel: full
   compression:
     response:
       enabled: false
