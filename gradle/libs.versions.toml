@@ -106,6 +106,8 @@ jjwt_api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jwt" }
 jjwt_impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jwt" }
 jjwt_jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jwt" }
 
+spring_boot_starter_oauth2_resource_server = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server", version.ref = "spring_boot" }
+
 # Coroutine Libraries
 kotlinx_coroutine_core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
 kotlinx_coroutine_reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor" }

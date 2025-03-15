@@ -12,8 +12,10 @@ spring:
       - redis.yml
       - logging.yml
       - monitoring.yml
-#      - authentication-redis.yml
-#      - authentication.yml
+      - authentication-redis.yml
+      - authentication.yml
+      - oauth.yml
+      - rsa.yml
 #      - db-core.yml
 #      - notification.yml
 #      - aws.yml
