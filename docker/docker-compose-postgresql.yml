@@ -1,0 +1,13 @@
+services:
+    db:
+      image: postgres:13.4
+      container_name: pida-local-pg
+      restart: always
+      ports:
+        - "5432:5432"
+      environment:
+        POSTGRES_DB: pida
+        POSTGRES_USER: pida
+        POSTGRES_PASSWORD: pida!@
+        TZ: Asia/Seoul
+      command: [ "postgres", "-c", "log_statement=all" ]
