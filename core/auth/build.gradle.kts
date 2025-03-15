@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":support:swagger"))
     implementation(project(":support:logging"))
 
-    runtimeOnly(libs.mysql.connector)
+    runtimeOnly(libs.postgresql.connector)
     runtimeOnly(libs.h2)
 
     testImplementation(project(":tests:test-helper"))

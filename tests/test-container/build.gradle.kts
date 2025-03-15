@@ -5,8 +5,8 @@ plugins {
 dependencies {
     compileOnly(libs.spring.boot.starter.test)
 
-    testFixturesRuntimeOnly(libs.mysql.connector)
-    testFixturesImplementation(libs.bundles.testcontainers.mysql)
+    testFixturesRuntimeOnly(libs.postgresql.connector)
+    testFixturesImplementation(libs.bundles.testcontainers.postgres)
     testFixturesImplementation(libs.test.containers.localstack)
     testFixturesImplementation(libs.bundles.aws.client)
 }

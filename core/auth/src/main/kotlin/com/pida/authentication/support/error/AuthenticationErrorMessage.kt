@@ -1,6 +1,6 @@
 package com.pida.authentication.support.error
 
-data class AuthenticationErrorMessage private constructor(
+data class AuthenticationErrorMessage(
     val code: String,
     val message: String,
 ) {

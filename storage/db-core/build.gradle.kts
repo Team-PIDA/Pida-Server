@@ -10,7 +10,7 @@ dependencies {
     implementation(libs.hibernate.spatial)
     compileOnly(project(":core:core-domain"))
 
-    runtimeOnly(libs.mysql.connector)
+    runtimeOnly(libs.postgresql.connector)
     runtimeOnly(libs.h2)
 
     testImplementation(project(":core:core-domain"))

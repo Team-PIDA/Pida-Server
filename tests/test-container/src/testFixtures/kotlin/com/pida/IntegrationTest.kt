@@ -11,7 +11,6 @@ import org.springframework.test.context.TestConstructor
 @ConfigurationPropertiesScan
 @ContextConfiguration(
     classes = [
-        MySQLTestContainersConfig::class,
         RedisContainersConfig::class,
         LocalStackAwsConfig::class,
     ],

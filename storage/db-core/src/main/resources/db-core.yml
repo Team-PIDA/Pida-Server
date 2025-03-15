@@ -8,7 +8,9 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
-    database-platform: org.hibernate.spatial.dialect.mysql.MySQL8SpatialDialect
+    # MySQL -> PostgreSQL Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 ---
 spring:
   config:
@@ -25,8 +27,10 @@ spring:
 datasource:
   db:
     core:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://${DATASOURCE_DB_CORE_JDBC_URL}
+      # MySQL -> PostgreSQL 드라이버
+      driver-class-name: org.postgresql.Driver
+      # MySQL -> PostgreSQL JDBC URL (예: jdbc:postgresql://localhost:5432/dbname)
+      jdbc-url: jdbc:postgresql://${DATASOURCE_DB_CORE_JDBC_URL}
       username: ${DATASOURCE_DB_CORE_USERNAME}
       password: ${DATASOURCE_DB_CORE_PASSWORD}
       pool-name: core-db-pool
@@ -37,6 +41,7 @@ datasource:
       max-lifetime: 600000
       data-source-properties:
         rewriteBatchedStatements: true
+
 ---
 spring:
   config:
@@ -45,8 +50,8 @@ spring:
 datasource:
   db:
     core:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://${DATASOURCE_DB_CORE_JDBC_URL}
+      driver-class-name: org.postgresql.Driver
+      jdbc-url: jdbc:postgresql://${DATASOURCE_DB_CORE_JDBC_URL}
       username: ${DATASOURCE_DB_CORE_USERNAME}
       password: ${DATASOURCE_DB_CORE_PASSWORD}
       pool-name: core-db-pool

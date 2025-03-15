@@ -20,7 +20,7 @@ spring_cloud_dependencies = "2024.0.0"
 redisson = "3.30.0"
 
 # DB version
-mysql = "8.2.0"
+postgresql = "42.7.5"
 hibernate_spatial = "6.6.10.Final"
 
 # Test Version
@@ -123,7 +123,7 @@ arrow_fx_stm = { module = "io.arrow-kt:arrow-fx-stm", version.ref = "arrow_fx" }
 # TestContainers Libraries
 spring_boot_testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
 test_containers_junit_jupiter = { module = "org.testcontainers:junit-jupiter" }
-test_containers_mysql = { module = "org.testcontainers:mysql" }
+test_containers_postgres = { module = "org.testcontainers:postgresql" }
 test_containers_localstack = { module = "org.testcontainers:localstack" }
 
 # FixtureMonkey Library
@@ -137,7 +137,8 @@ jackson_kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin"
 jackson_datatype_jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
 
 # DataBase Libraries
-mysql_connector = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
+# postgresql
+postgresql_connector = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 hibernate_spatial = { module = "org.hibernate:hibernate-spatial", version.ref = "hibernate_spatial" }
 h2 = { module = "com.h2database:h2" }
 
@@ -185,5 +186,5 @@ firebase = { module = "com.google.firebase:firebase-admin", version.ref = "fireb
 line_kotlin_jdsl = ["line_kotlin_jdsl_jpql_dsl", "line_kotlin_jdsl_jpql_render", "line_kotlin_jdsl_spring_data_jpa_support"]
 aws_client = ["aws_sdk_s3"]
 openfeign = ["spring_cloud_openfeign", "openfeign_hc5", "openfeign_micrometer"]
-testcontainers_mysql = ["test_containers_mysql", "spring_boot_testcontainers", "test_containers_junit_jupiter", "spring_boot_starter_test"]
+testcontainers_postgres = ["test_containers_postgres", "spring_boot_testcontainers", "test_containers_junit_jupiter", "spring_boot_starter_test"]
 kotest = ["kotest_assertions", "kotest_property", "kotest_extensions"]
