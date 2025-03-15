@@ -25,7 +25,7 @@ auth:
 spring:
   config:
     activate:
-      on-profile: live
+      on-profile: prod
 auth:
   datasource:
     redis:
