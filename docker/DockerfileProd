@@ -18,5 +18,4 @@ EXPOSE 8080
 
 CMD java \
     -Dspring.profiles.active=${PROFILE} \
-    -Xmx4096m \
     -jar /service/pida/core-api-0.0.1.jar
