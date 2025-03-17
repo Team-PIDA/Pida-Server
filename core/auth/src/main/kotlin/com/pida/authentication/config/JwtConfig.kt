@@ -22,23 +22,23 @@ class JwtConfig(
     @Bean
     fun jwtDecoder(): JwtDecoder =
         NimbusJwtDecoder
-            .withPublicKey(rsaKeyProperties.publicKey)
+            .withPublicKey(rsaKeyProperties.getRSAPublicKey())
             .build()
 
     @Bean
     fun jwtEncoder(): JwtEncoder {
         val rsaKey: RSAKey =
             RSAKey
-                .Builder(rsaKeyProperties.publicKey)
-                .privateKey(rsaKeyProperties.privateKey)
+                .Builder(rsaKeyProperties.getRSAPublicKey())
+                .privateKey(rsaKeyProperties.getRSAPrivateKey())
                 .build()
         return NimbusJwtEncoder(ImmutableJWKSet(JWKSet(rsaKey)))
     }
 
     @Bean
     fun jwkSource(): JWKSource<SecurityContext> {
-        val rsaPublicKey: RSAPublicKey = rsaKeyProperties.publicKey
-        val rsaPrivateKey: RSAPrivateKey = rsaKeyProperties.privateKey
+        val rsaPublicKey: RSAPublicKey = rsaKeyProperties.getRSAPublicKey()
+        val rsaPrivateKey: RSAPrivateKey = rsaKeyProperties.getRSAPrivateKey()
         val rsaKey: RSAKey =
             RSAKey
                 .Builder(rsaPublicKey)
