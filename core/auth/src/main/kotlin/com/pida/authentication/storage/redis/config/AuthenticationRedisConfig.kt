@@ -11,11 +11,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
 class AuthenticationRedisConfig(
-    private val redisProperties: RedisProperties,
+    private val authenticationRedisProperties: AuthenticationRedisProperties,
 ) {
     @Bean
     fun authenticationRedisConnectionFactory(): LettuceConnectionFactory =
-        LettuceConnectionFactory(RedisStandaloneConfiguration(redisProperties.host, redisProperties.port))
+        LettuceConnectionFactory(RedisStandaloneConfiguration(authenticationRedisProperties.host, authenticationRedisProperties.port))
 
     @Bean
     fun authenticationRedisTemplate(
