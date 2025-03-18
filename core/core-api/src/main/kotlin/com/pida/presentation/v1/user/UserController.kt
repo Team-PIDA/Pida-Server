@@ -1,6 +1,6 @@
-package com.pida.presentation.v1.member
+package com.pida.presentation.v1.user
 
 import com.pida.presentation.v1.annotation.ApiV1Controller
 
 @ApiV1Controller
-class MemberController
+class UserController
