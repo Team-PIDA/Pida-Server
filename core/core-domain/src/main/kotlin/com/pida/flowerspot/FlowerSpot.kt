@@ -8,8 +8,8 @@ data class FlowerSpot(
     val streetName: String,
     val district: String?,
     val description: String?,
-    val geom: GeoJson,        // LineString GeoJson
-    val pinPoint: GeoJson,    // Point GeoJson
+    val geom: GeoJson, // LineString GeoJson
+    val pinPoint: GeoJson, // Point GeoJson
     val region: Region,
     val deletedAt: LocalDateTime?,
 )
