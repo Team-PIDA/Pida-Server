@@ -9,6 +9,7 @@ spring:
       enabled: true
   config:
     import:
+      - db-core.yml
       - redis.yml
       - logging.yml
       - monitoring.yml
@@ -16,7 +17,6 @@ spring:
       - authentication.yml
       - oauth.yml
       - rsa.yml
-#      - db-core.yml
 #      - notification.yml
 #      - aws.yml
   web.resources.add-mappings: false

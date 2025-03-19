@@ -44,6 +44,7 @@ subprojects {
         implementation(libs.kotlin.reflect)
         implementation(libs.kotlin.stdlib.jdk8)
         implementation(libs.jackson.kotlin)
+        implementation(libs.hibernate.spatial)
 
         annotationProcessor(libs.spring.boot.configuration.processor)
         kapt(libs.spring.boot.configuration.processor)

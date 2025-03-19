@@ -7,7 +7,6 @@ allOpen {
 dependencies {
     api(libs.spring.boot.starter.data.jpa)
     implementation(libs.bundles.line.kotlin.jdsl)
-    implementation(libs.hibernate.spatial)
     compileOnly(project(":core:core-domain"))
 
     runtimeOnly(libs.postgresql.connector)
