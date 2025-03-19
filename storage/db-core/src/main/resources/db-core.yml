@@ -27,10 +27,8 @@ spring:
 datasource:
   db:
     core:
-      # MySQL -> PostgreSQL 드라이버
       driver-class-name: org.postgresql.Driver
-      # MySQL -> PostgreSQL JDBC URL (예: jdbc:postgresql://localhost:5432/dbname)
-      jdbc-url: jdbc:postgresql://${DATASOURCE_DB_CORE_JDBC_URL}
+      jdbc-url: ${DATASOURCE_DB_CORE_JDBC_URL}
       username: ${DATASOURCE_DB_CORE_USERNAME}
       password: ${DATASOURCE_DB_CORE_PASSWORD}
       pool-name: core-db-pool
@@ -51,7 +49,7 @@ datasource:
   db:
     core:
       driver-class-name: org.postgresql.Driver
-      jdbc-url: jdbc:postgresql://${DATASOURCE_DB_CORE_JDBC_URL}
+      jdbc-url: ${DATASOURCE_DB_CORE_JDBC_URL}
       username: ${DATASOURCE_DB_CORE_USERNAME}
       password: ${DATASOURCE_DB_CORE_PASSWORD}
       pool-name: core-db-pool
