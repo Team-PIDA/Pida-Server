@@ -97,9 +97,11 @@ spring_boot_starter_test = { module = "org.springframework.boot:spring-boot-star
 spring_restdocs_mockmvc = { module = "org.springframework.restdocs:spring-restdocs-mockmvc" }
 spring_restdocs_restassured = { module = "org.springframework.restdocs:spring-restdocs-restassured" }
 spring_boot_starter_redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
-spring_doc_openapi_starter_webmvc_ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "swaggerVersion" }
 spring_boot_starter_security = { module = "org.springframework.boot:spring-boot-starter-security" }
 spring_security_test = { module = "org.springframework.security:spring-security-test" }
+
+# swagger
+spring_doc_openapi_starter_webmvc_ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "swaggerVersion" }
 
 # JWT
 jjwt_api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jwt" }

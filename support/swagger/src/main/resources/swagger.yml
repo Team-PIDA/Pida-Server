@@ -1,5 +1,39 @@
 springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
-    url: /static/pida-docs.yaml
+    enabled: true
+    path: /swagger-ui
+    disable-swagger-default-url: true
+    display-request-duration: true
+    tags-sorter: alpha
+    operations-sorter: alpha
+    try-it-out-enabled: true
+    doc-expansion: none
+    persist-authorization: true
+    syntax-highlight:
+      default: true
+      theme: agate
+    urls:
+      - name: Pida App API DOCS
+        url: /v3/api-docs
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+swagger:
+  user: pida
+  password: pida1234
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+swagger:
+  user: ${SWAGGER_USER}
+  password: ${SWAGGER_PASSWORD}
+---

@@ -11,13 +11,20 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.pida.authentication.jwt.JwtConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.core.GrantedAuthorityDefaults
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.security.web.util.matcher.OrRequestMatcher
+import org.springframework.security.web.util.matcher.RequestMatcher
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -27,7 +34,9 @@ import java.time.format.DateTimeFormatter
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(
+    private val swaggerUserProperties: SwaggerUserProperties,
+) {
     @Bean
     fun objectMapper(): ObjectMapper =
         jacksonObjectMapper().registerModules(
@@ -59,6 +68,37 @@ class SecurityConfig {
     fun grantedAuthorityDefaults(): GrantedAuthorityDefaults = GrantedAuthorityDefaults("")
 
     @Bean
+    @Order(1)
+    fun swaggerFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher(getSwaggerUrls())
+            .httpBasic { }
+            .authorizeHttpRequests { auth ->
+                auth.anyRequest().authenticated()
+            }
+
+        return http.build()
+    }
+
+    fun getSwaggerUrls(): RequestMatcher =
+        OrRequestMatcher(
+            AntPathRequestMatcher("/swagger-ui/**"),
+            AntPathRequestMatcher("/v3/api-docs/**"),
+            AntPathRequestMatcher("/swagger-resources/**"),
+        )
+
+    @Bean
+    fun inMemoryUserDetailsManager(): InMemoryUserDetailsManager {
+        val user: UserDetails =
+            User
+                .withUsername(swaggerUserProperties.user)
+                .password(passwordEncoder().encode(swaggerUserProperties.password))
+                .roles("SWAGGER")
+                .build()
+        return InMemoryUserDetailsManager(user)
+    }
+
+    @Bean
     fun passwordEncoder(): PasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
 
     @Bean
@@ -67,44 +107,29 @@ class SecurityConfig {
         jwtConverter: JwtConverter,
     ): SecurityFilterChain {
         http
-            .oauth2ResourceServer { oauth2ResourceServer ->
-                oauth2ResourceServer.jwt { jwtConfig ->
-                    jwtConfig.jwtAuthenticationConverter(
-                        jwtConverter.apply {
-                            setPrincipalClaimName("jti")
-                        },
-                    )
+            .oauth2ResourceServer { oauth2 ->
+                oauth2.jwt { jwt ->
+                    jwt.jwtAuthenticationConverter(jwtConverter.apply { setPrincipalClaimName("jti") })
                 }
-                oauth2ResourceServer.authenticationEntryPoint(
-                    AuthenticationEntryPoint(
-                        objectMapper(),
-                    ),
-                )
+                oauth2.authenticationEntryPoint(CustomAuthenticationEntryPoint(objectMapper()))
             }
+
         http
-            .headers {
-                it.frameOptions { option ->
-                    option.disable()
-                }
-            }.csrf { it.disable() }
-            .httpBasic { it.disable() }
+            .headers { it.frameOptions { option -> option.disable() } }
+            .csrf { it.disable() }
             .formLogin { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authorizeHttpRequests { authorizeHttpRequest ->
-                authorizeHttpRequest.requestMatchers("/swagger-ui/**").permitAll()
-                authorizeHttpRequest.requestMatchers("/v3/api-docs/**").permitAll()
-                authorizeHttpRequest.requestMatchers("/h2-console/**").permitAll()
-                authorizeHttpRequest.requestMatchers("/actuator/**").permitAll()
-                authorizeHttpRequest.requestMatchers("/ping").permitAll()
+            .exceptionHandling { it.authenticationEntryPoint(CustomAuthenticationEntryPoint(objectMapper())) }
 
-                authorizeHttpRequest.anyRequest().authenticated()
-            }.exceptionHandling {
-                it.authenticationEntryPoint(
-                    AuthenticationEntryPoint(
-                        objectMapper(),
-                    ),
-                )
-            }
+        http.httpBasic { it.realmName("Swagger Realm") }
+
+        http.authorizeHttpRequests { authorize ->
+            authorize.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").hasRole("SWAGGER")
+
+            authorize.requestMatchers("/h2-console/**", "/actuator/**", "/ping", "/api/v1/**").permitAll()
+
+            authorize.anyRequest().authenticated()
+        }
 
         return http.build()
     }
