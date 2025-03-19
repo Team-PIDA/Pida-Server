@@ -3,22 +3,21 @@ package com.pida.support.response
 import com.pida.support.error.ErrorResponse
 import java.time.LocalDateTime
 
-data class ApiResponse(
+data class ApiResponse<Data>(
     val success: Boolean,
     val status: Int,
-    val data: Any,
+    val data: Data? = null,
     val timestamp: LocalDateTime,
 ) {
     companion object {
-        @JvmStatic
-        fun success(
+        fun <Data> success(
             status: Int,
-            data: Any,
-        ) = ApiResponse(true, status, data, LocalDateTime.now())
+            data: Data,
+        ): ApiResponse<Data> = ApiResponse(true, status, data, LocalDateTime.now())
 
         fun fail(
             status: Int,
             errorResponse: ErrorResponse,
-        ) = ApiResponse(false, status, errorResponse, LocalDateTime.now())
+        ): ApiResponse<ErrorResponse> = ApiResponse(false, status, errorResponse, LocalDateTime.now())
     }
 }
