@@ -2,14 +2,15 @@ package com.pida.support.cache
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Component
 
 @Component
 class Cache(
-    _cacheAdvice: CacheAdvice,
+    private val cacheAdvice: CacheAdvice,
 ) {
     init {
-        cacheAdvice = _cacheAdvice
+        Cache.cacheAdvice = cacheAdvice
     }
 
     companion object {
@@ -21,6 +22,11 @@ class Cache(
             typeReference: TypeReference<T>,
             function: () -> T,
         ): T = cacheAdvice.invoke(ttl, key, typeReference, function)
+    }
+
+    @PostConstruct
+    fun init() {
+        Cache.cacheAdvice = cacheAdvice
     }
 }
 

@@ -1,70 +1,70 @@
 package com.pida.support.tx
 
 import com.pida.support.annotation.ReadOnlyTransactional
+import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.springframework.beans.factory.InitializingBean
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import kotlin.coroutines.CoroutineContext
 
-object Tx {
-    @Suppress("ktlint:standard:backing-property-naming")
-    private lateinit var _txRunner: TxRunner
-
-    fun initialize(txRunner: TxRunner) {
-        _txRunner = txRunner
+@Component
+class Tx(
+    private val txAdvice: TxAdvice,
+) {
+    init {
+        Tx.txAdvice = txAdvice
     }
 
-    fun <T> writeable(function: () -> T): T = _txRunner.runTx(function)
+    companion object {
+        private lateinit var txAdvice: TxAdvice
 
-    fun <T> readable(function: () -> T): T = _txRunner.runReadOnly(function)
+        fun <T> writeable(block: () -> T): T = txAdvice.writeable(block)
 
-    fun <T> requiresNew(function: () -> T): T = _txRunner.runRequiresNew(function)
+        fun <T> readable(block: () -> T): T = txAdvice.readable(block)
 
-    suspend fun <T> coWriteable(
-        coroutineContext: CoroutineContext = Dispatchers.IO,
-        function: suspend () -> T,
-    ): T = withContext(coroutineContext) { _txRunner.runTxSuspend(function) }
+        fun <T> requiresNew(block: () -> T): T = txAdvice.requiresNew(block)
 
-    suspend fun <T> coReadable(
-        coroutineContext: CoroutineContext = Dispatchers.IO,
-        function: suspend () -> T,
-    ): T = withContext(coroutineContext) { _txRunner.runReadOnlySuspend(function) }
+        suspend fun <T> coWriteable(
+            coroutineContext: CoroutineContext = Dispatchers.IO,
+            block: suspend () -> T,
+        ): T = withContext(coroutineContext) { txAdvice.coWriteable(block) }
 
-    suspend fun <T> coRequiresNew(
-        coroutineContext: CoroutineContext = Dispatchers.IO,
-        function: suspend () -> T,
-    ): T = withContext(coroutineContext) { _txRunner.runRequiresNewSuspend(function) }
-}
+        suspend fun <T> coReadable(
+            coroutineContext: CoroutineContext = Dispatchers.IO,
+            block: suspend () -> T,
+        ): T = withContext(coroutineContext) { txAdvice.coReadable(block) }
 
-@Configuration
-class TxConfig {
-    @Bean("txInitBean")
-    fun txInitialize(txRunner: TxRunner): InitializingBean = InitializingBean { Tx.initialize(txRunner) }
-}
+        suspend fun <T> coRequiresNew(
+            coroutineContext: CoroutineContext = Dispatchers.IO,
+            block: suspend () -> T,
+        ): T = withContext(coroutineContext) { txAdvice.coRequiresNew(block) }
+    }
 
-@Component
-class TxRunner {
-    @Transactional
-    fun <T> runTx(block: () -> T): T = block()
+    @PostConstruct
+    fun init() {
+        Tx.txAdvice = txAdvice
+    }
 
-    @ReadOnlyTransactional
-    fun <T> runReadOnly(block: () -> T): T = block()
+    @Component
+    class TxAdvice {
+        @Transactional
+        fun <T> writeable(block: () -> T): T = block()
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun <T> runRequiresNew(block: () -> T): T = block()
+        @ReadOnlyTransactional
+        fun <T> readable(block: () -> T): T = block()
 
-    // ✅ suspend 함수 지원
-    @Transactional
-    suspend fun <T> runTxSuspend(block: suspend () -> T): T = block()
+        @Transactional(propagation = Propagation.REQUIRES_NEW)
+        fun <T> requiresNew(block: () -> T): T = block()
 
-    @ReadOnlyTransactional
-    suspend fun <T> runReadOnlySuspend(block: suspend () -> T): T = block()
+        @Transactional
+        suspend fun <T> coWriteable(block: suspend () -> T): T = block()
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    suspend fun <T> runRequiresNewSuspend(block: suspend () -> T): T = block()
+        @ReadOnlyTransactional
+        suspend fun <T> coReadable(block: suspend () -> T): T = block()
+
+        @Transactional(propagation = Propagation.REQUIRES_NEW)
+        suspend fun <T> coRequiresNew(block: suspend () -> T): T = block()
+    }
 }

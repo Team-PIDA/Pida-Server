@@ -15,6 +15,7 @@ jwt = "0.12.6"
 spring_boot = "3.4.3"
 spring_dependency_management = "1.1.7"
 spring_cloud_dependencies = "2024.0.0"
+jakartaAnnotation = "3.0.0"
 
 # Redis version
 redisson = "3.30.0"
@@ -99,6 +100,8 @@ spring_restdocs_restassured = { module = "org.springframework.restdocs:spring-re
 spring_boot_starter_redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 spring_boot_starter_security = { module = "org.springframework.boot:spring-boot-starter-security" }
 spring_security_test = { module = "org.springframework.security:spring-security-test" }
+jakarta_annotation_api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotation" }
+
 
 # swagger
 spring_doc_openapi_starter_webmvc_ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "swaggerVersion" }
@@ -120,7 +123,6 @@ reactor_kotlin = { module = "io.projectreactor.kotlin:reactor-kotlin-extensions"
 # arrow-kt Libraries
 arrow_fx_coroutine = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow_fx" }
 arrow_fx_stm = { module = "io.arrow-kt:arrow-fx-stm", version.ref = "arrow_fx" }
-
 
 # TestContainers Libraries
 spring_boot_testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
