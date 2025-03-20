@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service
 class FlowerSpotService(
     private val flowerSpotFinder: FlowerSpotFinder,
 ) {
-    fun findAllFlowerSpot(): List<FlowerSpot> = flowerSpotFinder.readAll()
+    suspend fun findAllFlowerSpot(): List<FlowerSpot> = flowerSpotFinder.readAll()
 }

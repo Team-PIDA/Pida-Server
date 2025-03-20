@@ -14,5 +14,5 @@ class FlowerSpotController(
 ) {
     @Operation(summary = "벚꽃 장소 조회", description = "벚꽃 장소를 조회합니다.")
     @GetMapping("/flower-spot")
-    fun flowerSpotFindAll(): FlowerSpotAllResponse = FlowerSpotAllResponse.of(flowerSpotService.findAllFlowerSpot())
+    suspend fun flowerSpotFindAll(): FlowerSpotAllResponse = FlowerSpotAllResponse.of(flowerSpotService.findAllFlowerSpot())
 }

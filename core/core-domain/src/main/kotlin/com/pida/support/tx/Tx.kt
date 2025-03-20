@@ -1,70 +1,68 @@
 package com.pida.support.tx
 
-import com.pida.support.annotation.ReadOnlyTransactional
-import jakarta.annotation.PostConstruct
+import com.pida.support.error.ErrorException
+import com.pida.support.error.ErrorType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Propagation
-import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionDefinition
+import org.springframework.transaction.support.TransactionTemplate
 import kotlin.coroutines.CoroutineContext
 
 @Component
-class Tx(
-    private val txAdvice: TxAdvice,
+class TxAdvice(
+    transactionManager: PlatformTransactionManager,
 ) {
-    init {
-        Tx.txAdvice = txAdvice
-    }
+    private val writeTemplate =
+        TransactionTemplate(transactionManager).apply {
+            propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRED
+        }
 
-    companion object {
-        private lateinit var txAdvice: TxAdvice
+    private val requiresNewTemplate =
+        TransactionTemplate(transactionManager).apply {
+            propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRES_NEW
+        }
 
-        fun <T> writeable(block: () -> T): T = txAdvice.writeable(block)
+    private val readOnlyTemplate =
+        TransactionTemplate(transactionManager).apply {
+            propagationBehavior = TransactionDefinition.PROPAGATION_SUPPORTS
+            isReadOnly = true
+        }
 
-        fun <T> readable(block: () -> T): T = txAdvice.readable(block)
+    fun <T> write(block: () -> T): T = execute(writeTemplate, block)
 
-        fun <T> requiresNew(block: () -> T): T = txAdvice.requiresNew(block)
+    fun <T> requiresNew(block: () -> T): T = execute(requiresNewTemplate, block)
 
-        suspend fun <T> coWriteable(
-            coroutineContext: CoroutineContext = Dispatchers.IO,
-            block: suspend () -> T,
-        ): T = withContext(coroutineContext) { txAdvice.coWriteable(block) }
+    fun <T> readOnly(block: () -> T): T = execute(readOnlyTemplate, block)
 
-        suspend fun <T> coReadable(
-            coroutineContext: CoroutineContext = Dispatchers.IO,
-            block: suspend () -> T,
-        ): T = withContext(coroutineContext) { txAdvice.coReadable(block) }
+    suspend fun <T> coWrite(
+        coroutineContext: CoroutineContext = Dispatchers.IO,
+        block: () -> T,
+    ): T = writeTemplate.coExecute(coroutineContext, block)
 
-        suspend fun <T> coRequiresNew(
-            coroutineContext: CoroutineContext = Dispatchers.IO,
-            block: suspend () -> T,
-        ): T = withContext(coroutineContext) { txAdvice.coRequiresNew(block) }
-    }
+    suspend fun <T> coRequiresNew(
+        coroutineContext: CoroutineContext = Dispatchers.IO,
+        block: () -> T,
+    ): T = requiresNewTemplate.coExecute(coroutineContext, block)
 
-    @PostConstruct
-    fun init() {
-        Tx.txAdvice = txAdvice
-    }
+    suspend fun <T> coReadOnly(
+        coroutineContext: CoroutineContext = Dispatchers.IO,
+        block: () -> T,
+    ): T = readOnlyTemplate.coExecute(coroutineContext, block)
 
-    @Component
-    class TxAdvice {
-        @Transactional
-        fun <T> writeable(block: () -> T): T = block()
-
-        @ReadOnlyTransactional
-        fun <T> readable(block: () -> T): T = block()
-
-        @Transactional(propagation = Propagation.REQUIRES_NEW)
-        fun <T> requiresNew(block: () -> T): T = block()
-
-        @Transactional
-        suspend fun <T> coWriteable(block: suspend () -> T): T = block()
-
-        @ReadOnlyTransactional
-        suspend fun <T> coReadable(block: suspend () -> T): T = block()
-
-        @Transactional(propagation = Propagation.REQUIRES_NEW)
-        suspend fun <T> coRequiresNew(block: suspend () -> T): T = block()
-    }
+    private fun <T> execute(
+        template: TransactionTemplate,
+        block: () -> T,
+    ): T =
+        template.execute { block() }
+            ?: throw ErrorException(ErrorType.FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR)
 }
+
+suspend fun <T> TransactionTemplate.coExecute(
+    coroutineContext: CoroutineContext = Dispatchers.IO,
+    block: () -> T,
+): T =
+    withContext(coroutineContext) {
+        this@coExecute.execute { block() }
+    } ?: throw ErrorException(ErrorType.FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR)
