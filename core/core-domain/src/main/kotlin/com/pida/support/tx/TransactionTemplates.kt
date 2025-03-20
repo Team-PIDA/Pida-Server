@@ -14,27 +14,31 @@ import kotlin.coroutines.CoroutineContext
 class TransactionTemplates(
     transactionManager: PlatformTransactionManager,
 ) {
-    val writer = TransactionTemplate(transactionManager).apply {
-        propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRED
-    }
+    val writer =
+        TransactionTemplate(transactionManager).apply {
+            propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRED
+        }
 
-    val newTxWriter = TransactionTemplate(transactionManager).apply {
-        propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRES_NEW
-    }
+    val newTxWriter =
+        TransactionTemplate(transactionManager).apply {
+            propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRES_NEW
+        }
 
-    val reader = TransactionTemplate(transactionManager).apply {
-        propagationBehavior = TransactionDefinition.PROPAGATION_SUPPORTS
-        isReadOnly = true
-    }
+    val reader =
+        TransactionTemplate(transactionManager).apply {
+            propagationBehavior = TransactionDefinition.PROPAGATION_SUPPORTS
+            isReadOnly = true
+        }
 }
 
 // 코루틴용 확장 함수
 suspend fun <T> TransactionTemplate.coExecute(
     coroutineContext: CoroutineContext = Dispatchers.IO,
-    block: () -> T
-): T = withContext(coroutineContext) {
-    this@coExecute.execute { block() }
-} ?: throw ErrorException(ErrorType.FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR)
+    block: () -> T,
+): T =
+    withContext(coroutineContext) {
+        this@coExecute.execute { block() }
+    } ?: throw ErrorException(ErrorType.FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR)
 
 // 일반 블록용 확장
 fun <T> TransactionTemplate.executeOrThrow(block: () -> T): T =
