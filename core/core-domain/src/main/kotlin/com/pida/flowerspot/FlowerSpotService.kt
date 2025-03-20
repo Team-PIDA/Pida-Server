@@ -6,5 +6,10 @@ import org.springframework.stereotype.Service
 class FlowerSpotService(
     private val flowerSpotFinder: FlowerSpotFinder,
 ) {
-    suspend fun findAllFlowerSpot(): List<FlowerSpot> = flowerSpotFinder.readAll()
+    suspend fun findAllFlowerSpot(region: Region?): List<FlowerSpot> =
+        if (region == null) {
+            flowerSpotFinder.readAll()
+        } else {
+            flowerSpotFinder.readAllByRegion(region)
+        }
 }

@@ -21,4 +21,13 @@ class FlowerSpotFinder(
         ) {
             flowerSpotRepository.findAll()
         }
+
+    suspend fun readAllByRegion(region: Region): List<FlowerSpot> =
+        cacheAdvice.invoke(
+            ttl = 1440L,
+            key = ALL_SPOT + ":${region.name}",
+            typeReference = object : TypeReference<List<FlowerSpot>>() {},
+        ) {
+            flowerSpotRepository.findAllByRegion(region)
+        }
 }
