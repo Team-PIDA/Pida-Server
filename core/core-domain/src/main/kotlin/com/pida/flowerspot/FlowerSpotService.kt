@@ -12,4 +12,6 @@ class FlowerSpotService(
         } else {
             flowerSpotFinder.readAllByRegion(region)
         }
+
+    suspend fun findOneFlowerSpot(spotId: Long): FlowerSpot = flowerSpotFinder.readBy(spotId)
 }

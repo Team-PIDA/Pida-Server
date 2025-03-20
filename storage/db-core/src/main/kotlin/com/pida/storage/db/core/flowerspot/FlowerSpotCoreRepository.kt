@@ -15,7 +15,7 @@ class FlowerSpotCoreRepository(
     private val tx: TransactionTemplates,
     private val txAdvice: TxAdvice,
 ) : FlowerSpotRepository {
-    override fun findBy(spotId: Long): FlowerSpot =
+    override suspend fun findBy(spotId: Long): FlowerSpot =
         txAdvice.readOnly {
             flowerSpotJpaRepository
                 .findByIdAndDeletedAtIsNullOrElseThrow(spotId)

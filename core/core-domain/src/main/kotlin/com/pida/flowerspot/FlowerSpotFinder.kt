@@ -30,4 +30,6 @@ class FlowerSpotFinder(
         ) {
             flowerSpotRepository.findAllByRegion(region)
         }
+
+    suspend fun readBy(spotId: Long): FlowerSpot = flowerSpotRepository.findBy(spotId)
 }
