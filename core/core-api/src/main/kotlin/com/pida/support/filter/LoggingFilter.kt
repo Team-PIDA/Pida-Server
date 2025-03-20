@@ -129,7 +129,7 @@ class LoggingFilter(
     ) {
         request.remoteAddr?.takeIf { it.isNotBlank() }?.let { logData.put("client", it) }
         setSession(request, logData)
-        setMember(request, logData)
+        setUser(request, logData)
     }
 
     private fun setSession(
@@ -142,13 +142,13 @@ class LoggingFilter(
         }
     }
 
-    private fun setMember(
+    private fun setUser(
         request: HttpServletRequest,
         logData: ObjectNode,
     ) {
-        val remoteMember = request.remoteUser
-        if (remoteMember != null) {
-            logData.put("member", remoteMember)
+        val remoteUser = request.remoteUser
+        if (remoteUser != null) {
+            logData.put("user", remoteUser)
         }
     }
 }

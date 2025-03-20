@@ -15,7 +15,7 @@ class Cache(
     companion object {
         private lateinit var cacheAdvice: CacheAdvice
 
-        fun <T> cache(
+        suspend fun <T> cache(
             ttl: Long,
             key: String,
             typeReference: TypeReference<T>,
@@ -29,11 +29,11 @@ class CacheAdvice(
     private val cacheRepository: CacheRepository,
     private val objectMapper: ObjectMapper,
 ) {
-    fun <T> invoke(
+    suspend fun <T> invoke(
         ttl: Long,
         key: String,
         typeReference: TypeReference<T>,
-        function: () -> T,
+        function: suspend () -> T,
     ): T {
         val cached = cacheRepository.get(key)
         if (cached != null) {

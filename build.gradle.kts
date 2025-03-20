@@ -52,7 +52,7 @@ subprojects {
         testImplementation(libs.spring.mockk)
         testImplementation(libs.bundles.kotest)
         testImplementation(libs.spring.boot.starter.test)
-//        testImplementation(libs.spring.security.test)
+        testImplementation(libs.spring.security.test)
     }
 
     tasks.withType<KotlinCompile> {

@@ -16,8 +16,8 @@ import java.time.format.DateTimeFormatter
 @Configuration
 class JacksonTimeFormatConfig {
     @Bean
-    fun javaTimeModule(): JavaTimeModule { // To ensure that LocalDateTime always includes millisecond
-        return JavaTimeModule().apply {
+    fun javaTimeModule(): JavaTimeModule =
+        JavaTimeModule().apply {
             addSerializer(
                 LocalDateTime::class.java,
                 LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")),
@@ -39,5 +39,4 @@ class JacksonTimeFormatConfig {
                 LocalTimeSerializer(DateTimeFormatter.ofPattern("HH:mm:ss.SSS")),
             )
         }
-    }
 }
