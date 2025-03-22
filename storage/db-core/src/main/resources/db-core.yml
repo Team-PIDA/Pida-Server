@@ -17,14 +17,6 @@ spring:
   config:
     activate:
       on-profile: local
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        show_log: true
-        format_sql: true
 datasource:
   db:
     core:

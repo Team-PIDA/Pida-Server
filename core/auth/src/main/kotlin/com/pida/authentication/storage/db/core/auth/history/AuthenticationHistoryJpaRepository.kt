@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface AuthenticationHistoryJpaRepository : JpaRepository<AuthenticationHistoryEntity, Long> {
     fun findAllByUserKeyAndDeviceId(
         userKey: String,
-        deviceId: String,
+        deviceId: String?,
     ): List<AuthenticationHistoryEntity>
 
     fun findByUserKeyAndEntityStatus(

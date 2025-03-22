@@ -1,10 +1,6 @@
 package com.pida.authentication.domain.auth.repository
 
-import com.pida.authentication.domain.auth.AuthenticationPida
-import com.pida.authentication.domain.auth.AuthenticationSns
-import com.pida.authentication.domain.auth.LoginIdWithSocialType
-import com.pida.authentication.domain.auth.NewAuthenticationSocial
-import com.pida.authentication.domain.auth.SocialType
+import com.pida.authentication.domain.auth.*
 
 interface AuthenticationRepository {
     fun findBy(loginId: String): AuthenticationPida?
@@ -21,6 +17,12 @@ interface AuthenticationRepository {
         userKey: String,
         newAuthenticationSocial: NewAuthenticationSocial,
     ): AuthenticationSns
+
+    fun createAuthentication(
+        userId: Long,
+        userKey: String,
+        newAuthenticationPida: NewAuthenticationPida,
+    ): AuthenticationPida
 
     fun verifyLoginId(loginId: String): Boolean
 

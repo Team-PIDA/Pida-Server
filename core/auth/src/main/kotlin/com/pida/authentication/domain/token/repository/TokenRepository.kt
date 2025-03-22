@@ -7,7 +7,7 @@ import com.pida.authentication.domain.token.Token
 
 interface TokenRepository {
     fun create(
-        deviceId: String,
+        deviceId: String?,
         authentication: Authentication,
     ): Token
 
