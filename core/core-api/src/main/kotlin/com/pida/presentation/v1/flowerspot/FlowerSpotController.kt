@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 
-@Tag(name = "1. Flower Spot", description = "벚꽃 장소 관련 API")
+@Tag(name = "3. Flower Spot", description = "벚꽃 장소 관련 API")
 @ApiV1Controller
 class FlowerSpotController(
     private val flowerSpotService: FlowerSpotService,

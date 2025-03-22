@@ -7,15 +7,19 @@ import com.pida.presentation.v1.auth.request.SignUpRequest
 import com.pida.presentation.v1.auth.response.SignUpResponse
 import com.pida.presentation.v1.auth.response.TokenResponse
 import com.pida.user.UserService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 
+@Tag(name = "1. Auth", description = "인증 관련 API")
 @ApiV1Controller
 class AuthController(
     private val authenticationService: AuthenticationService,
     private val userService: UserService,
 ) {
+    @Operation(summary = "이메일 로그인", description = "로그인합니다.")
     @PostMapping("/auth/login")
     fun login(
         @RequestHeader(name = "X-DEVICE-ID") deviceId: String?,
@@ -25,6 +29,7 @@ class AuthController(
         return TokenResponse.toResponse(token)
     }
 
+    @Operation(summary = "이메일 회원가입", description = "회원가입합니다.")
     @PostMapping("/auth/signup")
     suspend fun signUp(
         @RequestBody request: SignUpRequest,
