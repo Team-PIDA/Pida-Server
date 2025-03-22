@@ -1,11 +1,6 @@
 package com.pida.authentication.domain.auth.component
 
-import com.pida.authentication.domain.auth.AuthenticationPida
-import com.pida.authentication.domain.auth.AuthenticationSns
-import com.pida.authentication.domain.auth.CredentialSocial
-import com.pida.authentication.domain.auth.CredentialsPida
-import com.pida.authentication.domain.auth.NewAuthenticationHistory
-import com.pida.authentication.domain.auth.NewAuthenticationSocial
+import com.pida.authentication.domain.auth.*
 import com.pida.authentication.domain.auth.repository.AuthenticationRepository
 import com.pida.authentication.domain.token.NewToken
 import com.pida.authentication.domain.token.Token
@@ -13,17 +8,19 @@ import com.pida.authentication.domain.token.TokenStatus
 import com.pida.authentication.domain.token.repository.TokenRepository
 import com.pida.authentication.support.error.AuthenticationErrorException
 import com.pida.authentication.support.error.AuthenticationErrorType
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
 class AuthenticationProcessor(
     private val authenticationRepository: AuthenticationRepository,
     private val tokenRepository: TokenRepository,
+    private val passwordEncoder: PasswordEncoder,
     private val authenticationValidator: AuthenticationValidator,
     private val authenticationHistoryWriter: AuthenticationHistoryWriter,
 ) {
     fun login(
-        deviceId: String,
+        deviceId: String?,
         credentialsPida: CredentialsPida,
     ): Token {
         val authentication: AuthenticationPida =
@@ -101,6 +98,19 @@ class AuthenticationProcessor(
             userId = userId,
             userKey = userKey,
             newAuthenticationSocial = newAuthenticationSocial,
+        )
+
+    fun createAuthentication(
+        userId: Long,
+        userKey: String,
+        newAuthenticationPida: NewAuthenticationPida,
+    ): AuthenticationPida =
+        authenticationRepository.createAuthentication(
+            userId = userId,
+            userKey = userKey,
+            newAuthenticationPida = newAuthenticationPida.copy(
+                password = passwordEncoder.encode(newAuthenticationPida.password),
+            ),
         )
 
     fun renew(refreshToken: String): Token = tokenRepository.renew(refreshToken)

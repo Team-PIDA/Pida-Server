@@ -41,7 +41,7 @@ class JwtProvider(
     private val authenticationHistoryUpdater: AuthenticationHistoryUpdater,
 ) : TokenRepository {
     override fun create(
-        deviceId: String,
+        deviceId: String?,
         authentication: Authentication,
     ): Token {
         val accessToken =
@@ -249,7 +249,7 @@ class JwtProvider(
 
     private fun verifyTokenHistory(
         userKey: String,
-        deviceId: String,
+        deviceId: String?,
         refreshToken: String,
     ): AuthenticationHistory {
         val authenticationHistory =

@@ -7,13 +7,14 @@ import com.pida.authentication.domain.auth.repository.AuthenticationHistoryRepos
 import com.pida.authentication.storage.db.core.AuthenticationEntityStatus
 import com.pida.authentication.support.error.AuthenticationErrorException
 import com.pida.authentication.support.error.AuthenticationErrorType
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 class AuthenticationHistoryCoreRepository(
     private val repository: AuthenticationHistoryJpaRepository,
 ) : AuthenticationHistoryRepository {
+    @Transactional
     override fun create(newAuthenticationHistory: NewAuthenticationHistory): AuthenticationHistory {
         val saveHistory = repository.save(AuthenticationHistoryEntity(newAuthenticationHistory))
         return saveHistory.toAuthenticationHistory()
@@ -21,7 +22,7 @@ class AuthenticationHistoryCoreRepository(
 
     override fun findUserKeyWithDeviceWithRefreshToken(
         userKey: String,
-        deviceId: String,
+        deviceId: String?,
         refreshToken: String,
     ): AuthenticationHistory? {
         val histories =

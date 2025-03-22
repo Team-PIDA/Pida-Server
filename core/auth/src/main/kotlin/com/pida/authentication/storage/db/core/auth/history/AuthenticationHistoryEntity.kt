@@ -14,7 +14,7 @@ import jakarta.persistence.Table
 class AuthenticationHistoryEntity(
     val userId: Long,
     val userKey: String,
-    val deviceId: String,
+    val deviceId: String?,
     @Column(columnDefinition = "TEXT")
     var accessToken: String,
     @Column(columnDefinition = "TEXT")

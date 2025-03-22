@@ -9,7 +9,7 @@ interface AuthenticationHistoryRepository {
 
     fun findUserKeyWithDeviceWithRefreshToken(
         userKey: String,
-        deviceId: String,
+        deviceId: String?,
         refreshToken: String,
     ): AuthenticationHistory?
 

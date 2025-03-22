@@ -1,9 +1,6 @@
 package com.pida.authentication.storage.db.core.auth
-import com.pida.authentication.domain.auth.AuthenticationPida
-import com.pida.authentication.domain.auth.AuthenticationSns
-import com.pida.authentication.domain.auth.LoginIdWithSocialType
-import com.pida.authentication.domain.auth.NewAuthenticationSocial
-import com.pida.authentication.domain.auth.SocialType
+
+import com.pida.authentication.domain.auth.*
 import com.pida.authentication.domain.auth.repository.AuthenticationRepository
 import com.pida.authentication.storage.db.core.support.findByIdOrElseThrow
 import com.pida.authentication.support.error.AuthenticationErrorException
@@ -51,6 +48,20 @@ class AuthenticationCoreRepository(
                     newAuthenticationSocial = newAuthenticationSocial,
                 ),
             ).toAuthenticationSns()
+
+    override fun createAuthentication(
+        userId: Long,
+        userKey: String,
+        newAuthenticationPida: NewAuthenticationPida,
+    ): AuthenticationPida =
+        repository
+            .save(
+                AuthenticationEntity(
+                    userId = userId,
+                    userKey = userKey,
+                    newAuthenticationPida = newAuthenticationPida,
+                ),
+            ).toAuthenticationPida()
 
     override fun verifyLoginId(loginId: String): Boolean = repository.existsByLoginId(loginId)
 

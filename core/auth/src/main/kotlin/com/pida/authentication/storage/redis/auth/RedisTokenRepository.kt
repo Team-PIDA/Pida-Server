@@ -19,7 +19,7 @@ class RedisTokenRepository(
     fun create(
         accessToken: String,
         refreshToken: String,
-        deviceId: String,
+        deviceId: String?,
         providerDetail: ProviderDetail,
         accessTokenExpiration: Long,
         refreshTokenExpiration: Long,
@@ -38,11 +38,11 @@ class RedisTokenRepository(
                 objectMapper.writeValueAsString(tokenWithAuthentication),
                 Duration.ofSeconds(accessTokenExpiration * 60L),
             )
-            set(
-                refreshToken,
-                objectMapper.writeValueAsString(tokenWithAuthentication),
-                Duration.ofSeconds(refreshTokenExpiration * 60L),
-            )
+//            set(
+//                refreshToken,
+//                objectMapper.writeValueAsString(tokenWithAuthentication),
+//                Duration.ofSeconds(refreshTokenExpiration * 60L),
+//            )
         }
         return tokenWithAuthentication
     }

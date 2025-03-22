@@ -12,7 +12,7 @@ class AuthenticationHistoryReader(
 ) {
     fun readByUserKeyWithDeviceWithRefreshToken(
         userKey: String,
-        deviceId: String,
+        deviceId: String?,
         refreshToken: String,
     ): AuthenticationHistory =
         authenticationHistoryRepository.findUserKeyWithDeviceWithRefreshToken(userKey, deviceId, refreshToken)

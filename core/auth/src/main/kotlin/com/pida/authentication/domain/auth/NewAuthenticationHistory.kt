@@ -6,7 +6,7 @@ import com.pida.authentication.domain.token.TokenStatus
 data class NewAuthenticationHistory(
     val userId: Long,
     val userKey: String,
-    val deviceId: String,
+    val deviceId: String?,
     val newToken: NewToken,
     val status: TokenStatus,
 )
