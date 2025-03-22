@@ -16,7 +16,9 @@ import java.time.LocalTime
 import java.time.YearMonth
 
 @Configuration
-internal class SwaggerConfig {
+internal class SwaggerConfig(
+    private val swaggerProperties: SwaggerProperties,
+){
     @Bean
     fun openAPI(): OpenAPI {
         SpringDocUtils
@@ -27,7 +29,7 @@ internal class SwaggerConfig {
         return OpenAPI()
             .info(swaggerInfo())
             .servers(
-                listOf("http://localhost:8080")
+                listOf(swaggerProperties.domain)
                     .map { Server().url(it) },
             ).components(authComponents())
     }

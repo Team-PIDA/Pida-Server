@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.YearMonthSerializer
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.pida.authentication.jwt.JwtConverter
+import com.pida.swagger.SwaggerProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -35,7 +36,7 @@ import java.time.format.DateTimeFormatter
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-    private val swaggerUserProperties: SwaggerUserProperties,
+    private val swaggerProperties: SwaggerProperties,
 ) {
     @Bean
     fun objectMapper(): ObjectMapper =
@@ -91,8 +92,8 @@ class SecurityConfig(
     fun inMemoryUserDetailsManager(): InMemoryUserDetailsManager {
         val user: UserDetails =
             User
-                .withUsername(swaggerUserProperties.user)
-                .password(passwordEncoder().encode(swaggerUserProperties.password))
+                .withUsername(swaggerProperties.user)
+                .password(passwordEncoder().encode(swaggerProperties.password))
                 .roles("SWAGGER")
                 .build()
         return InMemoryUserDetailsManager(user)
