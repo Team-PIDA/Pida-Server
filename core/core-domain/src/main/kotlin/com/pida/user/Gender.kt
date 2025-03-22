@@ -9,12 +9,11 @@ enum class Gender(
     ;
 
     companion object {
-        fun toGender(gender: String): Gender {
-            return when (gender) {
+        fun toGender(gender: String): Gender =
+            when (gender) {
                 "male" -> MALE
                 "female" -> FEMALE
                 else -> ETC
             }
-        }
     }
 }
