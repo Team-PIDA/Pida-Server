@@ -108,9 +108,10 @@ class AuthenticationProcessor(
         authenticationRepository.createAuthentication(
             userId = userId,
             userKey = userKey,
-            newAuthenticationPida = newAuthenticationPida.copy(
-                password = passwordEncoder.encode(newAuthenticationPida.password),
-            ),
+            newAuthenticationPida =
+                newAuthenticationPida.copy(
+                    password = passwordEncoder.encode(newAuthenticationPida.password),
+                ),
         )
 
     fun renew(refreshToken: String): Token = tokenRepository.renew(refreshToken)
