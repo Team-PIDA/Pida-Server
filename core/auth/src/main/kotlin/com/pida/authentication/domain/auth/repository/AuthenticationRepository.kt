@@ -1,6 +1,11 @@
 package com.pida.authentication.domain.auth.repository
 
-import com.pida.authentication.domain.auth.*
+import com.pida.authentication.domain.auth.AuthenticationPida
+import com.pida.authentication.domain.auth.AuthenticationSns
+import com.pida.authentication.domain.auth.LoginIdWithSocialType
+import com.pida.authentication.domain.auth.NewAuthenticationPida
+import com.pida.authentication.domain.auth.NewAuthenticationSocial
+import com.pida.authentication.domain.auth.SocialType
 
 interface AuthenticationRepository {
     fun findBy(loginId: String): AuthenticationPida?

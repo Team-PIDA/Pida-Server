@@ -17,7 +17,7 @@ class UserService(
 
     suspend fun getProfile(userId: Long): UserProfile = userReader.readUserProfile(userId)
 
-    suspend fun getUser(userId: Long): User = userReader.readUser(userId)
+    fun getUser(userId: Long): User = userReader.readUser(userId)
 
     suspend fun updateNickname(
         userKey: String,

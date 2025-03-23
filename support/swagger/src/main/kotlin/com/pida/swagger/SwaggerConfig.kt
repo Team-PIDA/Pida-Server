@@ -18,7 +18,7 @@ import java.time.YearMonth
 @Configuration
 internal class SwaggerConfig(
     private val swaggerProperties: SwaggerProperties,
-){
+) {
     @Bean
     fun openAPI(): OpenAPI {
         SpringDocUtils

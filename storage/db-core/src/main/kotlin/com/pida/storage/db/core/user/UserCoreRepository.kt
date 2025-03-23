@@ -28,7 +28,7 @@ class UserCoreRepository(
             return@write userJpaRepository.save(UserEntity(newUser, newUserKey)).toUser()
         }
 
-    override suspend fun readUserById(id: Long): User? =
+    override fun readUserById(id: Long): User? =
         txAdvice.readOnly {
             userJpaRepository.findByIdOrNull(id)?.toUser()
         }

@@ -1,6 +1,13 @@
 package com.pida.authentication.storage.db.core.auth
 
-import com.pida.authentication.domain.auth.*
+import com.pida.authentication.domain.auth.AuthenticationPida
+import com.pida.authentication.domain.auth.AuthenticationSns
+import com.pida.authentication.domain.auth.AuthorityType
+import com.pida.authentication.domain.auth.GrantedAuthority
+import com.pida.authentication.domain.auth.LoginIdWithSocialType
+import com.pida.authentication.domain.auth.NewAuthenticationPida
+import com.pida.authentication.domain.auth.NewAuthenticationSocial
+import com.pida.authentication.domain.auth.SocialType
 import com.pida.authentication.storage.db.core.AuthenticationBaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
