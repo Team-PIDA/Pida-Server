@@ -1,9 +1,12 @@
 package com.pida.authentication.domain.auth.component
 
-import com.pida.authentication.client.oauth.AppleClient
-import com.pida.authentication.client.oauth.KaKaoApi
-import com.pida.authentication.client.oauth.KaKaoClient
-import com.pida.authentication.domain.auth.*
+import com.pida.authentication.domain.auth.AuthenticationPida
+import com.pida.authentication.domain.auth.AuthenticationSns
+import com.pida.authentication.domain.auth.CredentialSocial
+import com.pida.authentication.domain.auth.CredentialsPida
+import com.pida.authentication.domain.auth.NewAuthenticationHistory
+import com.pida.authentication.domain.auth.NewAuthenticationPida
+import com.pida.authentication.domain.auth.NewAuthenticationSocial
 import com.pida.authentication.domain.auth.repository.AuthenticationRepository
 import com.pida.authentication.domain.token.NewToken
 import com.pida.authentication.domain.token.Token
