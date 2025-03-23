@@ -44,4 +44,14 @@ enum class AuthenticationErrorType(
         "새로 입력한 아이디와 기존 아이디는 같을 수 없습니다.",
         AuthenticationErrorLevel.WARN,
     ),
+    APPLE_TOKEN_CLIENT_FAILED(
+        AuthenticationErrorKind.CLIENT_ERROR,
+        "애플 토큰 요청에 실패하였습니다.",
+        AuthenticationErrorLevel.ERROR,
+    ),
+    APPLE_PRIVATE_KEY_ENCODING_FAILED(
+        AuthenticationErrorKind.CLIENT_ERROR,
+        "애플 개인키 인코딩에 실패하였습니다.",
+        AuthenticationErrorLevel.ERROR,
+    ),
 }

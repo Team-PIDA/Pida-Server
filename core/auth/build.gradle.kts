@@ -14,6 +14,7 @@ dependencies {
     // Security
     implementation(libs.spring.boot.starter.security)
     testImplementation(libs.spring.security.test)
+    implementation(libs.bouncycastle.bcpkix)
     implementation(libs.jjwt.api)
     runtimeOnly(libs.jjwt.jackson)
     runtimeOnly(libs.jjwt.impl)
