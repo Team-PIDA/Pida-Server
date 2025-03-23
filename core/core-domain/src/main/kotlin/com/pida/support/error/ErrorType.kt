@@ -27,6 +27,7 @@ enum class ErrorType(
     INVALID_TOKEN(401, ErrorKind.AUTHORIZATION, "유효하지 않은 토큰입니다.", ErrorLevel.WARN),
     INVALID_ACCESS_TOKEN(401, ErrorKind.AUTHORIZATION, "잘못된 accessToken 입니다.", ErrorLevel.WARN),
     INVALID_REFRESH_TOKEN(401, ErrorKind.AUTHORIZATION, "잘못된 refreshToken 입니다.", ErrorLevel.WARN),
+    INVALID_SOCIAL_PROVIDER(400, ErrorKind.CLIENT_ERROR, "지원하지 않는 소셜 제공자입니다.", ErrorLevel.WARN),
 
     /** Sign */
     INVALID_CREDENTIALS(400, ErrorKind.CLIENT_ERROR, "아이디 혹은 비밀번호가 올바르지 않습니다.", ErrorLevel.WARN),

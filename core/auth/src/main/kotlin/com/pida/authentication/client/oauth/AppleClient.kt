@@ -21,7 +21,7 @@ class AppleClient internal constructor(
     private val objectMapper: ObjectMapper,
 ) {
     companion object {
-        const val APPLE_BUNDLE_ID = "com.pida.app"
+        const val APPLE_BUNDLE_ID = "com.pida.me.ios"
         const val APPLE_URI = "https://appleid.apple.com"
     }
 
@@ -59,9 +59,12 @@ class AppleClient internal constructor(
             return false
         }
         val currentDate = Date(System.currentTimeMillis())
-        val bundleId = jwtClaims.audience[0]
+        // audience 확인 부분 개선
+        val bundleId = jwtClaims.audience.firstOrNull()
+        if (bundleId != APPLE_BUNDLE_ID) return false
+
         val appleUrl = jwtClaims.issuer
-        return currentDate.before(jwtClaims.expirationTime) && bundleId == APPLE_BUNDLE_ID && appleUrl == APPLE_URI
+        return currentDate.before(jwtClaims.expirationTime) && appleUrl == APPLE_URI
     }
 
     private fun isSignatureValid(signedJWT: SignedJWT): Boolean {
