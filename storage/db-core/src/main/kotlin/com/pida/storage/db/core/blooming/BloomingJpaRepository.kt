@@ -3,12 +3,12 @@ package com.pida.storage.db.core.blooming
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface BloomingJpaRepository : JpaRepository<BloomingEntity, Long> {
-    suspend fun findByUserIdAndFlowerSpotId(
+    fun findByUserIdAndFlowerSpotId(
         userId: Long,
         flowerSpotId: Long,
     ): BloomingEntity?
 
-    suspend fun findAllByUserId(userId: Long): List<BloomingEntity>
+    fun findAllByUserId(userId: Long): List<BloomingEntity>
 
-    suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<BloomingEntity>
+    fun findAllByFlowerSpotId(flowerSpotId: Long): List<BloomingEntity>
 }

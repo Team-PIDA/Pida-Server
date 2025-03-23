@@ -33,7 +33,7 @@ class UserReader(
         return user
     }
 
-    suspend fun readUser(userId: Long): User {
+    fun readUser(userId: Long): User {
         val user = userRepository.readUserById(userId) ?: throw ErrorException(ErrorType.NOT_FOUND_USER)
         return user
     }

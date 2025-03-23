@@ -12,7 +12,7 @@ interface UserRepository {
 
     suspend fun readByUserKey(userKey: String): UserProfile
 
-    suspend fun readUserById(id: Long): User?
+    fun readUserById(id: Long): User?
 
     suspend fun readByNameAndPhone(
         name: String,
