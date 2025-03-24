@@ -1,6 +1,7 @@
 package com.pida.storage.db.core.flowerspot
 
 import com.pida.flowerspot.FlowerSpot
+import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.flowerspot.FlowerSpotRepository
 import com.pida.flowerspot.Region
 import com.pida.storage.db.core.support.findByIdAndDeletedAtIsNullOrElseThrow
@@ -34,5 +35,31 @@ class FlowerSpotCoreRepository(
             flowerSpotJpaRepository
                 .findByRegionAndDeletedAtIsNull(region)
                 .map { it.toFlowerSpot() }
+        }
+
+    override suspend fun findAllByLocation(location: FlowerSpotLocation): List<FlowerSpot> =
+        tx.reader.coExecute {
+            flowerSpotJpaRepository
+                .findWithinBounds(
+                    location.swLat!!,
+                    location.swLng!!,
+                    location.neLat!!,
+                    location.neLng!!,
+                ).map { it.toFlowerSpot() }
+        }
+
+    override suspend fun findAllByLocationAndRegion(
+        region: Region,
+        location: FlowerSpotLocation,
+    ): List<FlowerSpot> =
+        tx.reader.coExecute {
+            flowerSpotJpaRepository
+                .findWithinBoundsAndRegion(
+                    location.swLat!!,
+                    location.swLng!!,
+                    location.neLat!!,
+                    location.neLng!!,
+                    region.name,
+                ).map { it.toFlowerSpot() }
         }
 }
