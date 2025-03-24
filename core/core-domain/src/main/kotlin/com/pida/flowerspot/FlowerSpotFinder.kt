@@ -15,7 +15,7 @@ class FlowerSpotFinder(
 
     suspend fun readAll(): List<FlowerSpot> =
         cacheAdvice.invoke(
-            ttl = 1440L,
+            ttl = 180L,
             key = ALL_SPOT,
             typeReference = object : TypeReference<List<FlowerSpot>>() {},
         ) {
@@ -24,7 +24,7 @@ class FlowerSpotFinder(
 
     suspend fun readAllByRegion(region: Region): List<FlowerSpot> =
         cacheAdvice.invoke(
-            ttl = 1440L,
+            ttl = 180L,
             key = ALL_SPOT + ":${region.name}",
             typeReference = object : TypeReference<List<FlowerSpot>>() {},
         ) {
@@ -32,4 +32,19 @@ class FlowerSpotFinder(
         }
 
     suspend fun readBy(spotId: Long): FlowerSpot = flowerSpotRepository.findBy(spotId)
+
+    suspend fun findByCondition(condition: FindSpotPolicyCondition): List<FlowerSpot> =
+        when (condition) {
+            FindSpotPolicyCondition.All -> readAll()
+            is FindSpotPolicyCondition.ByRegion -> readAllByRegion(condition.region)
+            is FindSpotPolicyCondition.ByLocation -> readAllByLocation(condition.location)
+            is FindSpotPolicyCondition.ByRegionAndLocation -> readAllByLocationAndRegion(condition.region, condition.location)
+        }
+
+    suspend fun readAllByLocation(location: FlowerSpotLocation): List<FlowerSpot> = flowerSpotRepository.findAllByLocation(location)
+
+    suspend fun readAllByLocationAndRegion(
+        region: Region,
+        location: FlowerSpotLocation,
+    ): List<FlowerSpot> = flowerSpotRepository.findAllByLocationAndRegion(region, location)
 }
