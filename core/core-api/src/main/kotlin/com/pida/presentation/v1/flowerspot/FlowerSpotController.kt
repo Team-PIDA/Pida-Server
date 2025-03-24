@@ -1,5 +1,6 @@
 package com.pida.presentation.v1.flowerspot
 
+import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.flowerspot.FlowerSpotService
 import com.pida.flowerspot.Region
 import com.pida.presentation.v1.annotation.ApiV1Controller
@@ -21,8 +22,21 @@ class FlowerSpotController(
     @GetMapping("/flower-spot")
     suspend fun flowerSpotFindAll(
         @RequestParam("region") region: Region?,
+        @RequestParam("swLat") swLat: Double?,
+        @RequestParam("swLng") swLng: Double?,
+        @RequestParam("neLat") neLat: Double?,
+        @RequestParam("neLng") neLng: Double?,
     ): FlowerSpotAllResponse {
-        val flowerSpots = flowerSpotService.findAllFlowerSpot(region)
+        val flowerSpots =
+            flowerSpotService.findAllFlowerSpot(
+                region,
+                FlowerSpotLocation(
+                    swLat = swLat,
+                    swLng = swLng,
+                    neLat = neLat,
+                    neLng = neLng,
+                ),
+            )
         val responseDtoList = flowerSpots.map { FlowerSpotResponseDto.from(it) }
         return FlowerSpotAllResponse.of(responseDtoList)
     }
