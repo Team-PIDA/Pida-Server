@@ -12,8 +12,12 @@ class BloomingCustomRepository(
     private val entityManager: EntityManager,
     private val jdslRenderContext: RenderContext,
 ) {
+    companion object {
+        const val DATE_THRESHOLD = 5L
+    }
+
     fun countRecentBySpotId(spotId: Long): Long {
-        val threshold = LocalDateTime.now().minusDays(5)
+        val threshold = LocalDateTime.now().minusDays(DATE_THRESHOLD)
 
         val query =
             jpql {
