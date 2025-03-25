@@ -1,18 +1,18 @@
 package com.pida.presentation.v1.flowerspot.response
 
-import com.pida.flowerspot.FlowerSpot
+import com.pida.flowerspot.FlowerSpotDetails
 import com.pida.flowerspot.GeoJson
 import com.pida.flowerspot.Region
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
-data class FlowerSpotDetails(
+data class FlowerSpotDetailsResponse(
     @Schema(description = "장소 ID", example = "1")
     val id: Long,
     @Schema(description = "주소", example = "서울특별시 강남구 수서동")
     val address: String?,
     @Schema(description = "최근 방문 횟수", example = "5")
-    val recentlyVisitedCount: Int = 0,
+    val recentlyVisitedCount: Long,
     @Schema(description = "도로명", example = "밤고개1길")
     val streetName: String,
     @Schema(description = "행정동", example = "수서동")
@@ -50,18 +50,18 @@ data class FlowerSpotDetails(
     val deletedAt: LocalDateTime?,
 ) {
     companion object {
-        fun of(flowerSpot: FlowerSpot) =
-            FlowerSpotDetails(
-                id = flowerSpot.id,
-                address = flowerSpot.address,
-                recentlyVisitedCount = 0, // TODO: 사용자 방문 횟수
-                streetName = flowerSpot.streetName,
-                district = flowerSpot.district,
-                description = flowerSpot.description,
-                geom = flowerSpot.geom,
-                pinPoint = flowerSpot.pinPoint,
-                region = flowerSpot.region,
-                deletedAt = flowerSpot.deletedAt,
+        fun of(flowerSpotDetails: FlowerSpotDetails) =
+            FlowerSpotDetailsResponse(
+                id = flowerSpotDetails.id,
+                address = flowerSpotDetails.address,
+                recentlyVisitedCount = flowerSpotDetails.recentlyVisitedCount,
+                streetName = flowerSpotDetails.streetName,
+                district = flowerSpotDetails.district,
+                description = flowerSpotDetails.description,
+                geom = flowerSpotDetails.geom,
+                pinPoint = flowerSpotDetails.pinPoint,
+                region = flowerSpotDetails.region,
+                deletedAt = flowerSpotDetails.deletedAt,
             )
     }
 }

@@ -6,7 +6,6 @@ import com.pida.flowerspot.FlowerSpotRepository
 import com.pida.flowerspot.Region
 import com.pida.storage.db.core.support.findByIdAndDeletedAtIsNullOrElseThrow
 import com.pida.support.tx.TransactionTemplates
-import com.pida.support.tx.TxAdvice
 import com.pida.support.tx.coExecute
 import org.springframework.stereotype.Repository
 
@@ -14,10 +13,9 @@ import org.springframework.stereotype.Repository
 class FlowerSpotCoreRepository(
     private val flowerSpotJpaRepository: FlowerSpotJpaRepository,
     private val tx: TransactionTemplates,
-    private val txAdvice: TxAdvice,
 ) : FlowerSpotRepository {
     override suspend fun findBy(spotId: Long): FlowerSpot =
-        txAdvice.readOnly {
+        tx.reader.coExecute {
             flowerSpotJpaRepository
                 .findByIdAndDeletedAtIsNullOrElseThrow(spotId)
                 .toFlowerSpot()

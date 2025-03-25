@@ -1,11 +1,12 @@
 package com.pida.presentation.v1.flowerspot
 
+import com.pida.flowerspot.FlowerSpotFacade
 import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.flowerspot.FlowerSpotService
 import com.pida.flowerspot.Region
 import com.pida.presentation.v1.annotation.ApiV1Controller
 import com.pida.presentation.v1.flowerspot.response.FlowerSpotAllResponse
-import com.pida.presentation.v1.flowerspot.response.FlowerSpotDetails
+import com.pida.presentation.v1.flowerspot.response.FlowerSpotDetailsResponse
 import com.pida.presentation.v1.flowerspot.response.FlowerSpotResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam
 @ApiV1Controller
 class FlowerSpotController(
     private val flowerSpotService: FlowerSpotService,
+    private val flowerSpotFacade: FlowerSpotFacade,
 ) {
     @Operation(summary = "벚꽃 장소 조회", description = "벚꽃 장소를 조회합니다.")
     @GetMapping("/flower-spot")
@@ -46,8 +48,8 @@ class FlowerSpotController(
     @GetMapping("/flower-spot/{spotId}")
     suspend fun flowerSpotFindOne(
         @PathVariable spotId: Long,
-    ): FlowerSpotDetails {
-        val flowerSpot = flowerSpotService.findOneFlowerSpot(spotId)
-        return FlowerSpotDetails.of(flowerSpot)
+    ): FlowerSpotDetailsResponse {
+        val flowerSpot = flowerSpotFacade.findOneFlowerSpot(spotId)
+        return FlowerSpotDetailsResponse.of(flowerSpot)
     }
 }
