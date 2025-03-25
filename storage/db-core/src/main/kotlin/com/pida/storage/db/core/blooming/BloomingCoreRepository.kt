@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class BloomingCoreRepository(
     private val bloomingJpaRepository: BloomingJpaRepository,
+    private val bloomingCustomRepository: BloomingCustomRepository,
     private val txAdvice: TxAdvice,
 ) : BloomingRepository {
     override fun add(newBlooming: NewBlooming): Blooming =
@@ -38,5 +39,10 @@ class BloomingCoreRepository(
     override suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<Blooming> =
         txAdvice.readOnly {
             bloomingJpaRepository.findAllByFlowerSpotId(flowerSpotId).map { it.toBlooming() }
+        }
+
+    override suspend fun countRecentBySpotId(spotId: Long): Long =
+        txAdvice.readOnly {
+            bloomingCustomRepository.countRecentBySpotId(spotId)
         }
 }
