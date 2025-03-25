@@ -14,34 +14,12 @@ class UserReader(
 
     suspend fun readUserProfile(userKey: String): UserProfile = userRepository.readByUserKey(userKey)
 
-    suspend fun readUserProfileOrNull(phone: String): UserProfile? = userRepository.readByPhoneNumber(phone)
-
-    suspend fun readUserProfile(
-        name: String,
-        phone: String,
-    ): UserProfile = userRepository.readByNameAndPhone(name, phone)
-
-    suspend fun readUser(
-        name: String,
-        phone: String,
-    ): UserProfile {
-        val user =
-            userRepository.readByNameAndPhone(
-                name = name,
-                phone = phone,
-            )
-        return user
-    }
-
     fun readUser(userId: Long): User {
         val user = userRepository.readUserById(userId) ?: throw ErrorException(ErrorType.NOT_FOUND_USER)
         return user
     }
 
-    suspend fun existsByEmailOrPhone(
-        email: String,
-        phone: String,
-    ): Boolean = userRepository.existsByEmailOrPhone(email, phone)
-
     suspend fun readAllByUserIds(userIds: List<Long>): List<UserProfile> = userRepository.readAllByUserIds(userIds)
+
+    fun readUserByEmail(email: String): User? = userRepository.readUserByEmail(email)
 }

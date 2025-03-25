@@ -10,7 +10,6 @@ import com.pida.authentication.domain.auth.UpdateAuthenticationHistory
 import com.pida.authentication.domain.auth.component.AuthenticationHistoryReader
 import com.pida.authentication.domain.auth.component.AuthenticationHistoryUpdater
 import com.pida.authentication.domain.token.NewToken
-import com.pida.authentication.domain.token.PhoneToken
 import com.pida.authentication.domain.token.Token
 import com.pida.authentication.domain.token.TokenStatus
 import com.pida.authentication.domain.token.repository.TokenRepository
@@ -144,16 +143,6 @@ class JwtProvider(
         }
     }
 
-    override fun createPhoneJwt(phone: String): String = issuePhoneMessageToken(phone = phone)
-
-    @Throws(AuthenticationException::class)
-    override fun getPhoneWithVerifyPhoneJwt(phoneToken: PhoneToken): String =
-        try {
-            jwtDecoder.decode(phoneToken.token).id
-        } catch (exception: BadJwtException) {
-            throw AuthenticationErrorException(AuthenticationErrorType.INVALID_TOKEN)
-        }
-
     override fun findBy(accessToken: String): Provider? = redisTokenRepository.findBy(accessToken)
 
     @Throws(AuthenticationException::class)
@@ -196,21 +185,6 @@ class JwtProvider(
             expiresAt = issuedAt.plusSeconds(authenticationProperties.refreshTokenExpirationSeconds * 60L),
             issuedAt = issuedAt,
             claims = mapOf(Pair("type", "R")),
-        )
-    }
-
-    /**
-     * issue phone message token
-     *
-     * @param phone [String] phone number.
-     */
-    private fun issuePhoneMessageToken(phone: String): String {
-        val issuedAt: Instant = Instant.now()
-        return generateToken(
-            jwtId = phone,
-            expiresAt = issuedAt.plusSeconds(180 * 60L),
-            issuedAt = issuedAt,
-            claims = mapOf(Pair("type", "P")),
         )
     }
 

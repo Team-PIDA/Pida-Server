@@ -2,7 +2,6 @@ package com.pida.authentication.domain.token.repository
 
 import com.pida.authentication.domain.auth.Authentication
 import com.pida.authentication.domain.auth.Provider
-import com.pida.authentication.domain.token.PhoneToken
 import com.pida.authentication.domain.token.Token
 
 interface TokenRepository {
@@ -16,10 +15,6 @@ interface TokenRepository {
     fun remove(token: String): String
 
     fun removeByUserKey(userKey: String)
-
-    fun createPhoneJwt(phone: String): String
-
-    fun getPhoneWithVerifyPhoneJwt(phoneToken: PhoneToken): String
 
     fun findBy(accessToken: String): Provider?
 }

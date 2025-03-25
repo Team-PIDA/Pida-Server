@@ -1,6 +1,6 @@
-package com.pida.authentication.client.oauth
+package com.pida.user
 
-data class KaKaoClientResult(
+data class KakaoUserInfo(
     val id: String,
     val email: String,
     val name: String,

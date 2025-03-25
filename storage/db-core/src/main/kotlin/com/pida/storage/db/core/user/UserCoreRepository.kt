@@ -33,25 +33,9 @@ class UserCoreRepository(
             userJpaRepository.findByIdOrNull(id)?.toUser()
         }
 
-    override suspend fun readByNameAndPhone(
-        name: String,
-        phone: String,
-    ): UserProfile =
-        tx.reader.coExecute {
-            userJpaRepository
-                .findByNameAndPhoneAndDeletedAtIsNull(name, phone)
-                ?.toProfile()
-                ?: throw ErrorException(ErrorType.NOT_FOUND_DATA)
-        }
-
     override suspend fun readByUserIdOrNull(id: Long): UserProfile? =
         tx.reader.coExecute {
             userJpaRepository.findByIdAndDeletedAtIsNull(id)?.toProfile()
-        }
-
-    override suspend fun readByPhoneNumber(phoneNumber: String): UserProfile? =
-        tx.reader.coExecute {
-            userJpaRepository.findByPhone(phoneNumber)?.toProfile()
         }
 
     override suspend fun readAllByUserIds(userIds: List<Long>): List<UserProfile> =
@@ -70,22 +54,11 @@ class UserCoreRepository(
             userJpaRepository.findByIdAndDeletedAtIsNullOrElseThrow(id).toProfile()
         }
 
-    override suspend fun existsByEmailOrPhone(
-        email: String,
-        phone: String,
-    ): Boolean =
-        tx.reader.coExecute {
-            userJpaRepository.existsByEmailAndPhoneAndDeletedAtIsNull(email, phone)
-        }
+    override fun readUserByEmail(email: String): User? = userJpaRepository.findByEmail(email)?.toUser()
 
     override suspend fun existsByEmail(email: String): Boolean =
         tx.reader.coExecute {
             userJpaRepository.existsByEmailAndDeletedAtIsNull(email)
-        }
-
-    override suspend fun existsByPhone(phone: String): Boolean =
-        tx.reader.coExecute {
-            userJpaRepository.existsByPhoneAndDeletedAtIsNull(phone)
         }
 
     override suspend fun updateNickname(
@@ -95,16 +68,6 @@ class UserCoreRepository(
         tx.writer.coExecute {
             val user = userJpaRepository.findByUserKey(userKey) ?: throw ErrorException(ErrorType.NOT_FOUND_DATA)
             user.updateNickname(nickname)
-            return@coExecute user.toProfile()
-        }
-
-    override suspend fun updatePhone(
-        userKey: String,
-        phone: String,
-    ): UserProfile =
-        tx.writer.coExecute {
-            val user = userJpaRepository.findByUserKey(userKey) ?: throw ErrorException(ErrorType.NOT_FOUND_DATA)
-            user.updatePhone(phone)
             return@coExecute user.toProfile()
         }
 

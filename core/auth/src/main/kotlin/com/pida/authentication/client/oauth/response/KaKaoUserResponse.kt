@@ -3,8 +3,6 @@ package com.pida.authentication.client.oauth.response
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.pida.authentication.client.oauth.KaKaoClientResult
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class KaKaoUserResponse(
@@ -18,18 +16,6 @@ data class KaKaoUserResponse(
             email = kaKaoAccount.email ?: "",
             name = kaKaoAccount.name ?: "피다",
             nickname = kaKaoAccount.kaKaoProfile.nickname ?: "피다",
-            phone =
-                kaKaoAccount.phoneNumber
-                    ?.replace("+82 ", "0")
-                    ?.replace("-", "") ?: "",
-            birth =
-                kaKaoAccount.birthYear?.let {
-                    LocalDate.parse(
-                        "${kaKaoAccount.birthYear}${kaKaoAccount.birthDay}",
-                        DateTimeFormatter.ofPattern("yyyyMMdd"),
-                    )
-                } ?: LocalDate.now(),
-            gender = kaKaoAccount.gender ?: "ETC",
         )
 }
 

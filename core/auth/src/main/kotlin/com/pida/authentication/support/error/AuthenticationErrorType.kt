@@ -27,7 +27,6 @@ enum class AuthenticationErrorType(
     /** Sign */
     INVALID_CREDENTIALS(AuthenticationErrorKind.SERVER_ERROR, "아이디 혹은 비밀번호가 올바르지 않습니다.", AuthenticationErrorLevel.WARN),
     DUPLICATED_USER(AuthenticationErrorKind.CLIENT_ERROR, "이미 존재하는 계정입니다.", AuthenticationErrorLevel.INFO),
-    DUPLICATED_PHONE(AuthenticationErrorKind.CLIENT_ERROR, "이미 존재하는 휴대폰 번호입니다.", AuthenticationErrorLevel.INFO),
 
     WITHDRAWAL_USER(AuthenticationErrorKind.AUTHORIZATION, "사용할 수 없는 계정입니다.", AuthenticationErrorLevel.WARN),
     INVALID_LOGIN_ID_FORMAT(AuthenticationErrorKind.CLIENT_ERROR, "이메일 형식이 올바르지 않습니다.", AuthenticationErrorLevel.INFO),
