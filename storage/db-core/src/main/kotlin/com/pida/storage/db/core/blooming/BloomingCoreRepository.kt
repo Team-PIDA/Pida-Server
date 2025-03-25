@@ -3,13 +3,17 @@ package com.pida.storage.db.core.blooming
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingRepository
 import com.pida.blooming.NewBlooming
+import com.pida.support.tx.TransactionTemplates
 import com.pida.support.tx.TxAdvice
+import com.pida.support.tx.coExecute
 import org.springframework.stereotype.Repository
 
 @Repository
 class BloomingCoreRepository(
     private val bloomingJpaRepository: BloomingJpaRepository,
+    private val bloomingCustomRepository: BloomingCustomRepository,
     private val txAdvice: TxAdvice,
+    private val tx: TransactionTemplates,
 ) : BloomingRepository {
     override fun add(newBlooming: NewBlooming): Blooming =
         txAdvice.write {
@@ -38,5 +42,10 @@ class BloomingCoreRepository(
     override suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<Blooming> =
         txAdvice.readOnly {
             bloomingJpaRepository.findAllByFlowerSpotId(flowerSpotId).map { it.toBlooming() }
+        }
+
+    override suspend fun countRecentBySpotId(spotId: Long): Long =
+        tx.reader.coExecute {
+            bloomingCustomRepository.countRecentBySpotId(spotId)
         }
 }

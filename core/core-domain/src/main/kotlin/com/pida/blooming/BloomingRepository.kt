@@ -11,4 +11,6 @@ interface BloomingRepository {
     suspend fun findAllByUserId(userId: Long): List<Blooming>
 
     suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<Blooming>
+
+    suspend fun countRecentBySpotId(spotId: Long): Long
 }
