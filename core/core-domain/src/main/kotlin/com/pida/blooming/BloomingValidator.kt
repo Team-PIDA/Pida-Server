@@ -6,9 +6,7 @@ import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
-class BloomingValidator(
-    private val bloomingRepository: BloomingRepository,
-) {
+class BloomingValidator {
     suspend fun addValidate(blooming: Blooming?) {
         blooming?.let {
             if (it.createdAt.toLocalDate() == LocalDate.now()) {

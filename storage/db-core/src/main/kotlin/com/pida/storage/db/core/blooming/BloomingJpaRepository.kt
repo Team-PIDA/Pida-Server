@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface BloomingJpaRepository :
     JpaRepository<BloomingEntity, Long>,
     KotlinJdslJpqlExecutor {
-    fun findByUserIdAndFlowerSpotId(
+    fun findTopByUserIdAndFlowerSpotIdOrderByCreatedAtDesc(
         userId: Long,
         flowerSpotId: Long,
     ): BloomingEntity?

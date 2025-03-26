@@ -47,7 +47,7 @@ class FlowerSpotController(
     suspend fun flowerSpotFindOne(
         @PathVariable spotId: Long,
     ): FlowerSpotDetailsResponse {
-        val flowerSpot = flowerSpotFacade.findOneFlowerSpot(spotId)
+        val flowerSpot = flowerSpotFacade.readFlowerSpotDetails(spotId)
         return FlowerSpotDetailsResponse.of(flowerSpot)
     }
 }

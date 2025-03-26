@@ -3,7 +3,7 @@ package com.pida.blooming
 interface BloomingRepository {
     fun add(newBlooming: NewBlooming): Blooming
 
-    suspend fun findByUserIdAndSpotId(
+    suspend fun findTopByUserIdAndSpotIdDecs(
         userId: Long,
         flowerSpotId: Long,
     ): Blooming?

@@ -10,9 +10,9 @@ class FlowerSpotFacade(
     private val flowerSpotService: FlowerSpotService,
     private val bloomingService: BloomingService,
 ) {
-    suspend fun findOneFlowerSpot(spotId: Long): FlowerSpotDetails =
+    suspend fun readFlowerSpotDetails(spotId: Long): FlowerSpotDetails =
         coroutineScope {
-            val flowerSpotDeferred = async { flowerSpotService.findOneFlowerSpot(spotId) }
+            val flowerSpotDeferred = async { flowerSpotService.readOneFlowerSpot(spotId) }
             val bloomings = async { bloomingService.recentlyBloomingBySpotId(spotId) }
 
             return@coroutineScope FlowerSpotDetails.of(
@@ -25,7 +25,7 @@ class FlowerSpotFacade(
         region: Region?,
         location: FlowerSpotLocation,
     ): List<FlowerSpotDetails> {
-        val flowerSpots = flowerSpotService.findAllFlowerSpot(region, location)
+        val flowerSpots = flowerSpotService.readAllFlowerSpot(region, location)
         val recentlyBlooming = bloomingService.recentlyBloomingBySpotIds(flowerSpots.map { it.id })
 
         return flowerSpots.map { flowerSpot ->

@@ -26,12 +26,12 @@ class BloomingCoreRepository(
             bloomingJpaRepository.save(bloomingEntity).toBlooming()
         }
 
-    override suspend fun findByUserIdAndSpotId(
+    override suspend fun findTopByUserIdAndSpotIdDecs(
         userId: Long,
         flowerSpotId: Long,
     ): Blooming? =
         txAdvice.readOnly {
-            bloomingJpaRepository.findByUserIdAndFlowerSpotId(userId, flowerSpotId)?.toBlooming()
+            bloomingJpaRepository.findTopByUserIdAndFlowerSpotIdOrderByCreatedAtDesc(userId, flowerSpotId)?.toBlooming()
         }
 
     override suspend fun findAllByUserId(userId: Long): List<Blooming> =

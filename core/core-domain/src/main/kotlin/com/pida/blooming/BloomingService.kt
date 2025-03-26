@@ -1,6 +1,8 @@
 package com.pida.blooming
 
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import kotlin.math.roundToInt
 
 @Service
 class BloomingService(
@@ -9,13 +11,47 @@ class BloomingService(
     private val bloomingFinder: BloomingFinder,
 ) {
     suspend fun add(newBlooming: NewBlooming): Blooming {
-        val blooming = bloomingFinder.findByUserIdAndFlowerSpotId(newBlooming.userId, newBlooming.flowerSpotId)
+        val blooming = bloomingFinder.readTopByUserIdAndFlowerSpotIdDesc(newBlooming.userId, newBlooming.flowerSpotId)
         bloomingValidator.addValidate(blooming)
 
         return bloomingAppender.add(newBlooming)
     }
 
-    suspend fun recentlyBloomingBySpotId(spotId: Long): List<Blooming> = bloomingFinder.findRecentlyBloomingBySpotId(spotId)
+    suspend fun recentlyBloomingBySpotId(spotId: Long): List<Blooming> = bloomingFinder.readRecentlyBloomingBySpotId(spotId)
 
     fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> = bloomingFinder.recentlyBloomingBySpotIds(spotIds)
+
+    suspend fun readAllBloomingDetailsBySpotId(spotId: Long): BloomingDetails {
+        val bloomings = bloomingFinder.readRecentlyBloomingBySpotId(spotId)
+
+        val totalCount = bloomings.size.toLong()
+
+        val details =
+            bloomings
+                .groupBy { it.createdAt.toLocalDate().toString() }
+                .entries
+                .sortedByDescending { LocalDate.parse(it.key) }
+                .associate { (date, bloomingsOnDate) ->
+                    val dailyTotal = bloomingsOnDate.size.toDouble()
+
+                    val statusMap =
+                        bloomingsOnDate
+                            .groupingBy { it.status.name }
+                            .eachCount()
+                            .mapValues { (_, count) ->
+                                if (dailyTotal == 0.0) {
+                                    0
+                                } else {
+                                    ((count / dailyTotal) * 100).roundToInt()
+                                }
+                            }
+
+                    date to statusMap
+                }
+
+        return BloomingDetails(
+            totalCount = totalCount,
+            details = details,
+        )
+    }
 }
