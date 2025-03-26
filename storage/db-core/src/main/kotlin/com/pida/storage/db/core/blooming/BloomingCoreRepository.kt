@@ -44,8 +44,13 @@ class BloomingCoreRepository(
             bloomingJpaRepository.findAllByFlowerSpotId(flowerSpotId).map { it.toBlooming() }
         }
 
-    override suspend fun countRecentBySpotId(spotId: Long): Long =
+    override suspend fun findRecentlyBySpotId(spotId: Long): List<Blooming> =
         tx.reader.coExecute {
-            bloomingCustomRepository.countRecentBySpotId(spotId)
+            bloomingCustomRepository.recentlyBySpotId(spotId).map { it.toBlooming() }
+        }
+
+    override fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming> =
+        txAdvice.readOnly {
+            bloomingCustomRepository.recentlyBySpotIds(spotIds).map { it.toBlooming() }
         }
 }

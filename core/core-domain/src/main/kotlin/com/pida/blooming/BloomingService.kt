@@ -15,5 +15,7 @@ class BloomingService(
         return bloomingAppender.add(newBlooming)
     }
 
-    suspend fun recentlyVisitedCountBySpotId(spotId: Long): Long = bloomingFinder.recentlyVisitedCountBySpotId(spotId)
+    suspend fun recentlyBloomingBySpotId(spotId: Long): List<Blooming> = bloomingFinder.findRecentlyBloomingBySpotId(spotId)
+
+    fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> = bloomingFinder.recentlyBloomingBySpotIds(spotIds)
 }
