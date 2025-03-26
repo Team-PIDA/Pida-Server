@@ -46,7 +46,7 @@ datasource:
       username: ${DATASOURCE_DB_CORE_USERNAME}
       password: ${DATASOURCE_DB_CORE_PASSWORD}
       pool-name: core-db-pool
-      maximum-pool-size: 15
+      maximum-pool-size: 10
       connection-timeout: 1500
       keepalive-time: 30000
       validation-timeout: 1000

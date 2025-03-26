@@ -24,11 +24,11 @@ class FlowerSpotController(
     @Operation(summary = "벚꽃 장소 조회", description = "벚꽃 장소를 조회합니다.")
     @GetMapping("/flower-spot")
     suspend fun flowerSpotFindAll(
-        @RequestParam("region") @Parameter(name = "지역") region: Region?,
-        @RequestParam("swLat") @Parameter(name = "남서쪽 위도") swLat: Double?,
-        @RequestParam("swLng") @Parameter(name = "남서쪽 경도") swLng: Double?,
-        @RequestParam("neLat") @Parameter(name = "북동쪽 위도") neLat: Double?,
-        @RequestParam("neLng") @Parameter(name = "북동쪽 경도") neLng: Double?,
+        @RequestParam @Parameter(name = "region", description = "지역") region: Region?,
+        @RequestParam @Parameter(name = "swLat", description = "남서쪽 위도") swLat: Double?,
+        @RequestParam @Parameter(name = "swLng", description = "남서쪽 경도") swLng: Double?,
+        @RequestParam @Parameter(name = "neLat", description = "북동쪽 위도") neLat: Double?,
+        @RequestParam @Parameter(name = "neLng", description = "북동쪽 경도") neLng: Double?,
     ): FlowerSpotAllResponse {
         val flowerSpots =
             flowerSpotService.findAllFlowerSpot(
