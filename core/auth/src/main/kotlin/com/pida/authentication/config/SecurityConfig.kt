@@ -129,7 +129,7 @@ class SecurityConfig(
             authorize.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").hasRole("SWAGGER")
 
             // 인증 없이 허용할 API
-            authorize.requestMatchers("/api/v1/flower-spot/**", "/api/v1/auth/**").permitAll()
+            authorize.requestMatchers("/api/v1/flower-spot/**", "/api/v1/auth/**", "/api/v1/flower-spot", "/api/v1/auth").permitAll()
 
             // 추가로 열어줄 API
             authorize.requestMatchers("/h2-console/**", "/actuator/**", "/ping").permitAll()
