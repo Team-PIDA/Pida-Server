@@ -13,11 +13,26 @@ class FlowerSpotFacade(
     suspend fun findOneFlowerSpot(spotId: Long): FlowerSpotDetails =
         coroutineScope {
             val flowerSpotDeferred = async { flowerSpotService.findOneFlowerSpot(spotId) }
-            val recentlyVisitedCountDeferred = async { bloomingService.recentlyVisitedCountBySpotId(spotId) }
+            val bloomings = async { bloomingService.recentlyBloomingBySpotId(spotId) }
 
             return@coroutineScope FlowerSpotDetails.of(
                 flowerSpot = flowerSpotDeferred.await(),
-                recentlyVisitedCount = recentlyVisitedCountDeferred.await(),
+                bloomings = bloomings.await().groupBy { it.flowerSpotId }[spotId] ?: emptyList(),
             )
         }
+
+    suspend fun findAllFlowerSpot(
+        region: Region?,
+        location: FlowerSpotLocation,
+    ): List<FlowerSpotDetails> {
+        val flowerSpots = flowerSpotService.findAllFlowerSpot(region, location)
+        val recentlyBlooming = bloomingService.recentlyBloomingBySpotIds(flowerSpots.map { it.id })
+
+        return flowerSpots.map { flowerSpot ->
+            FlowerSpotDetails.of(
+                flowerSpot = flowerSpot,
+                bloomings = recentlyBlooming.groupBy { it.flowerSpotId }[flowerSpot.id] ?: emptyList(),
+            )
+        }
+    }
 }

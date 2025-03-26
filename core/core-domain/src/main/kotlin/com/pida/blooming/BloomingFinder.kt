@@ -15,5 +15,7 @@ class BloomingFinder(
 
     suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<Blooming> = bloomingRepository.findAllByFlowerSpotId(flowerSpotId)
 
-    suspend fun recentlyVisitedCountBySpotId(spotId: Long): Long = bloomingRepository.countRecentBySpotId(spotId)
+    suspend fun findRecentlyBloomingBySpotId(spotId: Long): List<Blooming> = bloomingRepository.findRecentlyBySpotId(spotId)
+
+    fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> = bloomingRepository.findRecentBySpotIds(spotIds)
 }

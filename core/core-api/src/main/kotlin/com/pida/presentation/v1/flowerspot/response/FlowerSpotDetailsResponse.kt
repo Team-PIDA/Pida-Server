@@ -1,5 +1,6 @@
 package com.pida.presentation.v1.flowerspot.response
 
+import com.pida.blooming.BloomingStatus
 import com.pida.flowerspot.FlowerSpotDetails
 import com.pida.flowerspot.GeoJson
 import com.pida.flowerspot.Region
@@ -13,6 +14,8 @@ data class FlowerSpotDetailsResponse(
     val address: String?,
     @Schema(description = "최근 방문 횟수", example = "5")
     val recentlyVisitedCount: Long,
+    @Schema(description = "개화 상태", example = "BLOOMED")
+    val bloomingStatus: BloomingStatus,
     @Schema(description = "도로명", example = "밤고개1길")
     val streetName: String,
     @Schema(description = "행정동", example = "수서동")
@@ -55,6 +58,7 @@ data class FlowerSpotDetailsResponse(
                 id = flowerSpotDetails.id,
                 address = flowerSpotDetails.address,
                 recentlyVisitedCount = flowerSpotDetails.recentlyVisitedCount,
+                bloomingStatus = flowerSpotDetails.bloomingStatus,
                 streetName = flowerSpotDetails.streetName,
                 district = flowerSpotDetails.district,
                 description = flowerSpotDetails.description,
