@@ -1,6 +1,7 @@
 package com.pida.presentation.v1.flowerspot.response
 
-import com.pida.flowerspot.FlowerSpot
+import com.pida.blooming.BloomingStatus
+import com.pida.flowerspot.FlowerSpotDetails
 import com.pida.flowerspot.GeoJson
 import com.pida.flowerspot.Region
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -26,6 +27,10 @@ data class FlowerSpotResponseDto(
     val id: Long,
     @Schema(description = "주소", example = "서울특별시 강남구 수서동")
     val address: String?,
+    @Schema(description = "최근 방문 횟수", example = "5")
+    val recentlyVisitedCount: Long,
+    @Schema(description = "개화 상태", example = "BLOOMED")
+    val bloomingStatus: BloomingStatus,
     @Schema(description = "도로명", example = "밤고개1길")
     val streetName: String,
     @Schema(description = "행정동", example = "수서동")
@@ -63,10 +68,12 @@ data class FlowerSpotResponseDto(
     val deletedAt: LocalDateTime?,
 ) {
     companion object {
-        fun from(flowerSpot: FlowerSpot): FlowerSpotResponseDto =
+        fun from(flowerSpot: FlowerSpotDetails): FlowerSpotResponseDto =
             FlowerSpotResponseDto(
                 id = flowerSpot.id,
                 address = flowerSpot.address,
+                recentlyVisitedCount = flowerSpot.recentlyVisitedCount,
+                bloomingStatus = flowerSpot.bloomingStatus,
                 streetName = flowerSpot.streetName,
                 district = flowerSpot.district,
                 description = flowerSpot.description,

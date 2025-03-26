@@ -6,14 +6,16 @@ import org.springframework.stereotype.Component
 class BloomingFinder(
     private val bloomingRepository: BloomingRepository,
 ) {
-    suspend fun findByUserIdAndFlowerSpotId(
+    suspend fun readTopByUserIdAndFlowerSpotIdDesc(
         userId: Long,
         flowerSpotId: Long,
-    ): Blooming? = bloomingRepository.findByUserIdAndSpotId(userId, flowerSpotId)
+    ): Blooming? = bloomingRepository.findTopByUserIdAndSpotIdDecs(userId, flowerSpotId)
 
-    suspend fun findAllByUserId(userId: Long): List<Blooming> = bloomingRepository.findAllByUserId(userId)
+    suspend fun readAllByUserId(userId: Long): List<Blooming> = bloomingRepository.findAllByUserId(userId)
 
-    suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<Blooming> = bloomingRepository.findAllByFlowerSpotId(flowerSpotId)
+    suspend fun readAllByFlowerSpotId(flowerSpotId: Long): List<Blooming> = bloomingRepository.findAllByFlowerSpotId(flowerSpotId)
 
-    suspend fun recentlyVisitedCountBySpotId(spotId: Long): Long = bloomingRepository.countRecentBySpotId(spotId)
+    suspend fun readRecentlyBloomingBySpotId(spotId: Long): List<Blooming> = bloomingRepository.findRecentlyBySpotId(spotId)
+
+    fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> = bloomingRepository.findRecentBySpotIds(spotIds)
 }

@@ -16,12 +16,12 @@ class BloomingCustomRepository(
         const val DATE_THRESHOLD = 5L
     }
 
-    fun countRecentBySpotId(spotId: Long): Long {
+    fun recentlyBySpotId(spotId: Long): List<BloomingEntity> {
         val threshold = LocalDateTime.now().minusDays(DATE_THRESHOLD)
 
         val query =
             jpql {
-                select(count(entity(BloomingEntity::class)))
+                select(entity(BloomingEntity::class))
                     .from(entity(BloomingEntity::class))
                     .whereAnd(
                         path(BloomingEntity::flowerSpotId).eq(spotId),
@@ -29,6 +29,22 @@ class BloomingCustomRepository(
                     )
             }
 
-        return entityManager.createQuery(query, jdslRenderContext).singleResult
+        return entityManager.createQuery(query, jdslRenderContext).resultList
+    }
+
+    fun recentlyBySpotIds(spotIds: List<Long>): List<BloomingEntity> {
+        val threshold = LocalDateTime.now().minusDays(DATE_THRESHOLD)
+
+        val query =
+            jpql {
+                select(entity(BloomingEntity::class))
+                    .from(entity(BloomingEntity::class))
+                    .whereAnd(
+                        path(BloomingEntity::flowerSpotId).`in`(spotIds),
+                        path(BloomingEntity::createdAt).gt(threshold),
+                    )
+            }
+
+        return entityManager.createQuery(query, jdslRenderContext).resultList
     }
 }

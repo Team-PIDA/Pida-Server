@@ -125,10 +125,26 @@ class SecurityConfig(
         http.httpBasic { it.realmName("Swagger Realm") }
 
         http.authorizeHttpRequests { authorize ->
+            // Swagger 인증
             authorize.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").hasRole("SWAGGER")
 
-            authorize.requestMatchers("/h2-console/**", "/actuator/**", "/ping", "/api/v1/**").permitAll()
+            // 인증 없이 허용할 API
+            authorize
+                .requestMatchers(
+                    "/api/v1/flower-spot/**",
+                    "/api/v1/auth/**",
+                    "/api/v1/flower-spot",
+                    "/api/v1/auth",
+                    "/api/v1/blooming/{spotId}/details",
+                ).permitAll()
 
+            // 추가로 열어줄 API
+            authorize.requestMatchers("/h2-console/**", "/actuator/**", "/ping").permitAll()
+
+            // 그 외 모든 API는 JWT 인증 필요
+            authorize.requestMatchers("/api/v1/user/**", "/api/v1/blooming").authenticated()
+
+            // 나머지도 다 인증
             authorize.anyRequest().authenticated()
         }
 
