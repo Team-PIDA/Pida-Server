@@ -1,9 +1,9 @@
 package com.pida.presentation.v1.auth
 
-import com.pida.authentication.domain.auth.CredentialSocial
-import com.pida.authentication.domain.auth.SocialType
-import com.pida.authentication.domain.auth.service.AuthenticationService
-import com.pida.authentication.domain.auth.service.OAuthService
+import com.pida.auth.AuthenticationService
+import com.pida.auth.CredentialSocial
+import com.pida.auth.SocialType
+import com.pida.client.oauth.OAuthService
 import com.pida.presentation.v1.annotation.ApiV1Controller
 import com.pida.presentation.v1.auth.request.LoginRequest
 import com.pida.presentation.v1.auth.request.SignUpRequest

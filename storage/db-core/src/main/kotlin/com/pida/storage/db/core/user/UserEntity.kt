@@ -1,5 +1,6 @@
 package com.pida.storage.db.core.user
 
+import com.pida.auth.SocialType
 import com.pida.storage.db.core.support.BaseEntity
 import com.pida.user.NewUser
 import com.pida.user.NewUserKey
@@ -7,6 +8,8 @@ import com.pida.user.User
 import com.pida.user.UserProfile
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Table
 
 @Entity
@@ -17,6 +20,11 @@ class UserEntity(
     var name: String,
     var nickname: String,
     var email: String,
+    private var password: String?,
+    private var socialId: String?,
+    @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "varchar(50)")
+    private val socialType: SocialType,
 ) : BaseEntity() {
     constructor(
         newUser: NewUser,
@@ -26,6 +34,9 @@ class UserEntity(
         email = newUser.email,
         name = newUser.name,
         nickname = newUser.nickname,
+        password = newUser.password,
+        socialId = newUser.socialId,
+        socialType = newUser.socialType,
     )
 
     fun toUser(): User =

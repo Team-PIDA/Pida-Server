@@ -1,9 +1,9 @@
 package com.pida.presentation.v1.auth.request
 
-import com.pida.authentication.domain.auth.AuthorityType
-import com.pida.authentication.domain.auth.GrantedAuthority
-import com.pida.authentication.domain.auth.NewAuthenticationSocial
-import com.pida.authentication.domain.auth.SocialType
+import com.pida.auth.AuthorityType
+import com.pida.auth.GrantedAuthority
+import com.pida.auth.NewAuthenticationSocial
+import com.pida.auth.SocialType
 import com.pida.user.NewUser
 
 data class SignUpSocialRequest(

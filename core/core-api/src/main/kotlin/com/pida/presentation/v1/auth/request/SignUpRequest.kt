@@ -1,8 +1,8 @@
 package com.pida.presentation.v1.auth.request
 
-import com.pida.authentication.domain.auth.AuthorityType
-import com.pida.authentication.domain.auth.GrantedAuthority
-import com.pida.authentication.domain.auth.NewAuthenticationPida
+import com.pida.auth.AuthorityType
+import com.pida.auth.GrantedAuthority
+import com.pida.auth.NewAuthenticationPida
 import com.pida.user.NewUser
 import io.swagger.v3.oas.annotations.media.Schema
 

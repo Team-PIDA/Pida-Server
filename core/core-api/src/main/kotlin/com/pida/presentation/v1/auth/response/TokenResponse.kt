@@ -1,6 +1,6 @@
 package com.pida.presentation.v1.auth.response
 
-import com.pida.authentication.domain.token.Token
+import com.pida.token.Token
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "토큰 응답 Json")
