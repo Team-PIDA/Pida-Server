@@ -33,6 +33,11 @@ interface UserRepository {
         nickname: String,
     ): UserProfile
 
+    suspend fun updateName(
+        userKey: String,
+        name: String,
+    ): UserProfile
+
     suspend fun updateEmail(
         userKey: String,
         email: String,

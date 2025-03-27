@@ -75,6 +75,6 @@ class RedisTokenCoreRepository(
             } ?: throw AuthenticationErrorException(AuthenticationErrorType.INVALID_TOKEN)
 
         redisTemplate.delete(tokenWithAuthentication.accessToken)
-        redisTemplate.delete(tokenWithAuthentication.refreshToken)
+//        redisTemplate.delete(tokenWithAuthentication.refreshToken)
     }
 }
