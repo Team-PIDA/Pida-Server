@@ -22,7 +22,7 @@ class AuthenticationFacade(
                 ?: userService
                     .create(
                         NewUser(
-                            name = "",
+                            name = credentialSocial.name,
                             email = credentialSocial.email,
                             socialId = credentialSocial.socialId,
                             socialType = credentialSocial.socialType,

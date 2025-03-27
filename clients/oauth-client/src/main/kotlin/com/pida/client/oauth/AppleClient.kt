@@ -20,7 +20,7 @@ class AppleClient internal constructor(
     private val objectMapper: ObjectMapper,
 ) {
     companion object {
-        const val APPLE_BUNDLE_ID = "com.pida.me.ios"
+        const val APPLE_BUNDLE_ID = "com.pida.me.ios.dev"
         const val APPLE_URI = "https://appleid.apple.com"
     }
 
