@@ -22,10 +22,7 @@ class UserReader(
     fun readUser(
         loginId: String,
         password: String,
-    ): User {
-        val user = userRepository.readUser(loginId, password) ?: throw ErrorException(ErrorType.NOT_FOUND_USER)
-        return user
-    }
+    ): User = userRepository.readUser(loginId, password)
 
     suspend fun readAllByUserIds(userIds: List<Long>): List<UserProfile> = userRepository.readAllByUserIds(userIds)
 

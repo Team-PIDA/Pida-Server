@@ -49,7 +49,7 @@ class AuthenticationHistoryCoreRepository(
     override fun removeToken(userKey: String): List<String>? =
         repository.findAllByUserKeyAndEntityStatus(userKey, AuthenticationEntityStatus.ACTIVE)?.map {
             it.delete()
-            it.refreshToken
+            it.accessToken
         }
 
     override fun findUserKey(userKey: String): AuthenticationHistory {
