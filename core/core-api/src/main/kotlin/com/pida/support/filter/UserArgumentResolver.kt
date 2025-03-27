@@ -1,6 +1,6 @@
 package com.pida.support.filter
 
-import com.pida.authentication.domain.auth.Provider
+import com.pida.auth.Provider
 import com.pida.user.User
 import com.pida.user.UserService
 import org.springframework.core.MethodParameter

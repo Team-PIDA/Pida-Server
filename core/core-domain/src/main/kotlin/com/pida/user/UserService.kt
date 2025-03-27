@@ -11,48 +11,35 @@ class UserService(
     private val userValidator: UserValidator,
 ) {
     suspend fun create(newUser: NewUser): User {
-        userValidator.verify(newUser)
+        userValidator.verifyEmail(newUser.email)
         return userAppender.create(newUser)
     }
 
     suspend fun getProfile(userId: Long): UserProfile = userReader.readUserProfile(userId)
 
+    fun getSocialUserByEmail(email: String): SocialUser? = userReader.readUserByEmail(email)
+
     fun getUser(userId: Long): User = userReader.readUser(userId)
+
+    fun getUser(
+        loginId: String,
+        password: String,
+    ): User = userReader.readUser(loginId, password)
 
     suspend fun updateNickname(
         userKey: String,
         updateNickname: UpdateNickname,
     ): UserProfile = userUpdater.updateNickname(userKey, updateNickname)
 
-    suspend fun updatePhone(
+    suspend fun updateName(
         userKey: String,
-        phone: String,
-    ): UserProfile {
-        userValidator.verifyPhone(phone)
-        return userUpdater.updatePhone(userKey, phone)
-    }
+        name: String,
+    ): UserProfile = userUpdater.updateName(userKey, name)
 
     suspend fun updateEmail(
         userKey: String,
         email: String,
     ): UserProfile = userUpdater.updateEmail(userKey, email)
-
-    suspend fun delete(userKey: String) {
-        userDeleter.deleteUser(userKey)
-    }
-
-    suspend fun getUser(
-        name: String,
-        phone: String,
-    ): UserProfile = userReader.readUser(name, phone)
-
-    suspend fun getUserProfile(
-        name: String,
-        phone: String,
-    ): UserProfile {
-        val userProfile = userReader.readUserProfile(name, phone)
-        return userProfile
-    }
 
     suspend fun getAllUserProfile(userIds: List<Long>): List<UserProfile> = userReader.readAllByUserIds(userIds)
 
@@ -60,7 +47,7 @@ class UserService(
         userValidator.verifyEmail(email)
     }
 
-    suspend fun verifyUser(validateNewUser: ValidateNewUser) {
-        userValidator.verifyPhone(validateNewUser.phone)
+    suspend fun deleteUser(newUserWithdrawal: NewUserWithdrawal) {
+        userDeleter.deleteUser(newUserWithdrawal.user.key)
     }
 }

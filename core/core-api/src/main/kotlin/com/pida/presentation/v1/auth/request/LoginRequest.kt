@@ -1,6 +1,6 @@
 package com.pida.presentation.v1.auth.request
 
-import com.pida.authentication.domain.auth.CredentialsPida
+import com.pida.auth.CredentialsPida
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "로그인 요청")

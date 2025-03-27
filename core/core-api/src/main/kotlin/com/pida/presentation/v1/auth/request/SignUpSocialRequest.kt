@@ -1,35 +1,32 @@
 package com.pida.presentation.v1.auth.request
 
-import com.pida.authentication.domain.auth.AuthorityType
-import com.pida.authentication.domain.auth.GrantedAuthority
-import com.pida.authentication.domain.auth.NewAuthenticationSocial
-import com.pida.authentication.domain.auth.SocialType
-import com.pida.user.Gender
+import com.pida.auth.AuthorityType
+import com.pida.auth.GrantedAuthority
+import com.pida.auth.NewAuthenticationSocial
+import com.pida.auth.SocialType
 import com.pida.user.NewUser
-import java.time.LocalDate
+import io.swagger.v3.oas.annotations.media.Schema
 
+@Schema(description = "소셜 회원가입 요청 Json")
 data class SignUpSocialRequest(
     val email: String,
     val name: String,
-    val nickName: String,
-    val phone: String,
-    val gender: Gender,
-    val birth: LocalDate,
-    val socialId: String,
-    val socialToken: String,
-    val socialType: SocialType,
 ) {
-    fun toNewUser(): NewUser =
+    fun toNewUser(
+        socialId: String,
+        socialType: SocialType,
+    ): NewUser =
         NewUser(
             email = email,
             name = name,
-            nickname = nickName,
-            phone = phone,
-            gender = gender,
-            birth = birth,
+            socialId = socialId,
+            socialType = socialType,
         )
 
-    fun toNewAuthenticationSocial(): NewAuthenticationSocial =
+    fun toNewAuthenticationSocial(
+        socialId: String,
+        socialType: SocialType,
+    ): NewAuthenticationSocial =
         NewAuthenticationSocial(
             loginId = email,
             socialId = socialId,

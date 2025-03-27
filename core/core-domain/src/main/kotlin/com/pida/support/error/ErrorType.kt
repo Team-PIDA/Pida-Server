@@ -33,7 +33,6 @@ enum class ErrorType(
     INVALID_CREDENTIALS(400, ErrorKind.CLIENT_ERROR, "아이디 혹은 비밀번호가 올바르지 않습니다.", ErrorLevel.WARN),
     WITHDRAWAL_USER(403, ErrorKind.FORBIDDEN_ERROR, "사용할 수 없는 계정입니다.", ErrorLevel.WARN),
     DUPLICATED_USER(409, ErrorKind.CLIENT_ERROR, "이미 존재하는 계정입니다.", ErrorLevel.INFO),
-    DUPLICATED_PHONE(409, ErrorKind.CLIENT_ERROR, "이미 존재하는 휴대폰 번호입니다.", ErrorLevel.INFO),
     INVALID_LOGIN_ID_FORMAT(400, ErrorKind.CLIENT_ERROR, "이메일 형식이 올바르지 않습니다.", ErrorLevel.INFO),
     INVALID_PASSWORD_FORMAT(
         400,

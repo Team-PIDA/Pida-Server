@@ -26,7 +26,7 @@ class BloomingService(
 
         val totalCount = bloomings.size.toLong()
 
-        val details =
+        val details: Map<String, Map<String, BloomingStatusDetails>> =
             bloomings
                 .groupBy { it.createdAt.toLocalDate().toString() }
                 .entries
@@ -34,19 +34,21 @@ class BloomingService(
                 .associate { (date, bloomingsOnDate) ->
                     val dailyTotal = bloomingsOnDate.size.toDouble()
 
-                    val statusMap =
+                    val statusCounts =
                         bloomingsOnDate
                             .groupingBy { it.status.name }
                             .eachCount()
-                            .mapValues { (_, count) ->
-                                if (dailyTotal == 0.0) {
-                                    0
-                                } else {
-                                    ((count / dailyTotal) * 100).roundToInt()
-                                }
-                            }
 
-                    date to statusMap
+                    val statusDetailsMap =
+                        statusCounts.mapValues { (_, count) ->
+                            val percentage = if (dailyTotal == 0.0) 0 else ((count / dailyTotal) * 100).roundToInt()
+                            BloomingStatusDetails(
+                                peopleCount = count,
+                                percentage = percentage,
+                            )
+                        }
+
+                    date to statusDetailsMap
                 }
 
         return BloomingDetails(

@@ -18,7 +18,6 @@ rootProject.name = "pida"
 include(
     "core:core-api",
     "core:core-domain",
-    "core:auth",
 )
 
 include(
@@ -29,6 +28,7 @@ include(
 include(
     "clients:aws-client",
     "clients:notification",
+    "clients:oauth-client",
 )
 
 include(

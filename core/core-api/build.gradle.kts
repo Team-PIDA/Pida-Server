@@ -11,11 +11,17 @@ dependencies {
     implementation(libs.spring.boot.starter.aop)
     implementation(libs.spring.boot.starter.validation)
 
-    implementation(project(":core:core-domain"))
-    implementation(project(":core:auth"))
+    // Security
+    implementation(libs.spring.boot.starter.security)
+    testImplementation(libs.spring.security.test)
+    implementation(libs.jjwt.api)
+    runtimeOnly(libs.jjwt.jackson)
+    runtimeOnly(libs.jjwt.impl)
 
+    implementation(project(":core:core-domain"))
     implementation(project(":clients:aws-client"))
     implementation(project(":clients:notification"))
+    implementation(project(":clients:oauth-client"))
     implementation(project(":support:swagger"))
 
     runtimeOnly(project(":support:logging"))

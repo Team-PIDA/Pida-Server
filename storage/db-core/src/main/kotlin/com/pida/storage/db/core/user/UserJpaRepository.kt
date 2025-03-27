@@ -6,27 +6,18 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface UserJpaRepository :
     JpaRepository<UserEntity, Long>,
     KotlinJdslJpqlExecutor {
-    fun findByUserKey(userKey: String): UserEntity?
+    fun findByUserKeyAndDeletedAtIsNull(userKey: String): UserEntity?
 
-    fun findByNameAndPhoneAndDeletedAtIsNull(
-        name: String,
-        phone: String,
+    fun findByEmailAndPasswordAndDeletedAtIsNull(
+        email: String,
+        password: String,
     ): UserEntity?
-
-    fun findByPhone(phone: String): UserEntity?
 
     fun findAllByIdIn(ids: List<Long>): List<UserEntity>
 
     fun findByIdAndDeletedAtIsNull(id: Long): UserEntity?
 
-    fun existsByEmailAndPhoneAndDeletedAtIsNull(
-        email: String,
-        phone: String,
-    ): Boolean
-
     fun existsByEmailAndDeletedAtIsNull(email: String): Boolean
 
-    fun existsByPhoneAndDeletedAtIsNull(phone: String): Boolean
-
-    fun deleteByUserKey(userKey: String)
+    fun findByEmailAndDeletedAtIsNull(email: String): UserEntity?
 }

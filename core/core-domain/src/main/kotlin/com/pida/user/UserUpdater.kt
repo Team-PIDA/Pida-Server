@@ -11,10 +11,10 @@ class UserUpdater(
         updateNickname: UpdateNickname,
     ): UserProfile = userRepository.updateNickname(userKey, updateNickname.nickname)
 
-    suspend fun updatePhone(
+    suspend fun updateName(
         userKey: String,
-        updatePhone: String,
-    ): UserProfile = userRepository.updatePhone(userKey, updatePhone)
+        name: String,
+    ): UserProfile = userRepository.updateName(userKey, name)
 
     suspend fun updateEmail(
         userKey: String,
