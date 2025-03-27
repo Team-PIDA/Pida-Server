@@ -10,13 +10,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EntityScan(
     basePackages = [
         "com.pida.storage.db.core",
-        "com.pida.authentication.storage.db.core",
     ],
 )
 @EnableJpaRepositories(
     basePackages = [
         "com.pida.storage.db.core",
-        "com.pida.authentication.storage.db.core",
     ],
 )
 class CoreJpaConfig

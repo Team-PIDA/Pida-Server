@@ -1,6 +1,6 @@
 package com.pida.presentation.v1.auth.request
 
-import com.pida.authentication.domain.token.RefreshToken
+import com.pida.token.RefreshToken
 
 data class RefreshTokenRequest(
     val refreshToken: String,
