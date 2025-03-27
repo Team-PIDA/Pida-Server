@@ -41,13 +41,13 @@ class UserService(
         email: String,
     ): UserProfile = userUpdater.updateEmail(userKey, email)
 
-    suspend fun delete(userKey: String) {
-        userDeleter.deleteUser(userKey)
-    }
-
     suspend fun getAllUserProfile(userIds: List<Long>): List<UserProfile> = userReader.readAllByUserIds(userIds)
 
     suspend fun checkEmail(email: String) {
         userValidator.verifyEmail(email)
+    }
+
+    suspend fun deleteUser(newUserWithdrawal: NewUserWithdrawal) {
+        userDeleter.deleteUser(newUserWithdrawal.user.key)
     }
 }
