@@ -7,6 +7,7 @@ import com.pida.auth.SocialType
 import com.pida.client.oauth.OAuthService
 import com.pida.presentation.v1.annotation.ApiV1Controller
 import com.pida.presentation.v1.auth.request.LoginRequest
+import com.pida.presentation.v1.auth.request.RefreshTokenRequest
 import com.pida.presentation.v1.auth.request.SignUpRequest
 import com.pida.presentation.v1.auth.request.SignUpSocialRequest
 import com.pida.presentation.v1.auth.request.TokenRequest
@@ -115,5 +116,14 @@ class AuthController(
     ): LogoutResponse {
         val logoutUserKey = authenticationService.logout(request.token)
         return LogoutResponse("$logoutUserKey: 로그아웃 되었습니다.")
+    }
+
+    @Operation(summary = "토큰 재발급", description = "토큰을 재발급합니다.")
+    @PostMapping("/auth/reissue")
+    fun reissueToken(
+        @RequestBody request: RefreshTokenRequest,
+    ): TokenResponse {
+        val token = authenticationService.renew(request.toRefreshToken())
+        return TokenResponse.toResponse(false, token)
     }
 }

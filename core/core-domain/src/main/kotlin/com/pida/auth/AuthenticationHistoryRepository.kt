@@ -13,7 +13,7 @@ interface AuthenticationHistoryRepository {
 
     fun removeToken(userKey: String): List<String>?
 
-    fun findUserKey(userKey: String): AuthenticationHistory
+    fun findUserKey(userKey: String): AuthenticationHistory?
 
     fun remove(token: String): String
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 class AuthenticationService(
     private val authenticationProcessor: AuthenticationProcessor,
+    private val authenticationHistoryReader: AuthenticationHistoryReader,
 ) {
     fun login(
         deviceId: String?,
@@ -24,11 +25,16 @@ class AuthenticationService(
     fun socialLogin(
         deviceId: String,
         socialUser: SocialUser,
-    ): Token =
-        authenticationProcessor.login(
+    ): Token {
+        authenticationHistoryReader.readByUserKey(socialUser.key)?.let {
+            authenticationProcessor.remove(it.token.accessToken)
+        }
+
+        return authenticationProcessor.login(
             deviceId = deviceId,
             socialUser = socialUser,
         )
+    }
 
     fun renew(refreshToken: RefreshToken): Token = authenticationProcessor.renew(refreshToken.token)
 

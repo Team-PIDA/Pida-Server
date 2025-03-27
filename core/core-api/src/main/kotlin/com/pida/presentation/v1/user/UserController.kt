@@ -30,7 +30,9 @@ class UserController(
 
     @Operation(summary = "회원탈퇴", description = "회원탈퇴를 진행합니다.")
     @DeleteMapping("/users")
-    suspend fun withdrawal(user: User): UserWithdrawalResponse {
+    suspend fun withdrawal(
+        @Parameter(hidden = true, required = false) user: User,
+    ): UserWithdrawalResponse {
         userService.deleteUser(
             NewUserWithdrawal(
                 user = user,
