@@ -1,5 +1,4 @@
 package com.pida.storage.db.core.auth
-import com.pida.authentication.storage.db.core.AuthenticationEntityStatus
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface AuthenticationHistoryJpaRepository : JpaRepository<AuthenticationHistoryEntity, Long> {
@@ -7,11 +6,6 @@ interface AuthenticationHistoryJpaRepository : JpaRepository<AuthenticationHisto
         userKey: String,
         deviceId: String?,
     ): List<AuthenticationHistoryEntity>
-
-    fun findByUserKeyAndEntityStatus(
-        userKey: String,
-        entityStatus: AuthenticationEntityStatus,
-    ): AuthenticationHistoryEntity?
 
     fun findAllByUserKeyAndEntityStatus(
         userKey: String,

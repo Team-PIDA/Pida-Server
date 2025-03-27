@@ -8,6 +8,11 @@ interface UserJpaRepository :
     KotlinJdslJpqlExecutor {
     fun findByUserKey(userKey: String): UserEntity?
 
+    fun findByEmailAndPassword(
+        email: String,
+        password: String,
+    ): UserEntity?
+
     fun findAllByIdIn(ids: List<Long>): List<UserEntity>
 
     fun findByIdAndDeletedAtIsNull(id: Long): UserEntity?

@@ -1,6 +1,5 @@
 package com.pida.client.oauth
 
-import com.pida.auth.AppleClientResult
 import com.pida.support.error.AuthenticationErrorException
 import com.pida.support.error.AuthenticationErrorType
 import feign.FeignException

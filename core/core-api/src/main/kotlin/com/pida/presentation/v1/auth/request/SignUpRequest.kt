@@ -3,6 +3,7 @@ package com.pida.presentation.v1.auth.request
 import com.pida.auth.AuthorityType
 import com.pida.auth.GrantedAuthority
 import com.pida.auth.NewAuthenticationPida
+import com.pida.auth.SocialType
 import com.pida.user.NewUser
 import io.swagger.v3.oas.annotations.media.Schema
 
@@ -22,6 +23,8 @@ data class SignUpRequest(
             email = email,
             name = name,
             nickname = nickname,
+            socialId = "",
+            socialType = SocialType.PIDA,
         )
 
     fun toNewAuthenticationPida(): NewAuthenticationPida =

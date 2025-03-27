@@ -1,7 +1,5 @@
 package com.pida.auth
 
-import com.pida.auth.provider.ProviderDetail
-
 interface RedisTokenRepository {
     fun create(
         accessToken: String,

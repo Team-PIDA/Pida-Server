@@ -4,6 +4,7 @@ import com.pida.auth.SocialType
 import com.pida.storage.db.core.support.BaseEntity
 import com.pida.user.NewUser
 import com.pida.user.NewUserKey
+import com.pida.user.SocialUser
 import com.pida.user.User
 import com.pida.user.UserProfile
 import jakarta.persistence.Column
@@ -18,7 +19,7 @@ class UserEntity(
     @Column(name = "user_key")
     val userKey: String,
     var name: String,
-    var nickname: String,
+    var nickname: String?,
     var email: String,
     private var password: String?,
     private var socialId: String?,
@@ -45,13 +46,21 @@ class UserEntity(
             key = userKey,
         )
 
+    fun toSocialUser(): SocialUser =
+        SocialUser(
+            id = id!!,
+            key = userKey,
+            socialId = socialId!!,
+            socialType = socialType,
+        )
+
     fun toProfile(): UserProfile =
         UserProfile(
             id = id!!,
             key = userKey,
             email = email,
             name = name,
-            nickname = nickname,
+            nickname = nickname ?: "",
             createdAt = createdAt,
         )
 

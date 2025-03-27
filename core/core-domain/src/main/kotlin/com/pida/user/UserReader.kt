@@ -19,7 +19,15 @@ class UserReader(
         return user
     }
 
+    fun readUser(
+        loginId: String,
+        password: String,
+    ): User {
+        val user = userRepository.readUser(loginId, password) ?: throw ErrorException(ErrorType.NOT_FOUND_USER)
+        return user
+    }
+
     suspend fun readAllByUserIds(userIds: List<Long>): List<UserProfile> = userRepository.readAllByUserIds(userIds)
 
-    fun readUserByEmail(email: String): User? = userRepository.readUserByEmail(email)
+    fun readUserByEmail(email: String): SocialUser? = userRepository.readUserByEmail(email)
 }

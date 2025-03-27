@@ -2,9 +2,9 @@ package com.pida.storage.redis
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.pida.auth.Provider
+import com.pida.auth.ProviderDetail
 import com.pida.auth.RedisTokenRepository
 import com.pida.auth.TokenWithAuthentication
-import com.pida.auth.provider.ProviderDetail
 import com.pida.support.error.AuthenticationErrorException
 import com.pida.support.error.AuthenticationErrorType
 import org.springframework.beans.factory.annotation.Qualifier
@@ -59,7 +59,6 @@ class RedisTokenCoreRepository(
         redisTemplate.opsForValue().get(accessToken)?.let {
             val tokenWithAuthentication = objectMapper.readValue(it, TokenWithAuthentication::class.java)
             Provider(
-                id = tokenWithAuthentication.provider.id,
                 userId = tokenWithAuthentication.provider.userId,
                 userKey = tokenWithAuthentication.provider.userKey,
             )

@@ -11,7 +11,7 @@ import com.pida.auth.SocialType
  */
 data class NewUser(
     val name: String,
-    val nickname: String,
+    val nickname: String? = null,
     val email: String,
     val password: String? = null,
     val socialId: String,

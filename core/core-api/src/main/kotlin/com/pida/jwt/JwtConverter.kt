@@ -44,7 +44,6 @@ class JwtConverter(
         val tokenWithAuthentication = redisTokenRepository.findByToken(jwt.tokenValue)
         jwt.validateByCachedToken(tokenWithAuthentication.accessToken)
         return Provider(
-            id = tokenWithAuthentication.provider.id,
             userId = tokenWithAuthentication.provider.userId,
             userKey = tokenWithAuthentication.provider.userKey,
         )

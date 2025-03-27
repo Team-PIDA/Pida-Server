@@ -1,4 +1,4 @@
-package com.pida.auth
+package com.pida.client.oauth
 
 data class AppleClientResult(
     val id: String,

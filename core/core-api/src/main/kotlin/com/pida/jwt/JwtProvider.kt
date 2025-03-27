@@ -1,7 +1,14 @@
 package com.pida.jwt
 
-import com.pida.auth.*
-import com.pida.auth.provider.ProviderDetail
+import com.pida.auth.AuthenticationHistory
+import com.pida.auth.AuthenticationHistoryReader
+import com.pida.auth.AuthenticationHistoryUpdater
+import com.pida.auth.AuthorityType
+import com.pida.auth.GrantedAuthority
+import com.pida.auth.Provider
+import com.pida.auth.ProviderDetail
+import com.pida.auth.RedisTokenRepository
+import com.pida.auth.UpdateAuthenticationHistory
 import com.pida.config.AuthenticationProperties
 import com.pida.support.error.AuthenticationErrorException
 import com.pida.support.error.AuthenticationErrorType
@@ -9,6 +16,8 @@ import com.pida.token.NewToken
 import com.pida.token.Token
 import com.pida.token.TokenStatus
 import com.pida.token.repository.TokenRepository
+import com.pida.user.SocialUser
+import com.pida.user.User
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.oauth2.jwt.BadJwtException
 import org.springframework.security.oauth2.jwt.Jwt
@@ -31,16 +40,20 @@ class JwtProvider(
     private val authenticationHistoryReader: AuthenticationHistoryReader,
     private val authenticationHistoryUpdater: AuthenticationHistoryUpdater,
 ) : TokenRepository {
+    companion object {
+        val grantedAuthorities = listOf(GrantedAuthority(AuthorityType.USER))
+    }
+
     override fun create(
         deviceId: String?,
-        authentication: Authentication,
+        user: User,
     ): Token {
         val accessToken =
             issueAccessToken(
-                authentication.userKey,
-                authentication.grantedAuthorities,
+                user.key,
+                grantedAuthorities,
             )
-        val refreshToken = issueRefreshToken(authentication.userKey)
+        val refreshToken = issueRefreshToken(user.key)
         return Token(
             accessToken = accessToken,
             refreshToken = refreshToken,
@@ -51,11 +64,43 @@ class JwtProvider(
                 deviceId = deviceId,
                 providerDetail =
                     ProviderDetail(
-                        authentication.id,
-                        authentication.userId,
-                        authentication.userKey,
+                        user.id,
+                        user.key,
                         grantedAuthorities =
-                            authentication.grantedAuthorities.map {
+                            grantedAuthorities.map {
+                                it.authorityType.name
+                            },
+                    ),
+                accessTokenExpiration = authenticationProperties.accessTokenExpirationSeconds,
+                refreshTokenExpiration = authenticationProperties.refreshTokenExpirationSeconds,
+            )
+        }
+    }
+
+    override fun create(
+        deviceId: String?,
+        socialUser: SocialUser,
+    ): Token {
+        val accessToken =
+            issueAccessToken(
+                socialUser.key,
+                grantedAuthorities,
+            )
+        val refreshToken = issueRefreshToken(socialUser.key)
+        return Token(
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+        ).apply {
+            redisTokenRepository.create(
+                accessToken = this.accessToken,
+                refreshToken = this.refreshToken,
+                deviceId = deviceId,
+                providerDetail =
+                    ProviderDetail(
+                        socialUser.id,
+                        socialUser.key,
+                        grantedAuthorities =
+                            grantedAuthorities.map {
                                 it.authorityType.name
                             },
                     ),

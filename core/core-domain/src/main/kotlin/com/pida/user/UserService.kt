@@ -17,23 +17,14 @@ class UserService(
 
     suspend fun getProfile(userId: Long): UserProfile = userReader.readUserProfile(userId)
 
+    fun getSocialUserByEmail(email: String): SocialUser? = userReader.readUserByEmail(email)
+
     fun getUser(userId: Long): User = userReader.readUser(userId)
 
-    fun signInKakao(kakaoUserInfo: KakaoUserInfo): User {
-        // 있으면 바로 return
-        val user = userReader.readUserByEmail(kakaoUserInfo.email)
-        return if (user != null) {
-            user
-        } else {
-            val newUser =
-                NewUser(
-                    name = kakaoUserInfo.name,
-                    email = kakaoUserInfo.email,
-                    nickname = kakaoUserInfo.nickname,
-                )
-            userAppender.create(newUser)
-        }
-    }
+    fun getUser(
+        loginId: String,
+        password: String,
+    ): User = userReader.readUser(loginId, password)
 
     suspend fun updateNickname(
         userKey: String,

@@ -14,13 +14,18 @@ interface UserRepository {
 
     fun readUserById(id: Long): User?
 
+    fun readUser(
+        loginId: String,
+        password: String,
+    ): User
+
     suspend fun readByUserIdOrNull(id: Long): UserProfile?
 
     suspend fun readAllByUserIds(userIds: List<Long>): List<UserProfile>
 
     suspend fun existsByEmail(email: String): Boolean
 
-    fun readUserByEmail(email: String): User?
+    fun readUserByEmail(email: String): SocialUser?
 
     // Update
     suspend fun updateNickname(
