@@ -40,11 +40,11 @@ class RedisTokenCoreRepository(
                 objectMapper.writeValueAsString(tokenWithAuthentication),
                 Duration.ofSeconds(accessTokenExpiration * 60L),
             )
-//            set(
-//                refreshToken,
-//                objectMapper.writeValueAsString(tokenWithAuthentication),
-//                Duration.ofSeconds(refreshTokenExpiration * 60L),
-//            )
+            set(
+                refreshToken,
+                objectMapper.writeValueAsString(tokenWithAuthentication),
+                Duration.ofSeconds(refreshTokenExpiration * 60L),
+            )
         }
         return tokenWithAuthentication
     }
@@ -75,6 +75,6 @@ class RedisTokenCoreRepository(
             } ?: throw AuthenticationErrorException(AuthenticationErrorType.INVALID_TOKEN)
 
         redisTemplate.delete(tokenWithAuthentication.accessToken)
-//        redisTemplate.delete(tokenWithAuthentication.refreshToken)
+        redisTemplate.delete(tokenWithAuthentication.refreshToken)
     }
 }

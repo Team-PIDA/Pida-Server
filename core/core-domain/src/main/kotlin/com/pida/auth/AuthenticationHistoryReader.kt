@@ -16,5 +16,5 @@ class AuthenticationHistoryReader(
         authenticationHistoryRepository.findUserKeyWithDeviceWithRefreshToken(userKey, deviceId, refreshToken)
             ?: throw AuthenticationErrorException(AuthenticationErrorType.NOT_FOUND_HISTORY)
 
-    fun readByUserKey(userKey: String): AuthenticationHistory = authenticationHistoryRepository.findUserKey(userKey)
+    fun readByUserKey(userKey: String): AuthenticationHistory? = authenticationHistoryRepository.findUserKey(userKey)
 }

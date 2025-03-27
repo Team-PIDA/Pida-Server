@@ -52,11 +52,14 @@ class AuthenticationHistoryCoreRepository(
             it.accessToken
         }
 
-    override fun findUserKey(userKey: String): AuthenticationHistory {
-        val authenticationHistory =
-            repository.findAllByUserKeyAndEntityStatus(userKey, AuthenticationEntityStatus.ACTIVE)
-                ?: throw AuthenticationErrorException(AuthenticationErrorType.NOT_FOUND_HISTORY)
-        return authenticationHistory.last().toAuthenticationHistory()
+    override fun findUserKey(userKey: String): AuthenticationHistory? {
+        val histories = repository.findAllByUserKeyAndEntityStatus(userKey, AuthenticationEntityStatus.ACTIVE)
+
+        if (histories.isNullOrEmpty()) {
+            return null
+        }
+
+        return histories.last().toAuthenticationHistory()
     }
 
     @Transactional
@@ -65,7 +68,6 @@ class AuthenticationHistoryCoreRepository(
             repository.findByAccessToken(token)
                 ?: throw AuthenticationErrorException(AuthenticationErrorType.NOT_FOUND_HISTORY)
         authenticationHistory.delete()
-        return authenticationHistory.accessToken
-//        return authenticationHistory.refreshToken
+        return authenticationHistory.refreshToken
     }
 }
