@@ -84,6 +84,16 @@ class UserCoreRepository(
             return@coExecute user.toProfile()
         }
 
+    override suspend fun updateName(
+        userKey: String,
+        name: String,
+    ): UserProfile =
+        tx.writer.coExecute {
+            val user = userJpaRepository.findByUserKey(userKey) ?: throw ErrorException(ErrorType.NOT_FOUND_DATA)
+            user.updateName(name)
+            return@coExecute user.toProfile()
+        }
+
     override suspend fun updateEmail(
         userKey: String,
         email: String,

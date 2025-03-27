@@ -31,6 +31,11 @@ class UserService(
         updateNickname: UpdateNickname,
     ): UserProfile = userUpdater.updateNickname(userKey, updateNickname)
 
+    suspend fun updateName(
+        userKey: String,
+        name: String,
+    ): UserProfile = userUpdater.updateName(userKey, name)
+
     suspend fun updateEmail(
         userKey: String,
         email: String,

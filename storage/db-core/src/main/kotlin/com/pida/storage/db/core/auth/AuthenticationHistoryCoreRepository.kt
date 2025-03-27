@@ -65,6 +65,7 @@ class AuthenticationHistoryCoreRepository(
             repository.findByAccessToken(token)
                 ?: throw AuthenticationErrorException(AuthenticationErrorType.NOT_FOUND_HISTORY)
         authenticationHistory.delete()
-        return authenticationHistory.refreshToken
+        return authenticationHistory.accessToken
+//        return authenticationHistory.refreshToken
     }
 }

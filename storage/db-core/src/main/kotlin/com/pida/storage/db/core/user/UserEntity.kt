@@ -50,6 +50,7 @@ class UserEntity(
         SocialUser(
             id = id!!,
             key = userKey,
+            name = name,
             socialId = socialId!!,
             socialType = socialType,
         )
@@ -66,6 +67,10 @@ class UserEntity(
 
     fun updateNickname(nickname: String) {
         this.nickname = nickname
+    }
+
+    fun updateName(name: String) {
+        this.name = name
     }
 
     fun updateEmail(email: String) {

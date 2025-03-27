@@ -15,26 +15,16 @@ class AuthenticationFacade(
         deviceId: String,
         credentialSocial: CredentialSocial,
     ): Pair<Boolean, Token> {
-        val (socialUser, isNewUser) =
-            userService
-                .getSocialUserByEmail(credentialSocial.email)
-                ?.let { it to false }
-                ?: userService
-                    .create(
-                        NewUser(
-                            name = credentialSocial.name,
-                            email = credentialSocial.email,
-                            socialId = credentialSocial.socialId,
-                            socialType = credentialSocial.socialType,
-                        ),
-                    ).let {
-                        SocialUser(
-                            id = it.id,
-                            key = it.key,
-                            socialId = credentialSocial.socialId,
-                            socialType = credentialSocial.socialType,
-                        ) to true
-                    }
+        val existingUser = userService.getSocialUserByEmail(credentialSocial.email)
+
+        val (socialUser, isUserNew) =
+            if (existingUser != null) {
+                existingUser to false
+            } else {
+                createNewSocialUser(credentialSocial)
+            }
+
+        val isNewUser = isUserNew || socialUser.name.isBlank()
 
         val token =
             authenticationService.socialLogin(
@@ -43,5 +33,28 @@ class AuthenticationFacade(
             )
 
         return isNewUser to token
+    }
+
+    suspend fun createNewSocialUser(credentialSocial: CredentialSocial): Pair<SocialUser, Boolean> {
+        val newUser =
+            userService.create(
+                NewUser(
+                    name = "",
+                    email = credentialSocial.email,
+                    socialId = credentialSocial.socialId,
+                    socialType = credentialSocial.socialType,
+                ),
+            )
+
+        val socialUser =
+            SocialUser(
+                id = newUser.id,
+                key = newUser.key,
+                name = "",
+                socialId = credentialSocial.socialId,
+                socialType = credentialSocial.socialType,
+            )
+
+        return socialUser to true
     }
 }
