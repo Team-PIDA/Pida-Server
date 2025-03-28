@@ -46,21 +46,21 @@
 ## 🏰 **Architecture Overview**
 
 
-### 📌 **Presentation Layer** (`:core:core-api`)
+### 📌 **Presentation Layer** (`:pida-core:core-api`)
 - 사용자 요청 처리 및 응답
 - Spring Boot Application, Controllers
 - 주요 Annotation: `@RestController`, `@Configuration`
 
-### 📌 **Business Layer** (`:core:core-domain`)
+### 📌 **Business Layer** (`:pida-core:core-domain`)
 - 순수 비즈니스 로직을 담당하는 서비스 계층
 - 서비스의 세부 구현 로직을 모듈화하여 담당
 - 주요 Annotation: `@Service`, `@Component`
 
-### 📌 **DataSource Layer** (`:storage`)
+### 📌 **DataSource Layer** (`:pida-storage`)
 - 실제 데이터 소스 관리 및 DB 제어
 - 주요 Annotation: `@Entity`, `@Repository`, `@Transactional`
 
-### 📌 **Clients Layer** (`:clients`)
+### 📌 **Clients Layer** (`:pida-clients`)
 - 외부 시스템과의 연동 및 API 호출 관리
 - 주요 Annotation: `@FeignClient`, `@EnableFeignClients`
 - 예시: 알림 서비스, 외부 API 통합
@@ -68,7 +68,7 @@
 
 ### 📚 **Other Modules**
 
-#### 🔖 Support
+#### 🔖 pida-supports
 
 - logging: Logback 기반 로그 관리
 
@@ -76,7 +76,7 @@
 
 - swagger: OAS 기반의 API 문서화 및 스펙 제공
 
-#### 🧪 Tests
+#### 🧪 pida-tests
 
 - api-docs: Spring Rest Docs를 활용한 API 명세 자동화
 
