@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.media.StringSchema
+import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.servers.Server
 import org.springdoc.core.utils.SpringDocUtils
@@ -32,6 +33,7 @@ internal class SwaggerConfig(
                 listOf(swaggerProperties.domain)
                     .map { Server().url(it) },
             ).components(authComponents())
+            .addSecurityItem(SecurityRequirement().addList("accessToken"))
     }
 
     @Bean

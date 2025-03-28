@@ -126,7 +126,7 @@ class SecurityConfig(
 
         http.authorizeHttpRequests { authorize ->
             // Swagger 인증
-            authorize.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").hasRole("SWAGGER")
+            authorize.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 
             // 인증 없이 허용할 API
             authorize
@@ -142,7 +142,7 @@ class SecurityConfig(
             authorize.requestMatchers("/h2-console/**", "/actuator/**", "/ping").permitAll()
 
             // 그 외 모든 API는 JWT 인증 필요
-            authorize.requestMatchers("/api/v1/users/**", "/api/v1/blooming").authenticated()
+            authorize.requestMatchers("/api/v1/users/**", "/api/v1/users", "/api/v1/blooming").authenticated()
 
             // 나머지도 다 인증
             authorize.anyRequest().authenticated()
