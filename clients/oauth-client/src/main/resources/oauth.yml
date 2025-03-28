@@ -19,3 +19,6 @@ spring:
   httpclient:
     max-connections: 2000
     max-connections-per-route: 500
+
+apple:
+  bundle-id: ${APPLE_BUNDLE_ID}
