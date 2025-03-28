@@ -16,31 +16,31 @@ dependencyResolutionManagement {
 rootProject.name = "pida"
 
 include(
-    "core:core-api",
-    "core:core-domain",
+    "pida-core:core-api",
+    "pida-core:core-domain",
 )
 
 include(
-    "storage:db-core",
-    "storage:redis",
+    "pida-storage:db-core",
+    "pida-storage:redis",
 )
 
 include(
-    "clients:aws-client",
-    "clients:notification",
-    "clients:oauth-client",
+    "pida-clients:aws-client",
+    "pida-clients:notification",
+    "pida-clients:oauth-client",
 )
 
 include(
-    "support:logging",
-    "support:monitoring",
-    "support:swagger",
+    "pida-supports:logging",
+    "pida-supports:monitoring",
+    "pida-supports:swagger",
 )
 
 include(
-    "tests:api-docs",
-    "tests:test-helper",
-    "tests:test-container",
+    "pida-tests:api-docs",
+    "pida-tests:test-helper",
+    "pida-tests:test-container",
 )
 
 

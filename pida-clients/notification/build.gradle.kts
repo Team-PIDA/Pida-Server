@@ -3,7 +3,7 @@ dependencies {
     implementation(libs.bundles.openfeign)
     implementation(libs.firebase)
 
-    implementation(project(":core:core-domain"))
+    implementation(project(":pida-core:core-domain"))
 
-    testImplementation(project(":tests:test-helper"))
+    testImplementation(project(":pida-tests:test-helper"))
 }

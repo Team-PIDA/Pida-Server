@@ -31,4 +31,4 @@ jobs:
       - name: Build with Gradle Cache
         uses: gradle/gradle-build-action@v3
         with:
-          arguments: :core:core-api:build --no-daemon
+          arguments: :pida-core:core-api:build --no-daemon

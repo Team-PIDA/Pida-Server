@@ -3,5 +3,5 @@ dependencies {
     implementation(libs.bouncycastle.bcpkix)
     implementation(libs.bundles.openfeign)
 
-    implementation(project(":core:core-domain"))
+    implementation(project(":pida-core:core-domain"))
 }
