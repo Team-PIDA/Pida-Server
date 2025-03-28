@@ -9,10 +9,7 @@ RUN mkdir -p /service/pida
 # Firebase 및 RSA 키 파일을 복사
 RUN mkdir -p /keys
 
-COPY ./keys/private-key.pem /keys/private-key.pem
-COPY ./keys/public-key.pem /keys/public-key.pem
-
-COPY core/core-api/build/libs/core-api-0.0.1.jar /service/pida/core-api-0.0.1.jar
+COPY pida-core/core-api/build/libs/core-api-0.0.1.jar /service/pida/core-api-0.0.1.jar
 
 EXPOSE 8080
 

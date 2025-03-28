@@ -5,7 +5,7 @@ ARG PROFILE
 ENV PROFILE=${PROFILE}
 
 RUN mkdir -p /service/pida
-COPY core/core-api/build/libs/core-api-0.0.1.jar /service/pida/core-api-0.0.1.jar
+COPY pida-core/core-api/build/libs/core-api-0.0.1.jar /service/pida/core-api-0.0.1.jar
 
 EXPOSE 8080
 
