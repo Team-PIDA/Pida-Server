@@ -42,6 +42,13 @@ spring:
 spring:
   config:
     activate:
+      on-profile: dev
+    import:
+      - swagger.yml
+---
+spring:
+  config:
+    activate:
       on-profile: prod
     import:
       - swagger.yml
