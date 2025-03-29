@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         java-version: [ "21" ]
-        kotlin-version: [ "1.9.23" ]
+        kotlin-version: [ "2.1.0" ]
         distribution: [ "corretto" ]
 
     steps:

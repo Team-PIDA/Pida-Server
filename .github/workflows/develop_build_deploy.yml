@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         java-version: [ "21" ]
-        kotlin-version: [ "1.9.23" ]
+        kotlin-version: [ "2.1.0" ]
         distribution: [ "corretto" ]
 
     steps:
@@ -67,10 +67,10 @@ jobs:
         uses: docker/metadata-action@v5.5.0
         env:
           DOCKERHUB_IMAGE_FULL_NAME: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}
-          with:
-            images: ${{ env.DOCKERHUB_IMAGE_FULL_NAME }}
-            tags: |
-              type=sha,prefix=
+        with:
+          images: ${{ env.DOCKERHUB_IMAGE_FULL_NAME }}
+          tags: |
+            type=sha,prefix=
 
       # Docker 이미지 빌드 및 도커허브로 푸시
       - name: Docker Build and Push
