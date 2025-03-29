@@ -1,9 +1,9 @@
-name: Deploy
+name: Production Build & Deploy
 
 on:
   push:
     branches:
-      - develop
+      - release
 
 # permission can be added at job level or workflow level
 permissions:
