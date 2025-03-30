@@ -10,8 +10,6 @@ services:
     network_mode: host
     env_file:
       - .env
-    volumes:
-      - /home/ec2-user/app:/app
   redis:
     image: "redis:alpine"
     container_name: redis
