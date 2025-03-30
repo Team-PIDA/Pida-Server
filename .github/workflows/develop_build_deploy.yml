@@ -92,17 +92,7 @@ jobs:
           path: ./docker/docker-compose.yml
           remote_path: /home/ec2-user/
 
-      - name: Copy default.conf to EC2
-        uses: burnett01/rsync-deployments@7.0.1
-        with:
-          switches: -avzr --delete
-          remote_host: ${{ secrets.EC2_HOST }}
-          remote_user: ${{ secrets.EC2_USERNAME }}
-          remote_key: ${{ secrets.EC2_PRIVATE_KEY }}
-          path: ./nginx
-          remote_path: /home/ec2-user/
-
-            # EC2로 배포
+      # EC2로 배포
       - name: Deploy to EC2 Server
         uses: appleboy/ssh-action@v1.0.3
         env:
@@ -117,5 +107,4 @@ jobs:
           script: |
             echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
             docker compose up -d
-            docker exec -d nginx nginx -s reload
             docker image prune -a -f
