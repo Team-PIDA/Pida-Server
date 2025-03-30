@@ -22,3 +22,6 @@ spring:
 
 apple:
   bundle-id: ${APPLE_BUNDLE_ID}
+  key-id: ${APPLE_KEY_ID}
+  team-id: ${APPLE_TEAM_ID}
+  private-key: ${APPLE_P8}
