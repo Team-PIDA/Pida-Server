@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class AuthenticationService(
     private val authenticationProcessor: AuthenticationProcessor,
-    private val authenticationHistoryReader: AuthenticationHistoryReader,
 ) {
     fun login(
         deviceId: String?,
