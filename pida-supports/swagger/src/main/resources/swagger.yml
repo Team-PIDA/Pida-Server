@@ -29,6 +29,16 @@ swagger:
   domain: http://localhost:8080
   user: pida
   password: pida1234
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+swagger:
+  domain: ${SERVER_DOMAIN}
+  user: pida
+  password: pida1234
 ---
 spring:
   config:
