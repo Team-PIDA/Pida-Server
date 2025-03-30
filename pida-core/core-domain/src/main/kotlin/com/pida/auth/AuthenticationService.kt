@@ -25,16 +25,11 @@ class AuthenticationService(
     fun socialLogin(
         deviceId: String,
         socialUser: SocialUser,
-    ): Token {
-        authenticationHistoryReader.readByUserKey(socialUser.key)?.let {
-            authenticationProcessor.remove(it.token.accessToken)
-        }
-
-        return authenticationProcessor.login(
+    ): Token =
+        authenticationProcessor.login(
             deviceId = deviceId,
             socialUser = socialUser,
         )
-    }
 
     fun renew(refreshToken: RefreshToken): Token = authenticationProcessor.renew(refreshToken.token)
 

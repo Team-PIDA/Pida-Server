@@ -12,5 +12,10 @@ interface AuthenticationHistoryJpaRepository : JpaRepository<AuthenticationHisto
         status: AuthenticationEntityStatus,
     ): List<AuthenticationHistoryEntity>?
 
+    fun findAllByUserIdAndEntityStatus(
+        userId: Long,
+        active: AuthenticationEntityStatus,
+    ): List<AuthenticationHistoryEntity>?
+
     fun findByAccessToken(accessToken: String): AuthenticationHistoryEntity?
 }

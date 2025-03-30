@@ -16,6 +16,7 @@ import com.pida.presentation.v1.auth.response.SignUpResponse
 import com.pida.presentation.v1.auth.response.TokenResponse
 import com.pida.support.error.ErrorException
 import com.pida.support.error.ErrorType
+import com.pida.user.UpdateNickname
 import com.pida.user.User
 import com.pida.user.UserService
 import io.swagger.v3.oas.annotations.Operation
@@ -105,6 +106,7 @@ class AuthController(
             throw ErrorException(ErrorType.NOT_FOUND_DATA)
         } else {
             userService.updateName(tempUser.key, request.name)
+            userService.updateNickname(tempUser.key, UpdateNickname(request.name))
         }
         return SignUpResponse("회원가입에 성공했습니다.")
     }
