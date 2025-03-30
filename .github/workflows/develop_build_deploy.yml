@@ -106,8 +106,6 @@ jobs:
           debug: true
           script: |
             echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
-            cd /home/ec2-user/app
-            docker compose down
-            docker compose pull
-            docker compose up -d --force-recreate
+            cd ~/app
+            docker compose up -d
             docker image prune -a -f
