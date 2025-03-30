@@ -62,6 +62,16 @@ class AuthenticationHistoryCoreRepository(
         return histories.last().toAuthenticationHistory()
     }
 
+    override fun findUserId(userId: Long): AuthenticationHistory? {
+        val histories = repository.findAllByUserIdAndEntityStatus(userId, AuthenticationEntityStatus.ACTIVE)
+
+        if (histories.isNullOrEmpty()) {
+            return null
+        }
+
+        return histories.last().toAuthenticationHistory()
+    }
+
     @Transactional
     override fun remove(token: String): String {
         val authenticationHistory =

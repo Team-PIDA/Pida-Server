@@ -11,9 +11,11 @@ interface AuthenticationHistoryRepository {
 
     fun update(updateAuthenticationHistory: UpdateAuthenticationHistory): AuthenticationHistory?
 
-    fun removeToken(userKey: String): List<String>?
-
     fun findUserKey(userKey: String): AuthenticationHistory?
+
+    fun findUserId(userId: Long): AuthenticationHistory?
+
+    fun removeToken(userKey: String): List<String>?
 
     fun remove(token: String): String
 }

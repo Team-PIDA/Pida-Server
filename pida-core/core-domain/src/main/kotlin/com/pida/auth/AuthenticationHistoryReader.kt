@@ -17,4 +17,6 @@ class AuthenticationHistoryReader(
             ?: throw AuthenticationErrorException(AuthenticationErrorType.NOT_FOUND_HISTORY)
 
     fun readByUserKey(userKey: String): AuthenticationHistory? = authenticationHistoryRepository.findUserKey(userKey)
+
+    fun readByUserId(userId: Long): AuthenticationHistory? = authenticationHistoryRepository.findUserId(userId)
 }
