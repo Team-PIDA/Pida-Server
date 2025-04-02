@@ -1,0 +1,76 @@
+spring:
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+    show-sql: true
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+    # MySQL -> PostgreSQL Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+datasource:
+  db:
+    core:
+      driver-class-name: org.postgresql.Driver
+      jdbc-url: ${DATASOURCE_DB_CORE_JDBC_URL}
+      username: ${DATASOURCE_DB_CORE_USERNAME}
+      password: ${DATASOURCE_DB_CORE_PASSWORD}
+      pool-name: core-db-pool
+      maximum-pool-size: 10
+      connection-timeout: 1500
+      keepalive-time: 30000
+      validation-timeout: 1000
+      max-lifetime: 600000
+      data-source-properties:
+        rewriteBatchedStatements: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+datasource:
+  db:
+    core:
+      driver-class-name: org.postgresql.Driver
+      jdbc-url: ${DATASOURCE_DB_CORE_JDBC_URL}
+      username: ${DATASOURCE_DB_CORE_USERNAME}
+      password: ${DATASOURCE_DB_CORE_PASSWORD}
+      pool-name: core-db-pool
+      maximum-pool-size: 10
+      connection-timeout: 1500
+      keepalive-time: 30000
+      validation-timeout: 1000
+      max-lifetime: 600000
+      data-source-properties:
+        rewriteBatchedStatements: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+datasource:
+  db:
+    core:
+      driver-class-name: org.postgresql.Driver
+      jdbc-url: ${DATASOURCE_DB_CORE_JDBC_URL}
+      username: ${DATASOURCE_DB_CORE_USERNAME}
+      password: ${DATASOURCE_DB_CORE_PASSWORD}
+      pool-name: core-db-pool
+      maximum-pool-size: 10
+      connection-timeout: 1500
+      keepalive-time: 30000
+      validation-timeout: 1000
+      max-lifetime: 600000
+      data-source-properties:
+        rewriteBatchedStatements: true

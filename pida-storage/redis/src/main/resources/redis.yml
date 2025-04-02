@@ -1,0 +1,33 @@
+spring:
+  cache:
+    type: redis
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+core:
+  storage:
+    redis:
+      host: localhost
+      port: 6379
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+core:
+  storage:
+    redis:
+      host: localhost
+      port: 6379
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+core:
+  storage:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}

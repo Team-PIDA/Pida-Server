@@ -1,0 +1,15 @@
+FROM amazoncorretto:21
+ENV TZ="Asia/Seoul"
+
+ARG PROFILE
+ENV PROFILE=${PROFILE}
+
+RUN mkdir -p /service/pida
+
+COPY pida-core/core-api/build/libs/core-api-0.0.1.jar /service/pida/core-api-0.0.1.jar
+
+EXPOSE 8080
+
+CMD java \
+    -Dspring.profiles.active=${PROFILE} \
+    -jar /service/pida/core-api-0.0.1.jar

@@ -1,0 +1,55 @@
+spring.application.name: pida-server
+spring.profiles.active: ${SPRING_PROFILES_ACTIVE}
+
+spring:
+  main:
+    lazy-initialization: true
+  threads:
+    virtual:
+      enabled: true
+  config:
+    import:
+      - db-core.yml
+      - redis.yml
+      - logging.yml
+      - monitoring.yml
+      - authentication-redis.yml
+      - authentication.yml
+      - oauth.yml
+      - rsa.yml
+#      - notification.yml
+#      - aws.yml
+  web.resources.add-mappings: false
+
+server:
+  tomcat:
+    max-connections: 20000
+    threads:
+      max: 600
+      min-spare: 100
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+    import:
+      - swagger.yml
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import:
+      - swagger.yml
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import:
+      - swagger.yml
+---

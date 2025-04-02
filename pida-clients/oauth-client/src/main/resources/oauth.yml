@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    discovery:
+      enabled: false
+    openfeign:
+      client:
+        config:
+          kakao-auth-api:
+            connectTimeOut: 2100
+            readTimeout: 5000
+            loggerLevel: full
+          apple-auth-api:
+            connectTimeOut: 2100
+            readTimeout: 5000
+            loggerLevel: full
+  compression:
+    response:
+      enabled: false
+  httpclient:
+    max-connections: 2000
+    max-connections-per-route: 500
+
+apple:
+  bundle-id: ${APPLE_BUNDLE_ID}

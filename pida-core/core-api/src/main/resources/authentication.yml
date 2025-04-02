@@ -1,0 +1,3 @@
+jwt-token:
+  access-token-expiration-seconds: ${ACCESS_TOKEN_EXPIRATION_SECONDS} # 2(일) * 24 * 60
+  refresh-token-expiration-seconds: ${REFRESH_TOKEN_EXPIRATION_SECONDS} # 30(일) * 24 * 60
