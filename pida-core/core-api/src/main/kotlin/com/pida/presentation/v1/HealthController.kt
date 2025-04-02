@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 
-@Tag(name = "Z. Health Check", description = "서버 상태 확인 API")
+@Tag(name = "\uD83C\uDFC3 Health Check", description = "서버 상태 확인 API")
 @RestController
 class HealthController {
     @GetMapping("/ping")
