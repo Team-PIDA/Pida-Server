@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 
-@Tag(name = "1. Auth", description = "인증 관련 API")
+@Tag(name = "\uD83D\uDD11 Auth API", description = "인증 관련 API")
 @ApiV1Controller
 class AuthController(
     private val authenticationService: AuthenticationService,

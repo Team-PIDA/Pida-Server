@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 
-@Tag(name = "2. User", description = "유저 관련 API")
+@Tag(name = "\uD83E\uDDCD\uD83C\uDFFB User API", description = "유저 관련 API")
 @ApiV1Controller
 class UserController(
     private val userService: UserService,

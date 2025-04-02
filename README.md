@@ -1,10 +1,32 @@
-# 🌸 Pida Server
+# 🌸 우리 동네 꽃길 안내 서비스, 피다 (PIDA)
 
-<img src="./.github/image/pida_cover.png" style="border-radius: 20px;" alt="">
+<p align="center">
+  <img src="./.github/image/pida_cover.png" alt="pida_cover" width="100%" />
+</p>
+
+<p align="center">
+  <a href="https://wealthy-session-98c.notion.site/pida-1b490c66759880519df7f9c93c1ed2dd?pvs=4">
+    <img src="https://img.shields.io/badge/소개페이지-blue?style=for-the-badge&logo=notion&logoColor=white" style="border-radius: 8px;" />
+  </a>
+  <a href="https://www.instagram.com/_pida.flower/">
+    <img src="https://img.shields.io/badge/@_pida.flower-E4405F?style=for-the-badge&logo=instagram&logoColor=white" style="border-radius: 8px;" />
+  </a>
+  <a href="https://github.com/Team-PIDA/PIDA_iOS">
+    <img src="https://img.shields.io/badge/PIDA--iOS-000000?style=for-the-badge&logo=github&logoColor=white" style="border-radius: 8px;" />
+  </a>
+</p>
 
 ---
 
-##  🚀 **Tech Stack**
+## 📸 서비스 미리보기
+
+| <img src="https://github.com/user-attachments/assets/8605f071-dbb8-416e-85c9-fa889f4361fe" width="300" style="border-radius: 8px;" /> | <img src="https://github.com/user-attachments/assets/68b918ae-396b-4f1d-b52d-5aaa30e67ec9" width="300" style="border-radius: 8px;" /> | <img src="https://github.com/user-attachments/assets/e9df1a20-d723-4129-ab94-2a822aa811e1" width="300" style="border-radius: 8px;" /> |
+|:--:|:--:|:--:|
+
+
+---
+
+##  🚀 **Server Tech Stack**
 
 - **Language & Framework**:
     - Spring Boot 3.4.x
@@ -68,7 +90,7 @@
 
 ### 📚 **Other Modules**
 
-#### 🔖 pida-supports
+#### 🔖 pida-supports module
 
 - logging: Logback 기반 로그 관리
 
@@ -76,7 +98,7 @@
 
 - swagger: OAS 기반의 API 문서화 및 스펙 제공
 
-#### 🧪 pida-tests
+#### 🧪 pida-tests module
 
 - api-docs: Spring Rest Docs를 활용한 API 명세 자동화
 
