@@ -29,7 +29,10 @@ class UserService(
     suspend fun updateNickname(
         userKey: String,
         updateNickname: UpdateNickname,
-    ): UserProfile = userUpdater.updateNickname(userKey, updateNickname)
+    ): UserProfile {
+        userValidator.verifyNickname(updateNickname.nickname)
+        return userUpdater.updateNickname(userKey, updateNickname)
+    }
 
     suspend fun updateName(
         userKey: String,

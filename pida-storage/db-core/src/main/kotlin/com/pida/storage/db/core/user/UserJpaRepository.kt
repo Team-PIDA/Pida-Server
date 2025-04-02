@@ -19,5 +19,7 @@ interface UserJpaRepository :
 
     fun existsByEmailAndDeletedAtIsNull(email: String): Boolean
 
+    fun existsByNicknameAndDeletedAtIsNull(nickname: String): Boolean
+
     fun findByEmailAndDeletedAtIsNull(email: String): UserEntity?
 }

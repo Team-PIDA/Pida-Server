@@ -105,7 +105,9 @@ class AuthController(
         if (tempUser == null) {
             throw ErrorException(ErrorType.NOT_FOUND_DATA)
         } else {
+            // 회원가입 시 name
             userService.updateName(tempUser.key, request.name)
+            // DisplayName = nickname
             userService.updateNickname(tempUser.key, UpdateNickname(request.name))
         }
         return SignUpResponse("회원가입에 성공했습니다.")

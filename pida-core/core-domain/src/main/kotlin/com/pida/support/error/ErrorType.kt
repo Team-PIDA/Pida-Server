@@ -41,7 +41,9 @@ enum class ErrorType(
         ErrorLevel.INFO,
     ),
     INVALID_NAME_FORMAT(400, ErrorKind.CLIENT_ERROR, "이름을 제대로 입력해 주세요.", ErrorLevel.INFO),
-    INVALID_NICKNAME_FORMAT(400, ErrorKind.CLIENT_ERROR, "닉네임은 6자 이하로 입력해 주세요.", ErrorLevel.INFO),
+    NICKNAME_IS_BLANK(400, ErrorKind.CLIENT_ERROR, "닉네임을 입력해 주세요.", ErrorLevel.INFO),
+    INVALID_NICKNAME_FORMAT(400, ErrorKind.CLIENT_ERROR, "닉네임은 2자 이상 12자 이하로 입력해 주세요.", ErrorLevel.INFO),
+    DUPLICATE_NICKNAME(409, ErrorKind.CLIENT_ERROR, "이미 존재하는 닉네임입니다.", ErrorLevel.INFO),
 
     /** User */
     NOT_FOUND_USER(404, ErrorKind.SERVER_ERROR, "사용자가 존재하지 않습니다.", ErrorLevel.WARN),

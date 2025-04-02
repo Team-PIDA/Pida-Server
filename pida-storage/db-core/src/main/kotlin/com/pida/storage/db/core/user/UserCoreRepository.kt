@@ -74,6 +74,11 @@ class UserCoreRepository(
             userJpaRepository.existsByEmailAndDeletedAtIsNull(email)
         }
 
+    override suspend fun existsByNickname(nickname: String): Boolean =
+        tx.reader.coExecute {
+            userJpaRepository.existsByNicknameAndDeletedAtIsNull(nickname)
+        }
+
     override suspend fun updateNickname(
         userKey: String,
         nickname: String,

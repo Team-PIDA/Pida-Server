@@ -25,6 +25,8 @@ interface UserRepository {
 
     suspend fun existsByEmail(email: String): Boolean
 
+    suspend fun existsByNickname(nickname: String): Boolean
+
     fun readUserByEmail(email: String): SocialUser?
 
     // Update
