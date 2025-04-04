@@ -5,6 +5,7 @@ import com.pida.presentation.v1.annotation.ApiV1Controller
 import com.pida.presentation.v1.blooming.request.AddBloomingRequest
 import com.pida.presentation.v1.blooming.response.AddBloomingResponse
 import com.pida.presentation.v1.blooming.response.BloomingDetailsResponse
+import com.pida.presentation.v1.blooming.response.VerifyTodayBloomingResponse
 import com.pida.user.User
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -34,4 +35,11 @@ class BloomingController(
     suspend fun bloomingDetailsFindBySpot(
         @PathVariable spotId: Long,
     ): BloomingDetailsResponse = BloomingDetailsResponse.from(bloomingService.readAllBloomingDetailsBySpotId(spotId))
+
+    @Operation(summary = "오늘의 개화 상태 검증", description = "오늘의 개화 상태를 검증합니다.")
+    @GetMapping("/blooming/{spotId}/verify/today")
+    fun bloomingVerify(
+        @Parameter(hidden = true, required = false) user: User,
+        @PathVariable spotId: Long,
+    ): VerifyTodayBloomingResponse = VerifyTodayBloomingResponse.of(bloomingService.verifyTodayBlooming(user.id, spotId))
 }

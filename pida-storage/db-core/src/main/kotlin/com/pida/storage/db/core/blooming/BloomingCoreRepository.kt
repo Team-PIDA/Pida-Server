@@ -53,4 +53,12 @@ class BloomingCoreRepository(
         txAdvice.readOnly {
             bloomingCustomRepository.recentlyBySpotIds(spotIds).map { it.toBlooming() }
         }
+
+    override fun findTodayBloomingByUserId(
+        userId: Long,
+        flowerSpotId: Long,
+    ): Blooming? =
+        txAdvice.readOnly {
+            bloomingCustomRepository.findTodayBloomingByUserId(userId, flowerSpotId)?.toBlooming()
+        }
 }

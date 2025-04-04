@@ -56,4 +56,12 @@ class BloomingService(
             details = details,
         )
     }
+
+    fun verifyTodayBlooming(
+        userId: Long,
+        spotId: Long,
+    ): Boolean {
+        val blooming = bloomingFinder.readTodayBloomingByUserId(userId, spotId)
+        return bloomingValidator.todayBloomingValidate(blooming)
+    }
 }
