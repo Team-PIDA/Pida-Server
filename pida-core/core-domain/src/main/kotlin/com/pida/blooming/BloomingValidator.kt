@@ -14,4 +14,9 @@ class BloomingValidator {
             }
         }
     }
+
+    fun todayBloomingValidate(blooming: Blooming?): Boolean =
+        blooming?.let {
+            it.createdAt.toLocalDate() == LocalDate.now()
+        } ?: false
 }

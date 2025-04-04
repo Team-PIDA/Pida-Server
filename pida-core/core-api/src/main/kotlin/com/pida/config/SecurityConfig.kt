@@ -142,7 +142,13 @@ class SecurityConfig(
             authorize.requestMatchers("/h2-console/**", "/actuator/**", "/ping").permitAll()
 
             // 그 외 모든 API는 JWT 인증 필요
-            authorize.requestMatchers("/api/v1/users/**", "/api/v1/users", "/api/v1/blooming").authenticated()
+            authorize
+                .requestMatchers(
+                    "/api/v1/users/**",
+                    "/api/v1/users",
+                    "/api/v1/blooming",
+                    "/api/v1/blooming/{spotId}/verify/today",
+                ).authenticated()
 
             // 나머지도 다 인증
             authorize.anyRequest().authenticated()
