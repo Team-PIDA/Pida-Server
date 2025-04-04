@@ -5,6 +5,7 @@ import com.linecorp.kotlinjdsl.render.RenderContext
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.extension.createQuery
 import jakarta.persistence.EntityManager
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Repository
@@ -46,5 +47,27 @@ class BloomingCustomRepository(
             }
 
         return entityManager.createQuery(query, jdslRenderContext).resultList
+    }
+
+    fun findTodayBloomingByUserId(
+        userId: Long,
+        flowerSpotId: Long,
+    ): BloomingEntity? {
+        val startOfDay = LocalDate.now().atStartOfDay()
+        val endOfDay = startOfDay.plusDays(1)
+
+        val query =
+            jpql {
+                select(entity(BloomingEntity::class))
+                    .from(entity(BloomingEntity::class))
+                    .whereAnd(
+                        path(BloomingEntity::userId).eq(userId),
+                        path(BloomingEntity::flowerSpotId).eq(flowerSpotId),
+                        path(BloomingEntity::createdAt).greaterThanOrEqualTo(startOfDay),
+                        path(BloomingEntity::createdAt).lessThan(endOfDay),
+                    )
+            }
+
+        return entityManager.createQuery(query, jdslRenderContext).resultList.firstOrNull()
     }
 }
