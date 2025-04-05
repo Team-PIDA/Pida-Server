@@ -1,0 +1,2 @@
+fcm:
+  key-json: ${FIREBASE_KEY_JSON}
