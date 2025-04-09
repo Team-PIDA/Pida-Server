@@ -6,7 +6,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "recent_reporter")
+@Table(name = "t_recent_reporter")
 class RecentReporterEntity(
     val userId: Long,
     val flowerSpotId: Long,

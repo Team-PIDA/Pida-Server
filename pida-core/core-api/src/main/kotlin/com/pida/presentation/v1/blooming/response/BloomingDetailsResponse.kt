@@ -3,6 +3,7 @@ package com.pida.presentation.v1.blooming.response
 import com.pida.blooming.BloomingDetails
 import com.pida.blooming.BloomingStatusDetails
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDate
 
 @Schema(description = "개화 상태 상세 조회 응답 Json")
 data class BloomingDetailsResponse(
@@ -50,12 +51,18 @@ data class BloomingDetailsResponse(
     """,
     )
     val details: Map<String, Map<String, BloomingStatusDetails>>,
+    @Schema(description = "최근 제보자 닉네임", example = "피다")
+    val nickname: String? = null,
+    @Schema(description = "최근 제보한 날짜", example = "2025-04-10")
+    val updatedAt: LocalDate? = null,
 ) {
     companion object {
         fun from(bloomingDetails: BloomingDetails): BloomingDetailsResponse =
             BloomingDetailsResponse(
                 totalCount = bloomingDetails.totalCount,
                 details = bloomingDetails.details,
+                nickname = bloomingDetails.nickname,
+                updatedAt = bloomingDetails.updatedAt?.toLocalDate(),
             )
     }
 }

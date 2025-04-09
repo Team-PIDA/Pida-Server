@@ -1,3 +1,5 @@
 package com.pida.reporter
 
-interface RecentReporterRepository
+interface RecentReporterRepository {
+    suspend fun findRecentlyByFlowerSpotId(flowerSpotId: Long): RecentReporter?
+}
