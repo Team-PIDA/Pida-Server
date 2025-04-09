@@ -1,5 +1,6 @@
 package com.pida.presentation.v1.blooming
 
+import com.pida.blooming.BloomingFacade
 import com.pida.blooming.BloomingService
 import com.pida.presentation.v1.annotation.ApiV1Controller
 import com.pida.presentation.v1.blooming.request.AddBloomingRequest
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody
 @ApiV1Controller
 class BloomingController(
     private val bloomingService: BloomingService,
+    private val bloomingFacade: BloomingFacade,
 ) {
     @Operation(summary = "개화 상태 추가", description = "개화 상태를 추가합니다.")
     @PostMapping("/blooming")
@@ -34,7 +36,7 @@ class BloomingController(
     @GetMapping("/blooming/{spotId}/details")
     suspend fun bloomingDetailsFindBySpot(
         @PathVariable spotId: Long,
-    ): BloomingDetailsResponse = BloomingDetailsResponse.from(bloomingService.readAllBloomingDetailsBySpotId(spotId))
+    ): BloomingDetailsResponse = BloomingDetailsResponse.from(bloomingFacade.readBloomingDetailsBySpotId(spotId))
 
     @Operation(summary = "오늘의 개화 상태 검증", description = "오늘의 개화 상태를 검증합니다.")
     @GetMapping("/blooming/{spotId}/verify/today")

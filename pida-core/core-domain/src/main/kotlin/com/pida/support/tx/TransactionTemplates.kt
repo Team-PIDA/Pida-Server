@@ -40,6 +40,14 @@ suspend fun <T> TransactionTemplate.coExecute(
         this@coExecute.execute { block() }
     } ?: throw ErrorException(ErrorType.FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR)
 
+suspend fun <T> TransactionTemplate.coExecuteNullable(
+    coroutineContext: CoroutineContext = Dispatchers.IO,
+    block: () -> T?,
+): T? =
+    withContext(coroutineContext) {
+        this@coExecuteNullable.execute { block() }
+    }
+
 // 일반 블록용 확장
 fun <T> TransactionTemplate.executeOrThrow(block: () -> T): T =
     this.execute { block() } ?: throw ErrorException(ErrorType.FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR)
