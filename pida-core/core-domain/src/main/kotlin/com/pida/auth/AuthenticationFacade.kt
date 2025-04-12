@@ -11,7 +11,7 @@ class AuthenticationFacade(
     private val userService: UserService,
     private val authenticationService: AuthenticationService,
 ) {
-    fun socialLogin(
+    suspend fun socialLogin(
         deviceId: String,
         credentialSocial: CredentialSocial,
     ): Pair<Boolean, Token> {
@@ -35,7 +35,7 @@ class AuthenticationFacade(
         return isNewUser to token
     }
 
-    fun createNewSocialUser(credentialSocial: CredentialSocial): Pair<SocialUser, Boolean> {
+    suspend fun createNewSocialUser(credentialSocial: CredentialSocial): Pair<SocialUser, Boolean> {
         val newUser =
             userService.create(
                 NewUser(

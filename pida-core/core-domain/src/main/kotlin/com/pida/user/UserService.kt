@@ -10,7 +10,7 @@ class UserService(
     private val userDeleter: UserDeleter,
     private val userValidator: UserValidator,
 ) {
-    fun create(newUser: NewUser): User {
+    suspend fun create(newUser: NewUser): User {
         userValidator.verifyEmail(newUser.email)
         return userAppender.create(newUser)
     }
@@ -26,7 +26,7 @@ class UserService(
         password: String,
     ): User = userReader.readUser(loginId, password)
 
-    fun updateNickname(
+    suspend fun updateNickname(
         userKey: String,
         updateNickname: UpdateNickname,
     ): UserProfile {
@@ -34,7 +34,7 @@ class UserService(
         return userUpdater.updateNickname(userKey, updateNickname)
     }
 
-    fun updateName(
+    suspend fun updateName(
         userKey: String,
         name: String,
     ): UserProfile {

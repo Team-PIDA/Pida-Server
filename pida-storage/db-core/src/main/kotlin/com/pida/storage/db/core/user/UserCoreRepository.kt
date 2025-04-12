@@ -69,13 +69,13 @@ class UserCoreRepository(
             userJpaRepository.findByEmailAndDeletedAtIsNull(email)?.toSocialUser()
         }
 
-    override fun existsByEmail(email: String): Boolean =
-        txAdvice.readOnly {
+    override suspend fun existsByEmail(email: String): Boolean =
+        tx.reader.coExecute {
             userJpaRepository.existsByEmailAndDeletedAtIsNull(email)
         }
 
-    override fun existsByNickname(nickname: String): Boolean =
-        txAdvice.readOnly {
+    override suspend fun existsByNickname(nickname: String): Boolean =
+        tx.reader.coExecute {
             userJpaRepository.existsByNicknameAndDeletedAtIsNull(nickname)
         }
 

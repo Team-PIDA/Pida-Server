@@ -76,7 +76,7 @@ class AuthController(
 
     @Operation(summary = "애플 소셜 로그인", description = "애플 소셜 로그인합니다.")
     @PostMapping("/auth/social-login/apple")
-    fun socialAppleLogin(
+    suspend fun socialAppleLogin(
         @RequestBody request: TokenRequest,
     ): TokenResponse {
         val socialInfo = oAuthService.getAppleUserInfo(request.token)
@@ -97,7 +97,7 @@ class AuthController(
 
     @Operation(summary = "소셜 회원가입", description = "소셜 회원 가입합니다.")
     @PostMapping("/auth/social-signup")
-    fun socialSignUp(
+    suspend fun socialSignUp(
         @RequestBody request: SignUpSocialRequest,
     ): SignUpResponse {
         val tempUser = userService.getSocialUserByEmail(request.email)
@@ -105,7 +105,6 @@ class AuthController(
             throw ErrorException(ErrorType.NOT_FOUND_DATA)
         } else {
             userService.updateName(tempUser.key, request.name)
-//            userService.updateNickname(tempUser.key, UpdateNickname(request.name))
         }
         return SignUpResponse("회원가입에 성공했습니다.")
     }

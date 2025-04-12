@@ -23,9 +23,9 @@ interface UserRepository {
 
     suspend fun readAllByUserIds(userIds: List<Long>): List<UserProfile>
 
-    fun existsByEmail(email: String): Boolean
+    suspend fun existsByEmail(email: String): Boolean
 
-    fun existsByNickname(nickname: String): Boolean
+    suspend fun existsByNickname(nickname: String): Boolean
 
     fun readUserByEmail(email: String): SocialUser?
 

@@ -47,7 +47,7 @@ class UserController(
 
     @Operation(summary = "닉네임 수정", description = "닉네임을 수정합니다.")
     @PutMapping("/users/nickname")
-    fun updateNickname(
+    suspend fun updateNickname(
         @Parameter(hidden = true, required = false) user: User,
         @RequestBody request: UpdateNicknameRequest,
     ): UserProfileResponse {
