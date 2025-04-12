@@ -37,7 +37,10 @@ class UserService(
     suspend fun updateName(
         userKey: String,
         name: String,
-    ): UserProfile = userUpdater.updateName(userKey, name)
+    ): UserProfile {
+        userValidator.verifyNickname(name)
+        return userUpdater.updateName(userKey, name)
+    }
 
     suspend fun updateEmail(
         userKey: String,
@@ -50,7 +53,7 @@ class UserService(
         userValidator.verifyEmail(email)
     }
 
-    suspend fun deleteUser(newUserWithdrawal: NewUserWithdrawal) {
+    fun deleteUser(newUserWithdrawal: NewUserWithdrawal) {
         userDeleter.deleteUser(newUserWithdrawal.user.key)
     }
 }

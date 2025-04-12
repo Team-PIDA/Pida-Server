@@ -24,7 +24,7 @@ class AuthenticationFacade(
                 createNewSocialUser(credentialSocial)
             }
 
-        val isNewUser = isUserNew || socialUser.name.isBlank()
+        val isNewUser = isUserNew || socialUser.name.isNullOrBlank()
 
         val token =
             authenticationService.socialLogin(
@@ -39,7 +39,7 @@ class AuthenticationFacade(
         val newUser =
             userService.create(
                 NewUser(
-                    name = "",
+                    name = credentialSocial.name,
                     email = credentialSocial.email,
                     socialId = credentialSocial.socialId,
                     socialType = credentialSocial.socialType,
@@ -50,7 +50,7 @@ class AuthenticationFacade(
             SocialUser(
                 id = newUser.id,
                 key = newUser.key,
-                name = "",
+                name = credentialSocial.name,
                 socialId = credentialSocial.socialId,
                 socialType = credentialSocial.socialType,
             )

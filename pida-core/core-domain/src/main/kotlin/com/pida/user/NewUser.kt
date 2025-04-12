@@ -10,7 +10,7 @@ import com.pida.auth.SocialType
  * @property nickname 닉네임
  */
 data class NewUser(
-    val name: String,
+    val name: String?,
     val nickname: String? = null,
     val email: String,
     val password: String? = null,

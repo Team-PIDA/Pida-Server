@@ -18,10 +18,10 @@ import jakarta.persistence.Table
 class UserEntity(
     @Column(name = "user_key")
     val userKey: String,
-    var name: String,
+    var name: String?,
     var nickname: String?,
     var email: String,
-    private var password: String?,
+    val password: String?,
     private var socialId: String?,
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(50)")
