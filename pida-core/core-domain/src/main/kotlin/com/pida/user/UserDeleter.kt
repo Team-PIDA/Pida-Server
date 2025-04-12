@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 class UserDeleter(
     private val userRepository: UserRepository,
 ) {
-    suspend fun deleteUser(userKey: String) {
+    fun deleteUser(userKey: String) {
         userRepository.delete(userKey)
     }
 }

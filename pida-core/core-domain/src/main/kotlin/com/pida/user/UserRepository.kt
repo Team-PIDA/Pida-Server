@@ -30,12 +30,12 @@ interface UserRepository {
     fun readUserByEmail(email: String): SocialUser?
 
     // Update
-    suspend fun updateNickname(
+    fun updateNickname(
         userKey: String,
         nickname: String,
     ): UserProfile
 
-    suspend fun updateName(
+    fun updateName(
         userKey: String,
         name: String,
     ): UserProfile
@@ -46,5 +46,5 @@ interface UserRepository {
     ): UserProfile
 
     // Delete
-    suspend fun delete(userKey: String)
+    fun delete(userKey: String)
 }

@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component
 class UserUpdater(
     private val userRepository: UserRepository,
 ) {
-    suspend fun updateNickname(
+    fun updateNickname(
         userKey: String,
         updateNickname: UpdateNickname,
     ): UserProfile = userRepository.updateNickname(userKey, updateNickname.nickname)
 
-    suspend fun updateName(
+    fun updateName(
         userKey: String,
         name: String,
     ): UserProfile = userRepository.updateName(userKey, name)
