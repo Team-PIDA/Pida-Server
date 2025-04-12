@@ -15,7 +15,7 @@ class UserValidator(
         val EMAIL_REGEX = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}\$")
     }
 
-    suspend fun verifyEmail(email: String) {
+    fun verifyEmail(email: String) {
         if (!email.matches(EMAIL_REGEX)) {
             throw AuthenticationErrorException(AuthenticationErrorType.INVALID_LOGIN_ID_FORMAT)
         }
@@ -25,7 +25,7 @@ class UserValidator(
         }
     }
 
-    suspend fun verifyNickname(nickname: String) {
+    fun verifyNickname(nickname: String) {
         if (nickname.isBlank()) {
             throw ErrorException(ErrorType.NICKNAME_IS_BLANK)
         }

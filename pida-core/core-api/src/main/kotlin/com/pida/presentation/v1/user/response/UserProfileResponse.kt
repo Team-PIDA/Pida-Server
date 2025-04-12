@@ -13,7 +13,7 @@ data class UserProfileResponse(
     @Schema(description = "이메일", example = "test@test.com")
     val email: String,
     @Schema(description = "이름", example = "차윤범")
-    val name: String,
+    val name: String?,
     @Schema(description = "닉네임", example = "윤범초이")
     val nickname: String,
 ) {

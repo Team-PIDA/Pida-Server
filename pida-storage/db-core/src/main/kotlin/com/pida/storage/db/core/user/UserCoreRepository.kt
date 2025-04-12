@@ -69,34 +69,35 @@ class UserCoreRepository(
             userJpaRepository.findByEmailAndDeletedAtIsNull(email)?.toSocialUser()
         }
 
-    override suspend fun existsByEmail(email: String): Boolean =
-        tx.reader.coExecute {
+    override fun existsByEmail(email: String): Boolean =
+        txAdvice.readOnly {
             userJpaRepository.existsByEmailAndDeletedAtIsNull(email)
         }
 
-    override suspend fun existsByNickname(nickname: String): Boolean =
-        tx.reader.coExecute {
+    override fun existsByNickname(nickname: String): Boolean =
+        txAdvice.readOnly {
             userJpaRepository.existsByNicknameAndDeletedAtIsNull(nickname)
         }
 
-    override suspend fun updateNickname(
+    override fun updateNickname(
         userKey: String,
         nickname: String,
     ): UserProfile =
-        tx.writer.coExecute {
+        txAdvice.write {
             val user = userJpaRepository.findByUserKeyAndDeletedAtIsNull(userKey) ?: throw ErrorException(ErrorType.NOT_FOUND_DATA)
             user.updateNickname(nickname)
-            return@coExecute user.toProfile()
+            return@write user.toProfile()
         }
 
-    override suspend fun updateName(
+    override fun updateName(
         userKey: String,
         name: String,
     ): UserProfile =
-        tx.writer.coExecute {
+        txAdvice.write {
             val user = userJpaRepository.findByUserKeyAndDeletedAtIsNull(userKey) ?: throw ErrorException(ErrorType.NOT_FOUND_DATA)
             user.updateName(name)
-            return@coExecute user.toProfile()
+            user.updateNickname(name)
+            return@write user.toProfile()
         }
 
     override suspend fun updateEmail(
@@ -109,8 +110,8 @@ class UserCoreRepository(
             return@coExecute user.toProfile()
         }
 
-    override suspend fun delete(userKey: String) =
-        tx.writer.coExecute {
+    override fun delete(userKey: String) =
+        txAdvice.write {
             val user = userJpaRepository.findByUserKeyAndDeletedAtIsNull(userKey) ?: throw ErrorException(ErrorType.NOT_FOUND_DATA)
             user.softDelete()
         }

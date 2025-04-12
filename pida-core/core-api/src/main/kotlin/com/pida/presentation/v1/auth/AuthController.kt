@@ -16,7 +16,6 @@ import com.pida.presentation.v1.auth.response.SignUpResponse
 import com.pida.presentation.v1.auth.response.TokenResponse
 import com.pida.support.error.ErrorException
 import com.pida.support.error.ErrorType
-import com.pida.user.UpdateNickname
 import com.pida.user.User
 import com.pida.user.UserService
 import io.swagger.v3.oas.annotations.Operation
@@ -77,7 +76,7 @@ class AuthController(
 
     @Operation(summary = "애플 소셜 로그인", description = "애플 소셜 로그인합니다.")
     @PostMapping("/auth/social-login/apple")
-    suspend fun socialAppleLogin(
+    fun socialAppleLogin(
         @RequestBody request: TokenRequest,
     ): TokenResponse {
         val socialInfo = oAuthService.getAppleUserInfo(request.token)
@@ -88,7 +87,7 @@ class AuthController(
                 credentialSocial =
                     CredentialSocial(
                         email = socialInfo.email,
-                        name = "",
+                        name = null,
                         socialId = socialInfo.id,
                         socialType = SocialType.APPLE,
                     ),
@@ -98,17 +97,15 @@ class AuthController(
 
     @Operation(summary = "소셜 회원가입", description = "소셜 회원 가입합니다.")
     @PostMapping("/auth/social-signup")
-    suspend fun socialSignUp(
+    fun socialSignUp(
         @RequestBody request: SignUpSocialRequest,
     ): SignUpResponse {
         val tempUser = userService.getSocialUserByEmail(request.email)
         if (tempUser == null) {
             throw ErrorException(ErrorType.NOT_FOUND_DATA)
         } else {
-            // 회원가입 시 name
             userService.updateName(tempUser.key, request.name)
-            // DisplayName = nickname
-            userService.updateNickname(tempUser.key, UpdateNickname(request.name))
+//            userService.updateNickname(tempUser.key, UpdateNickname(request.name))
         }
         return SignUpResponse("회원가입에 성공했습니다.")
     }

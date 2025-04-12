@@ -23,19 +23,19 @@ interface UserRepository {
 
     suspend fun readAllByUserIds(userIds: List<Long>): List<UserProfile>
 
-    suspend fun existsByEmail(email: String): Boolean
+    fun existsByEmail(email: String): Boolean
 
-    suspend fun existsByNickname(nickname: String): Boolean
+    fun existsByNickname(nickname: String): Boolean
 
     fun readUserByEmail(email: String): SocialUser?
 
     // Update
-    suspend fun updateNickname(
+    fun updateNickname(
         userKey: String,
         nickname: String,
     ): UserProfile
 
-    suspend fun updateName(
+    fun updateName(
         userKey: String,
         name: String,
     ): UserProfile
@@ -46,5 +46,5 @@ interface UserRepository {
     ): UserProfile
 
     // Delete
-    suspend fun delete(userKey: String)
+    fun delete(userKey: String)
 }

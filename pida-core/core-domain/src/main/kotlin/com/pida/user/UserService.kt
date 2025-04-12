@@ -10,7 +10,7 @@ class UserService(
     private val userDeleter: UserDeleter,
     private val userValidator: UserValidator,
 ) {
-    suspend fun create(newUser: NewUser): User {
+    fun create(newUser: NewUser): User {
         userValidator.verifyEmail(newUser.email)
         return userAppender.create(newUser)
     }
@@ -26,7 +26,7 @@ class UserService(
         password: String,
     ): User = userReader.readUser(loginId, password)
 
-    suspend fun updateNickname(
+    fun updateNickname(
         userKey: String,
         updateNickname: UpdateNickname,
     ): UserProfile {
@@ -34,10 +34,13 @@ class UserService(
         return userUpdater.updateNickname(userKey, updateNickname)
     }
 
-    suspend fun updateName(
+    fun updateName(
         userKey: String,
         name: String,
-    ): UserProfile = userUpdater.updateName(userKey, name)
+    ): UserProfile {
+        userValidator.verifyNickname(name)
+        return userUpdater.updateName(userKey, name)
+    }
 
     suspend fun updateEmail(
         userKey: String,
@@ -50,7 +53,7 @@ class UserService(
         userValidator.verifyEmail(email)
     }
 
-    suspend fun deleteUser(newUserWithdrawal: NewUserWithdrawal) {
+    fun deleteUser(newUserWithdrawal: NewUserWithdrawal) {
         userDeleter.deleteUser(newUserWithdrawal.user.key)
     }
 }

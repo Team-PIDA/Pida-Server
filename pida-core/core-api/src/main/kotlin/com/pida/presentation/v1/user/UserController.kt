@@ -33,7 +33,7 @@ class UserController(
 
     @Operation(summary = "회원탈퇴", description = "회원탈퇴를 진행합니다.")
     @DeleteMapping("/users")
-    suspend fun withdrawal(
+    fun withdrawal(
         @Parameter(hidden = true, required = false) user: User,
     ): UserWithdrawalResponse {
         userService.deleteUser(
@@ -47,7 +47,7 @@ class UserController(
 
     @Operation(summary = "닉네임 수정", description = "닉네임을 수정합니다.")
     @PutMapping("/users/nickname")
-    suspend fun updateNickname(
+    fun updateNickname(
         @Parameter(hidden = true, required = false) user: User,
         @RequestBody request: UpdateNicknameRequest,
     ): UserProfileResponse {
