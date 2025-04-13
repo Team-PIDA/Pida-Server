@@ -52,7 +52,7 @@ line_kotlin_jdsl = "3.4.1"
 spring_mockk = "4.0.2"
 
 # firebase
-firebase = "9.2.0"
+firebase = "9.4.0"
 
 # OpenFeign
 spring_cloud_openfeign = "4.2.0"
