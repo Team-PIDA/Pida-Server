@@ -1,6 +1,7 @@
 package com.pida.fixture.flowerspot
 
 import com.navercorp.fixturemonkey.kotlin.setExp
+import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpot
 import com.pida.flowerspot.GeoJson
 import com.pida.flowerspot.Region
@@ -17,6 +18,7 @@ object FlowerSpotFixture {
             setExp(FlowerSpot::geom, GeoJson.LineString(listOf(listOf(127.123456, 37.123456), listOf(127.654321, 37.654321))))
             setExp(FlowerSpot::pinPoint, GeoJson.Point(listOf(127.123456, 37.123456)))
             setExp(FlowerSpot::region, Region.SEOUL)
+            setExp(FlowerSpot::kind, FlowerKind.BLOSSOM)
             setExp(FlowerSpot::deletedAt, null)
         }
 
@@ -31,6 +33,7 @@ object FlowerSpotFixture {
                 setExp(FlowerSpot::geom, GeoJson.LineString(listOf(listOf(127.123456, 37.123456), listOf(127.654321, 37.654321))))
                 setExp(FlowerSpot::pinPoint, GeoJson.Point(listOf(127.123456, 37.123456)))
                 setExp(FlowerSpot::region, Region.SEOUL)
+                setExp(FlowerSpot::kind, FlowerKind.BLOSSOM)
                 setExp(FlowerSpot::deletedAt, null)
             },
             fixtureBuilder<FlowerSpot> {
@@ -42,6 +45,7 @@ object FlowerSpotFixture {
                 setExp(FlowerSpot::geom, GeoJson.LineString(listOf(listOf(127.123456, 37.123456), listOf(127.654321, 37.654321))))
                 setExp(FlowerSpot::pinPoint, GeoJson.Point(listOf(127.123456, 37.123456)))
                 setExp(FlowerSpot::region, Region.SEOUL)
+                setExp(FlowerSpot::kind, FlowerKind.BLOSSOM)
                 setExp(FlowerSpot::deletedAt, null)
             },
             fixtureBuilder<FlowerSpot> {
@@ -53,6 +57,7 @@ object FlowerSpotFixture {
                 setExp(FlowerSpot::geom, GeoJson.LineString(listOf(listOf(127.123456, 37.123456), listOf(127.654321, 37.654321))))
                 setExp(FlowerSpot::pinPoint, GeoJson.Point(listOf(127.123456, 37.123456)))
                 setExp(FlowerSpot::region, Region.SEOUL)
+                setExp(FlowerSpot::kind, FlowerKind.BLOSSOM)
                 setExp(FlowerSpot::deletedAt, null)
             },
         )
