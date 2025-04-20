@@ -1,6 +1,7 @@
 package com.pida.presentation.v1.flowerspot.response
 
 import com.pida.blooming.BloomingStatus
+import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpotDetails
 import com.pida.flowerspot.GeoJson
 import com.pida.flowerspot.Region
@@ -53,7 +54,7 @@ data class FlowerSpotResponseDto(
     )
     val geom: GeoJson,
     @Schema(
-        description = "핀포인트 정보 (GeoJson)",
+        description = "핀 포인트 정보 (GeoJson)",
         example = """
         {
           "type": "Point",
@@ -64,6 +65,8 @@ data class FlowerSpotResponseDto(
     val pinPoint: GeoJson,
     @Schema(description = "지역", example = "SEOUL")
     val region: Region,
+    @Schema(description = "꽃 종류", example = "BLOSSOM")
+    val kind: FlowerKind,
     @Schema(description = "삭제 여부")
     val deletedAt: LocalDateTime?,
 ) {
@@ -80,6 +83,7 @@ data class FlowerSpotResponseDto(
                 geom = flowerSpot.geom,
                 pinPoint = flowerSpot.pinPoint,
                 region = flowerSpot.region,
+                kind = flowerSpot.kind,
                 deletedAt = flowerSpot.deletedAt,
             )
     }
