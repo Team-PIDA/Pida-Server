@@ -1,5 +1,6 @@
 package com.pida.storage.db.core.flowerspot
 
+import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpot
 import com.pida.flowerspot.GeoJson
 import com.pida.flowerspot.Region
@@ -26,6 +27,9 @@ class FlowerSpotEntity(
     val geom: LineString,
     @Column(columnDefinition = "geometry(Point, 4326)")
     val pinPoint: Point,
+    @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "varchar(30)")
+    val kind: FlowerKind,
 ) : BaseEntity() {
     fun toFlowerSpot(): FlowerSpot =
         FlowerSpot(
@@ -37,6 +41,7 @@ class FlowerSpotEntity(
             geom = GeoJson.LineString(geom.coordinates.map { listOf(it.x, it.y) }),
             pinPoint = GeoJson.Point(listOf(pinPoint.x, pinPoint.y)),
             region = region,
+            kind = kind,
             deletedAt = deletedAt,
         )
 }

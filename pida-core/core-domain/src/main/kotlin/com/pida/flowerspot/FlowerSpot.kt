@@ -11,5 +11,6 @@ data class FlowerSpot(
     val geom: GeoJson, // LineString GeoJson
     val pinPoint: GeoJson, // Point GeoJson
     val region: Region,
+    val kind: FlowerKind,
     val deletedAt: LocalDateTime?,
 )

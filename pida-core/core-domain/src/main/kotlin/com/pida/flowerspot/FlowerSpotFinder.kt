@@ -33,12 +33,12 @@ class FlowerSpotFinder(
 
     suspend fun readBy(spotId: Long): FlowerSpot = flowerSpotRepository.findBy(spotId)
 
-    suspend fun findByCondition(condition: FindSpotPolicyCondition): List<FlowerSpot> =
+    suspend fun findByCondition(condition: FindFlowerSpotPolicyCondition): List<FlowerSpot> =
         when (condition) {
-            FindSpotPolicyCondition.All -> readAll()
-            is FindSpotPolicyCondition.ByRegion -> readAllByRegion(condition.region)
-            is FindSpotPolicyCondition.ByLocation -> readAllByLocation(condition.location)
-            is FindSpotPolicyCondition.ByRegionAndLocation -> readAllByLocationAndRegion(condition.region, condition.location)
+            FindFlowerSpotPolicyCondition.All -> readAll()
+            is FindFlowerSpotPolicyCondition.ByRegion -> readAllByRegion(condition.region)
+            is FindFlowerSpotPolicyCondition.ByLocation -> readAllByLocation(condition.location)
+            is FindFlowerSpotPolicyCondition.ByRegionAndLocation -> readAllByLocationAndRegion(condition.region, condition.location)
         }
 
     suspend fun readAllByLocation(location: FlowerSpotLocation): List<FlowerSpot> = flowerSpotRepository.findAllByLocation(location)

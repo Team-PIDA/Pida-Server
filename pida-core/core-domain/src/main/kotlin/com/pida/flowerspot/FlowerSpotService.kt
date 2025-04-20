@@ -12,10 +12,10 @@ class FlowerSpotService(
     ): List<FlowerSpot> {
         val condition =
             when {
-                !location.isNotSet() && region == null -> FindSpotPolicyCondition.All
-                !location.isNotSet() -> FindSpotPolicyCondition.ByRegion(region!!)
-                region == null -> FindSpotPolicyCondition.ByLocation(location)
-                else -> FindSpotPolicyCondition.ByRegionAndLocation(region, location)
+                !location.isNotSet() && region == null -> FindFlowerSpotPolicyCondition.All
+                !location.isNotSet() -> FindFlowerSpotPolicyCondition.ByRegion(region!!)
+                region == null -> FindFlowerSpotPolicyCondition.ByLocation(location)
+                else -> FindFlowerSpotPolicyCondition.ByRegionAndLocation(region, location)
             }
         return flowerSpotFinder.findByCondition(condition)
     }

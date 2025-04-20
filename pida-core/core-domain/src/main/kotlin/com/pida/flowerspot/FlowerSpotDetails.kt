@@ -15,6 +15,7 @@ data class FlowerSpotDetails(
     val geom: GeoJson, // LineString GeoJson
     val pinPoint: GeoJson, // Point GeoJson
     val region: Region,
+    val kind: FlowerKind,
     val deletedAt: LocalDateTime?,
 ) {
     companion object {
@@ -32,6 +33,7 @@ data class FlowerSpotDetails(
             geom = flowerSpot.geom,
             pinPoint = flowerSpot.pinPoint,
             region = flowerSpot.region,
+            kind = flowerSpot.kind,
             deletedAt = flowerSpot.deletedAt,
         )
     }
