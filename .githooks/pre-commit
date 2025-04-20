@@ -1,14 +1,12 @@
 #!/bin/sh
 
-targetFiles=$(git diff --staged --name-only)
-
 echo "Apply Ktlint.."
 ./gradlew ktlintFormat
 ./gradlew ktlintCheck
 
-# Add files to stage spotless applied
-for file in $targetFiles; do
-  if test -f "$file"; then
-    git add $file
+# 변경된 파일 다시 스테이지
+git diff --name-only | while read file; do
+  if [ -f "$file" ]; then
+    git add "$file"
   fi
 done
