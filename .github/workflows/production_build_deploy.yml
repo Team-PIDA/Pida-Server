@@ -2,7 +2,7 @@ name: Production Build & Deploy
 
 on:
   push:
-    branches:
+    branches-ignore:
       - release
 
 # permission can be added at job level or workflow level

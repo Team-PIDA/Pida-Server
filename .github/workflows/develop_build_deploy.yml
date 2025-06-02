@@ -2,7 +2,7 @@ name: Development Build & Deploy
 
 on:
   push:
-    branches:
+    branches-ignore:
       - develop
 
 # permission can be added at job level or workflow level
