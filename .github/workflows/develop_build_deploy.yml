@@ -2,7 +2,7 @@ name: Development Build & Deploy
 
 on:
   push:
-    branches-ignore:
+    branches:
       - develop
 
 # permission can be added at job level or workflow level
@@ -72,12 +72,21 @@ jobs:
           tags: |
             type=sha,prefix=
 
+      # 멀티 아키텍처 지원을 위한 QEMU 설정
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # 도커 확장 빌드를 위한 Buildx 설정
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       # Docker 이미지 빌드 및 도커허브로 푸시
       - name: Docker Build and Push
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./docker/DockerfileDev
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
 
@@ -107,9 +116,5 @@ jobs:
           script: |
             echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
             cd ~/app
-            docker compose down
-
-            docker compose pull
-            docker compose up -d --force-recreate
-
+            docker compose up -d
             docker image prune -a -f
