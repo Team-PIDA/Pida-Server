@@ -2,8 +2,8 @@ name: Development Build & Deploy
 
 on:
   push:
-    branches-ignore:
-      - develop
+    branches:
+      - chore/deploy-v2
 
 # permission can be added at job level or workflow level
 permissions:
