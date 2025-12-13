@@ -115,9 +115,5 @@ jobs:
           script: |
             echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
             cd ~/app
-            docker compose down
-
-            docker compose pull
-            docker compose up -d --force-recreate
-
+            docker compose up -d
             docker image prune -a -f
