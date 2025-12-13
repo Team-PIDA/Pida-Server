@@ -72,6 +72,14 @@ jobs:
           tags: |
             type=sha,prefix=
 
+      # 멀티 아키텍처 지원을 위한 QEMU 설정
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # 도커 확장 빌드를 위한 Buildx 설정
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       # Docker 이미지 빌드 및 도커허브로 푸시
       - name: Docker Build and Push
         uses: docker/build-push-action@v5
