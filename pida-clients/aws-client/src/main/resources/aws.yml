@@ -1,0 +1,53 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+cloud:
+  aws:
+    region: ap-northeast-2
+    credentials:
+      access-key: ${AWS_ACCESS_KEY:test_access_key}
+      secret-key: ${AWS_SECRET_KEY:test_secret_key}
+    s3:
+      bucket: ${AWS_S3_IMAGE_BUCKET:test_bucket}
+      image-origin-url: ${AWS_S3_IMAGE_ORIGIN_URL}
+    stack:
+      auto: false
+    connection-time-out: 900000
+    socket-time-out: 900000
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+cloud:
+  aws:
+    region: ap-northeast-2
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    s3:
+      bucket: ${AWS_S3_IMAGE_BUCKET}
+      image-origin-url: ${AWS_S3_IMAGE_ORIGIN_URL}
+    stack:
+      auto: false
+    connection-time-out: 900000
+    socket-time-out: 900000
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+cloud:
+  aws:
+    region: ap-northeast-2
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    s3:
+      bucket: ${AWS_S3_IMAGE_BUCKET}
+      image-origin-url: ${AWS_S3_IMAGE_ORIGIN_URL}
+    stack:
+      auto: false
+    connection-time-out: 900000
+    socket-time-out: 900000

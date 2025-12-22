@@ -40,7 +40,7 @@ swaggerVersion = "2.8.5"
 sentry = "7.3.0"
 
 # AWS version
-aws = "2.25.47"
+aws = "2.40.13"
 
 # Slack Version
 slack = "1.39.2"
