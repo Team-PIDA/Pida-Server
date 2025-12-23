@@ -71,7 +71,7 @@ class BloomingFacade(
         bloomingService.add(newBlooming)
 
         return BloomingImageUploadUrl.from(
-            imageS3Caller.createUploadUrl(newBlooming.userId, ImagePrefix.FLOWERSPOT.value),
+            imageS3Caller.createUploadUrl(newBlooming.userId, ImagePrefix.FLOWERSPOT.value, newBlooming.flowerSpotId),
         )
     }
 }

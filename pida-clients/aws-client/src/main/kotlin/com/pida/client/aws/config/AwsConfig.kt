@@ -46,7 +46,7 @@ class AwsConfig(
     }
 
     @Bean(destroyMethod = "close")
-    fun s3Presigner(): S3Presigner { // Presigned URL 생성 전용 클라이언트
+    fun s3Presigner(): S3Presigner {
         val client =
             S3Presigner
                 .builder()

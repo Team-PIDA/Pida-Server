@@ -17,8 +17,9 @@ class ImageS3Processor(
     override fun createUploadUrl(
         userId: Long,
         prefix: String,
+        prefixId: Long,
     ): S3ImageUrl {
-        val imageFilePath = imageFileConstructor.imageFilePath(userId, prefix)
+        val imageFilePath = imageFileConstructor.imageFilePath(userId, prefix, prefixId)
         val imageFileName = imageFileConstructor.imageFileName()
 
         val presignedUrl =

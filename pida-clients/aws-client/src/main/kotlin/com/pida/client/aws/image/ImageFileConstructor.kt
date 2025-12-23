@@ -20,12 +20,13 @@ class ImageFileConstructor(
     /**
      * @param prefix [String] S3 key prefix: 도메인별 분리
      */
-    fun imageFilePath( // 이미지가 저장될 S3 key prefix 생성
+    fun imageFilePath(
         userId: Long,
         prefix: String,
+        prefixId: Long,
     ): String {
         val profile = environment.activeProfiles.firstOrNull() ?: "dev"
-        return "$profile/$prefix/$userId"
+        return "$profile/$prefix/$prefixId/$userId"
     }
 
     private fun randomFileName(): String =
