@@ -20,11 +20,11 @@ class PresignedUrlRateLimiter {
         if (!probe.isConsumed) {
             throw ErrorException(
                 ErrorType.EXCEED_RATE_LIMIT,
-                RateLimitMeta(retryAfterSeconds(probe)),
             )
         }
     }
 
+    // TODO: 향후 Retry-After 헤더로 활용할 수 있음
     private fun retryAfterSeconds(probe: ConsumptionProbe): Long = TimeUnit.NANOSECONDS.toSeconds(probe.nanosToWaitForRefill)
 
     fun resolveBucket(userId: Long): Bucket =

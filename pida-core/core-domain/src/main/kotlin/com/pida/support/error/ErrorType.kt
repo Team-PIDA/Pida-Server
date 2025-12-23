@@ -55,5 +55,5 @@ enum class ErrorType(
     ALREADY_BLOOMING(409, ErrorKind.CLIENT_ERROR, "하루에 한번만 가능합니다.", ErrorLevel.WARN),
 
     /** Rate Limit */
-    EXCEED_RATE_LIMIT(429, ErrorKind.FORBIDDEN_ERROR, "요청 횟수 제한을 초과했습니다.", ErrorLevel.WARN),
+    EXCEED_RATE_LIMIT(429, ErrorKind.TOO_MANY_REQUESTS, "요청 횟수 제한을 초과했습니다.", ErrorLevel.WARN),
 }
