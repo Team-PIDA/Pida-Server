@@ -3,6 +3,7 @@ package com.pida.client.aws.image
 import com.pida.client.aws.config.AwsProperties
 import com.pida.client.aws.s3.AwsS3Client
 import com.pida.support.aws.ImageS3Caller
+import com.pida.support.aws.PresignedUrlRateLimiter
 import com.pida.support.aws.S3ImageUrl
 import org.springframework.stereotype.Component
 import java.time.Duration
@@ -12,13 +13,15 @@ class ImageS3Processor(
     private val awsS3Client: AwsS3Client,
     private val awsProperties: AwsProperties,
     private val imageFileConstructor: ImageFileConstructor,
+    private val rateLimiter: PresignedUrlRateLimiter,
 ) : ImageS3Caller {
-
     override fun createUploadUrl(
         userId: Long,
         prefix: String,
         prefixId: Long,
     ): S3ImageUrl {
+        rateLimiter.consumeToken(userId)
+
         val imageFilePath = imageFileConstructor.imageFilePath(userId, prefix, prefixId)
         val imageFileName = imageFileConstructor.imageFileName()
 

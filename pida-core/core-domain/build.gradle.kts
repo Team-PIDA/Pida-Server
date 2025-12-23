@@ -14,4 +14,7 @@ dependencies {
     // Arrow Kt
     implementation(libs.arrow.fx.coroutine)
     implementation(libs.arrow.fx.stm)
+
+    // Bucket4j
+    implementation(libs.bucket4j.core)
 }

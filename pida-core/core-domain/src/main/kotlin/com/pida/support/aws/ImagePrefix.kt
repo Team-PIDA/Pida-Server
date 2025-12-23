@@ -4,5 +4,4 @@ enum class ImagePrefix(
     val value: String,
 ) {
     FLOWERSPOT("flowerspot"),
-    ;
 }

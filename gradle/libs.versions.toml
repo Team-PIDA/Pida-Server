@@ -59,6 +59,9 @@ spring_cloud_openfeign = "4.2.0"
 openfeign_hc5 = "13.1"
 openfeign_micrometer = "13.1"
 
+# Bucket4j
+bucket4j = "8.15.0"
+
 [plugins]
 # Kotlin Plugins
 kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -185,6 +188,9 @@ aws_sdk_s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
 
 # Firebase
 firebase = { module = "com.google.firebase:firebase-admin", version.ref = "firebase" }
+
+# Bucket4j
+bucket4j_core = { module = "com.bucket4j:bucket4j_jdk17-core", version.ref = "bucket4j" }
 
 [bundles]
 line_kotlin_jdsl = ["line_kotlin_jdsl_jpql_dsl", "line_kotlin_jdsl_jpql_render", "line_kotlin_jdsl_spring_data_jpa_support"]

@@ -18,7 +18,8 @@ class AwsConfig(
     private val env: Environment,
 ) {
     @Bean
-    fun credentialProvider(): AwsCredentialsProvider = // AWS 인증 전략
+    fun credentialProvider(): AwsCredentialsProvider =
+        // AWS 인증 전략
         env
             .takeIf { "local" in it.activeProfiles }
             ?.let {

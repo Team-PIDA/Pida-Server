@@ -7,4 +7,3 @@ interface ImageS3Caller {
         prefixId: Long,
     ): S3ImageUrl
 }
-
