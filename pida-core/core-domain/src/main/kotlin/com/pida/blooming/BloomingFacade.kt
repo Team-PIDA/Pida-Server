@@ -1,6 +1,8 @@
 package com.pida.blooming
 
 import com.pida.reporter.RecentReporterService
+import com.pida.support.aws.ImagePrefix
+import com.pida.support.aws.ImageS3Caller
 import com.pida.user.UserService
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -13,6 +15,7 @@ class BloomingFacade(
     private val bloomingService: BloomingService,
     private val recentReporterService: RecentReporterService,
     private val userService: UserService,
+    private val imageS3Caller: ImageS3Caller,
 ) {
     suspend fun readBloomingDetailsBySpotId(flowerSpotId: Long): BloomingDetails =
         coroutineScope {
@@ -63,4 +66,12 @@ class BloomingFacade(
                 details = details,
             )
         }
+
+    suspend fun uploadBloomingStatus(newBlooming: NewBlooming): BloomingImageUploadUrl {
+        bloomingService.add(newBlooming)
+
+        return BloomingImageUploadUrl.from(
+            imageS3Caller.createUploadUrl(newBlooming.userId, ImagePrefix.FLOWERSPOT.value),
+        )
+    }
 }

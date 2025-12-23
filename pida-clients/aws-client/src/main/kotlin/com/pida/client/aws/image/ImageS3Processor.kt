@@ -17,17 +17,16 @@ class ImageS3Processor(
     override fun createUploadUrl(
         userId: Long,
         prefix: String,
-        extension: String
     ): S3ImageUrl {
         val imageFilePath = imageFileConstructor.imageFilePath(userId, prefix)
-        val imageFileName = imageFileConstructor.imageFileName(extension)
+        val imageFileName = imageFileConstructor.imageFileName()
 
         val presignedUrl =
             awsS3Client.generateUploadUrl(
                 awsProperties.s3.bucket,
                 imageFilePath,
                 imageFileName,
-                Duration.ofSeconds(30),
+                Duration.ofSeconds(30), // 만료 시간 최소화
             )
 
         return S3ImageUrl(

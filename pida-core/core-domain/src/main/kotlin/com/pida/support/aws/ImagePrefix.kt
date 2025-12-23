@@ -1,9 +1,8 @@
 package com.pida.support.aws
 
-enum class ImagePrefix {
-    FLOWERSPOT,
+enum class ImagePrefix(
+    val value: String,
+) {
+    FLOWERSPOT("flowerspot"),
     ;
 }
-
-val ImagePrefix.value: String
-    get() = name.lowercase()
