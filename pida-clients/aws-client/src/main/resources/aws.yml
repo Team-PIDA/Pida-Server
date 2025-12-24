@@ -13,8 +13,8 @@ cloud:
       image-origin-url: ${AWS_S3_IMAGE_ORIGIN_URL}
     stack:
       auto: false
-    connection-time-out: 900000
-    socket-time-out: 900000
+    connection-time-out: 5000
+    socket-time-out: 30000
 ---
 spring:
   config:
