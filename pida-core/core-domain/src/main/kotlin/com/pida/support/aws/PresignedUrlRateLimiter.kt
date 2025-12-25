@@ -14,7 +14,7 @@ class PresignedUrlRateLimiter {
     private val buckets: Cache<Long, Bucket> =
         Caffeine
             .newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .expireAfterAccess(2, TimeUnit.MINUTES)
             .maximumSize(100_000)
             .build()
 
