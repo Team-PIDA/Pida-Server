@@ -20,9 +20,9 @@ class ImageS3Processor(
         prefix: String,
         prefixId: Long,
     ): S3ImageUrl {
-        rateLimiter.consumeToken(userId)
+        rateLimiter.consume(userId)
 
-        val imageFilePath = imageFileConstructor.imageFilePath(userId, prefix, prefixId)
+        val imageFilePath = imageFileConstructor.imageFilePath(prefix, prefixId)
         val imageFileName = imageFileConstructor.imageFileName()
 
         val presignedUrl =

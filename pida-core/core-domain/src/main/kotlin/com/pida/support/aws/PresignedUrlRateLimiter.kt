@@ -18,7 +18,7 @@ class PresignedUrlRateLimiter {
             .maximumSize(100_000)
             .build()
 
-    fun consumeToken(userId: Long) {
+    fun consume(userId: Long) {
         val bucket =
             buckets.get(userId) {
                 Bucket
