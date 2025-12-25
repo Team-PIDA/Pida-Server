@@ -62,6 +62,9 @@ openfeign_micrometer = "13.1"
 # Bucket4j
 bucket4j = "8.15.0"
 
+# Caffeine
+caffeine = "3.2.3"
+
 [plugins]
 # Kotlin Plugins
 kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -191,6 +194,9 @@ firebase = { module = "com.google.firebase:firebase-admin", version.ref = "fireb
 
 # Bucket4j
 bucket4j_core = { module = "com.bucket4j:bucket4j_jdk17-core", version.ref = "bucket4j" }
+
+# Caffeine
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 
 [bundles]
 line_kotlin_jdsl = ["line_kotlin_jdsl_jpql_dsl", "line_kotlin_jdsl_jpql_render", "line_kotlin_jdsl_spring_data_jpa_support"]

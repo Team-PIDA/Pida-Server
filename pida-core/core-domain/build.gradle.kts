@@ -17,4 +17,7 @@ dependencies {
 
     // Bucket4j
     implementation(libs.bucket4j.core)
+
+    // Caffeine
+    implementation(libs.caffeine)
 }
