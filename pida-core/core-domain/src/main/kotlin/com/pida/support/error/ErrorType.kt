@@ -53,4 +53,7 @@ enum class ErrorType(
     FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR(400, ErrorKind.CLIENT_ERROR, "트랜잭션 템플릿 실행에 실패하였습니다.", ErrorLevel.ERROR),
     DUPLICATED_EMAIL(409, ErrorKind.CLIENT_ERROR, "이미 존재하는 이메일입니다.", ErrorLevel.WARN),
     ALREADY_BLOOMING(409, ErrorKind.CLIENT_ERROR, "하루에 한번만 가능합니다.", ErrorLevel.WARN),
+
+    /** Rate Limit */
+    EXCEED_RATE_LIMIT(429, ErrorKind.TOO_MANY_REQUESTS, "요청 횟수 제한을 초과했습니다.", ErrorLevel.WARN),
 }

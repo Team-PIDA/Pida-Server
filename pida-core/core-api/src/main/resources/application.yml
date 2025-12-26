@@ -18,7 +18,7 @@ spring:
       - oauth.yml
       - rsa.yml
       - notification.yml
-#      - aws.yml
+      - aws.yml
   web.resources.add-mappings: false
 
 server:

@@ -6,7 +6,4 @@ dependencies {
 
     testImplementation(libs.spring.boot.starter.web)
     testImplementation(testFixtures(project(":pida-tests:test-container")))
-
-    // AWS
-    implementation(libs.aws.sdk.s3)
 }
