@@ -35,7 +35,48 @@ class ImageS3Processor(
 
         return S3ImageUrl(
             presignedUrl,
-            "${awsProperties.s3.imageOriginUrl}$imageFilePath/$imageFileName",
+            presignedGet(imageFilePath, imageFileName),
         )
     }
+
+    override suspend fun getImageUrl(
+        prefix: String,
+        prefixId: Long,
+        fileName: String?,
+    ): List<String> {
+        val imageFilePath = imageFileConstructor.imageFilePath(prefix, prefixId)
+
+        return fileName
+            ?.let {
+                listOf(presignedGet(imageFilePath, it)) // fileName이 있으면 특정 이미지 조회
+            } ?: listPresignedGets(imageFilePath) // 아니면 해당 경로 아래 모든 이미지 탐색
+    }
+
+    private fun presignedGet(
+        filePath: String,
+        fileName: String,
+        ttl: Duration = Duration.ofSeconds(30),
+    ): String =
+        awsS3Client.generateUrl(
+            bucketName = awsProperties.s3.bucket,
+            filePath = filePath,
+            fileName = fileName,
+            ttl = ttl,
+        )
+
+    private fun listPresignedGets(
+        filePath: String,
+        ttl: Duration = Duration.ofSeconds(30),
+    ): List<String> =
+        awsS3Client
+            .getBucketListObjects(
+                bucketName = awsProperties.s3.bucket,
+                filePath = filePath,
+            ).contents()
+            .orEmpty()
+            .asSequence()
+            .filterNot { it.key().endsWith("/") }
+            .map { it.key().substringAfterLast("/") }
+            .map { presignedGet(filePath, it, ttl) }
+            .toList()
 }

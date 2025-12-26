@@ -16,12 +16,14 @@ data class FlowerSpotDetails(
     val pinPoint: GeoJson, // Point GeoJson
     val region: Region,
     val kind: FlowerKind,
+    val imageUrls: List<String> = emptyList(),
     val deletedAt: LocalDateTime?,
 ) {
     companion object {
         fun of(
             flowerSpot: FlowerSpot,
             bloomings: List<Blooming>,
+            imageUrls: List<String> = emptyList(),
         ) = FlowerSpotDetails(
             id = flowerSpot.id,
             address = flowerSpot.address,
@@ -34,6 +36,7 @@ data class FlowerSpotDetails(
             pinPoint = flowerSpot.pinPoint,
             region = flowerSpot.region,
             kind = flowerSpot.kind,
+            imageUrls = imageUrls,
             deletedAt = flowerSpot.deletedAt,
         )
     }
