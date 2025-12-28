@@ -35,10 +35,11 @@ class FirebaseCloudMessageSender(
             ).setApnsConfig(
                 ApnsConfig
                     .builder()
+                    .putCustomData("destination", request.destination)
                     .setAps(
                         Aps
                             .builder()
-                            .setAlert("${request.title}\n${request.body}")
+                            .setAlert(request.body)
                             .setBadge(1)
                             .setSound("default")
                             .build(),
@@ -48,6 +49,7 @@ class FirebaseCloudMessageSender(
     fun sendEachForMulticastAll(
         title: String,
         body: String,
+        destination: String,
         fcmTokens: List<String>,
     ): BatchResponse? {
         val notification =
@@ -64,10 +66,11 @@ class FirebaseCloudMessageSender(
                 .setApnsConfig(
                     ApnsConfig
                         .builder()
+                        .putCustomData("destination", destination)
                         .setAps(
                             Aps
                                 .builder()
-                                .setAlert("$title\n$body")
+                                .setAlert(body)
                                 .setBadge(1)
                                 .setSound("default")
                                 .build(),

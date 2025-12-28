@@ -5,6 +5,7 @@ data class FirebaseCloudMessage(
     val fcmToken: String,
     val title: String,
     val body: String,
+    val destination: String,
     val tryCount: Int,
     val sent: Boolean,
 )

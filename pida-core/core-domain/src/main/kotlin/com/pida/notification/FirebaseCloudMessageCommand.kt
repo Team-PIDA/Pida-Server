@@ -1,6 +1,6 @@
-package com.pida.client.notification
+package com.pida.notification
 
-data class FcmSendRequest(
+data class FirebaseCloudMessageCommand(
     val fcmToken: String,
     val title: String,
     val body: String,
