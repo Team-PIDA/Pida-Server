@@ -2,8 +2,6 @@ spring.application.name: pida-server
 spring.profiles.active: ${SPRING_PROFILES_ACTIVE}
 
 spring:
-  main:
-    lazy-initialization: true
   threads:
     virtual:
       enabled: true

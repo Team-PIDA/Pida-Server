@@ -9,9 +9,9 @@ data class Page<T>(
             content: List<T>,
             totalCount: Long,
         ): Page<T> {
-            require(totalCount >= 0) { "totalCount ($totalCount) cannot be negative" }
+            require(totalCount >= 0) { "totalCount ($totalCount)는 음수일 수 없습니다" }
             require(totalCount >= content.size) {
-                "totalCount ($totalCount) cannot be smaller than content.size (${content.size})"
+                "totalCount ($totalCount)는 content.size (${content.size})보다 작을 수 없습니다"
             }
             val count = if (content.isEmpty()) 0 else totalCount
             return Page(content, count)

@@ -14,9 +14,9 @@ data class Cursor<T>(
             nextCursor: Long?,
             size: Long,
         ): Cursor<T> {
-            require(size >= 0) { "size ($size) must be greater than or equal to 0" }
+            require(size >= 0) { "size ($size)는 0 이상이어야 합니다" }
             require(size >= content.size) {
-                "totalCount ($size) cannot be smaller than content.size (${content.size})"
+                "size ($size)는 content.size (${content.size})보다 작을 수 없습니다"
             }
             return Cursor(content, nextCursor, size)
         }
