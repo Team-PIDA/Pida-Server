@@ -22,6 +22,7 @@ class FcmSender(
                         fcmToken = it.fcmToken,
                         title = it.title,
                         body = it.body,
+                        destination = it.destination,
                         tryCount = 0,
                         sent = false,
                     )
