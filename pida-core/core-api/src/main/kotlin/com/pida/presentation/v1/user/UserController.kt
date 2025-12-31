@@ -1,7 +1,9 @@
 package com.pida.presentation.v1.user
 
 import com.pida.auth.AuthenticationService
+import com.pida.client.oauth.OAuthService
 import com.pida.presentation.v1.annotation.ApiV1Controller
+import com.pida.presentation.v1.user.request.AppleRefreshTokenRequest
 import com.pida.presentation.v1.user.request.UpdateNicknameRequest
 import com.pida.presentation.v1.user.response.UserProfileResponse
 import com.pida.presentation.v1.user.response.UserWithdrawalResponse
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody
 class UserController(
     private val userService: UserService,
     private val authenticationService: AuthenticationService,
+    private val oAuthService: OAuthService,
 ) {
     @Operation(summary = "내 정보 조회", description = "내 정보를 조회합니다.")
     @GetMapping("/users/me")
@@ -35,6 +38,7 @@ class UserController(
     @DeleteMapping("/users")
     fun withdrawal(
         @Parameter(hidden = true, required = false) user: User,
+        @RequestBody request: AppleRefreshTokenRequest,
     ): UserWithdrawalResponse {
         userService.deleteUser(
             NewUserWithdrawal(
@@ -42,6 +46,8 @@ class UserController(
             ),
         )
         authenticationService.delete(user.key)
+
+        oAuthService.revokeApple(request.refreshToken)
         return UserWithdrawalResponse("회원탈퇴가 완료되었습니다.")
     }
 

@@ -10,8 +10,17 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import com.pida.support.error.AuthenticationErrorException
 import com.pida.support.error.AuthenticationErrorType
+import io.jsonwebtoken.Jwts
 import org.springframework.stereotype.Component
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.security.KeyFactory
+import java.security.PrivateKey
+import java.security.spec.PKCS8EncodedKeySpec
 import java.text.ParseException
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.Base64
 import java.util.Date
 
 @Component
@@ -40,6 +49,16 @@ class AppleClient internal constructor(
         }
     }
 
+    fun revoke(token: String) {
+        val clientSecret = generateAppleClientSecret()
+
+        appleApi.revokeToken(
+            appleProperties.bundleId,
+            clientSecret,
+            token,
+        )
+    }
+
     fun verify(token: String): Boolean {
         val signedJWT: SignedJWT
         val jwtClaims: JWTClaimsSet
@@ -54,7 +73,6 @@ class AppleClient internal constructor(
             return false
         }
         val currentDate = Date(System.currentTimeMillis())
-        // audience 확인 부분 개선
         val bundleId = jwtClaims.audience.firstOrNull()
         if (bundleId != appleProperties.bundleId) return false
 
@@ -81,5 +99,56 @@ class AppleClient internal constructor(
             }
         }
         return false
+    }
+
+    fun generateAppleClientSecret(): String {
+        val expirationDate =
+            Date.from(
+                LocalDateTime
+                    .now()
+                    .plusMinutes(5)
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant(),
+            )
+
+        val teamId = appleProperties.teamId
+        val clientId = appleProperties.bundleId
+        val keyId = appleProperties.keyId
+
+        val now = Date()
+
+        val jwtBuilder =
+            Jwts
+                .builder()
+                .header()
+                .add("kid", keyId)
+                .add("alg", "ES256")
+                .and()
+                .issuer(teamId)
+                .issuedAt(now)
+                .expiration(expirationDate)
+                .audience()
+                .add("https://appleid.apple.com")
+                .and()
+                .subject(clientId)
+
+        return jwtBuilder
+            .signWith(getPrivateKey())
+            .compact()
+    }
+
+    fun getPrivateKey(): PrivateKey {
+        val p8 = appleProperties.privateKey
+        val keyContent =
+            Files
+                .readAllLines(Paths.get(p8))
+                .filterNot { it.startsWith("-----") }
+                .joinToString("")
+
+        val decoded = Base64.getDecoder().decode(keyContent)
+        val keySpec = PKCS8EncodedKeySpec(decoded)
+        val keyFactory = KeyFactory.getInstance("EC")
+
+        return keyFactory.generatePrivate(keySpec)
     }
 }

@@ -25,4 +25,8 @@ class OAuthService(
         if (!appleClient.verify(token)) throw AuthenticationErrorException(AuthenticationErrorType.INVALID_APPLE_TOKEN)
         return appleClient.getUserInfo(token)
     }
+
+    fun revokeApple(refreshToken: String) {
+        appleClient.revoke(refreshToken)
+    }
 }
