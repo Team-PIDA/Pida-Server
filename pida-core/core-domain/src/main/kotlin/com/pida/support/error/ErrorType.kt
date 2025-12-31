@@ -56,4 +56,6 @@ enum class ErrorType(
 
     /** Rate Limit */
     EXCEED_RATE_LIMIT(429, ErrorKind.TOO_MANY_REQUESTS, "요청 횟수 제한을 초과했습니다.", ErrorLevel.WARN),
+
+    NOT_FOUND_FCM_CREDENTIALS(500, ErrorKind.INTERNAL_SERVER_ERROR, "FCM 인증 정보가 없습니다.", ErrorLevel.ERROR),
 }
