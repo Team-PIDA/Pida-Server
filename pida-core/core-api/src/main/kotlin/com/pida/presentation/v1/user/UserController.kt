@@ -3,11 +3,14 @@ package com.pida.presentation.v1.user
 import com.pida.auth.AuthenticationService
 import com.pida.presentation.v1.annotation.ApiV1Controller
 import com.pida.presentation.v1.user.request.UpdateNicknameRequest
+import com.pida.presentation.v1.user.request.UserMobileDeviceRequest
+import com.pida.presentation.v1.user.response.UserMobileDeviceResponse
 import com.pida.presentation.v1.user.response.UserProfileResponse
 import com.pida.presentation.v1.user.response.UserWithdrawalResponse
 import com.pida.user.NewUserWithdrawal
 import com.pida.user.User
 import com.pida.user.UserService
+import com.pida.user.device.UserDeviceService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -15,12 +18,14 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 
 @Tag(name = "\uD83E\uDDCD\uD83C\uDFFB User API", description = "유저 관련 API")
 @ApiV1Controller
 class UserController(
     private val userService: UserService,
     private val authenticationService: AuthenticationService,
+    private val userDeviceService: UserDeviceService,
 ) {
     @Operation(summary = "내 정보 조회", description = "내 정보를 조회합니다.")
     @GetMapping("/users/me")
@@ -53,5 +58,16 @@ class UserController(
     ): UserProfileResponse {
         val userProfile = userService.updateNickname(user.key, request.toUpdateNickname())
         return UserProfileResponse.of(userProfile)
+    }
+
+    @Operation(summary = "FCM 토큰 추가 및 갱신", description = "사용자의 FCM 토큰을 추가하거나 갱신합니다.")
+    @PutMapping("/users/fcm-token")
+    fun appendFcmToken(
+        @Parameter(hidden = true, required = false) user: User,
+        @RequestHeader("X-DEVICE-ID") deviceId: String?,
+        @RequestBody request: UserMobileDeviceRequest,
+    ): UserMobileDeviceResponse {
+        userDeviceService.append(request.toCreate(user, deviceId))
+        return UserMobileDeviceResponse("FcmToken 등록 완료")
     }
 }
