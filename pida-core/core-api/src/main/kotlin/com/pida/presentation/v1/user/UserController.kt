@@ -63,7 +63,7 @@ class UserController(
     @Operation(summary = "FCM 토큰 추가 및 갱신", description = "사용자의 FCM 토큰을 추가하거나 갱신합니다.")
     @PutMapping("/users/fcm-token")
     fun appendFcmToken(
-        user: User,
+        @Parameter(hidden = true, required = false) user: User,
         @RequestHeader("X-DEVICE-ID") deviceId: String?,
         @RequestBody request: UserMobileDeviceRequest,
     ): UserMobileDeviceResponse {
