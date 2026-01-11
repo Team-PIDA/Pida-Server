@@ -6,9 +6,6 @@ import org.springframework.stereotype.Service
 class UserLocationService(
     private val userLocationRepository: UserLocationRepository,
 ) {
-    fun updateUserLocation(
-        userId: Long,
-        latitude: Double,
-        longitude: Double,
-    ): UserLocation.Info = userLocationRepository.saveOrUpdate(userId, latitude, longitude)
+    fun updateUserLocation(command: UserLocationCommand): UserLocation.Info =
+        userLocationRepository.saveOrUpdate(command.userId, command.latitude, command.longitude)
 }
