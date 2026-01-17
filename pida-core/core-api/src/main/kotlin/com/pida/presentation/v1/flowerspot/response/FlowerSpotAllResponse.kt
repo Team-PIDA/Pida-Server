@@ -67,6 +67,12 @@ data class FlowerSpotResponseDto(
     val region: Region,
     @Schema(description = "꽃 종류", example = "BLOSSOM")
     val kind: FlowerKind,
+    @Schema(
+        description = "미리보기 이미지 URL",
+        example = "https://example.com/image1.jpg",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+    )
+    val previewUrl: String?,
     @Schema(description = "삭제 여부")
     val deletedAt: LocalDateTime?,
 ) {
@@ -84,6 +90,7 @@ data class FlowerSpotResponseDto(
                 pinPoint = flowerSpot.pinPoint,
                 region = flowerSpot.region,
                 kind = flowerSpot.kind,
+                previewUrl = flowerSpot.imageUrls.firstOrNull(),
                 deletedAt = flowerSpot.deletedAt,
             )
     }
