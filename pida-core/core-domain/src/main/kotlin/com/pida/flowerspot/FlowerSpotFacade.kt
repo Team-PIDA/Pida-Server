@@ -44,6 +44,12 @@ class FlowerSpotFacade(
             FlowerSpotDetails.of(
                 flowerSpot = flowerSpot,
                 bloomings = recentlyBlooming.groupBy { it.flowerSpotId }[flowerSpot.id] ?: emptyList(),
+                imageUrls =
+                    imageS3Caller.getImageUrl(
+                        prefix = ImagePrefix.FLOWERSPOT.value,
+                        prefixId = flowerSpot.id,
+                        fileName = null,
+                    ),
             )
         }
     }
