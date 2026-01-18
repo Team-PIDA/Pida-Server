@@ -3,8 +3,6 @@ package com.pida.scheduler
 import com.pida.support.extension.logger
 import com.pida.weather.WeatherLocation
 import com.pida.weather.WeatherService
-import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 /**
@@ -17,12 +15,13 @@ class WeatherTestScheduler(
 ) {
     private val logger by logger()
 
+    // TODO: 테스트 용이니 해당 메서스는 추가 디벨롭으로 푸시 알림 개발
+//    @Scheduled(fixedRate = 60000, initialDelay = 10000)
+
     /**
      * 10분(600,000ms)마다 날씨 데이터 조회 및 로깅
      * 서울 중구 기준 (위도: 37.5636, 경도: 126.9970, 격자 X: 60, 격자 Y: 127)
      */
-//    @Scheduled(fixedRate = 60000, initialDelay = 10000)
-    // TODO: 테스트 용이니 해당 메서스는 추가 디벨롭으로 푸시 알림 개발
     fun fetchAndLogWeather() {
         try {
             logger.info("=".repeat(80))
