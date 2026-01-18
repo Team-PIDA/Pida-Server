@@ -1,10 +1,8 @@
 package com.pida.client.weather
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
-import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -14,13 +12,14 @@ import java.time.format.DateTimeFormatter
  * API 문서: https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15084084
  */
 @Component
-class KmaWeatherClient(
-    @Value("\${kma.api.base-url:http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0}")
-    private val baseUrl: String,
-    @Value("\${kma.api.service-key:}")
+class KmaWeatherClient internal constructor(
+    // 단일 변수이니 properties 대신 value로 선언
+    @param:Value("\${kma.api.service-key:}")
     private val serviceKey: String,
-    private val webClient: WebClient,
+    private val kmaWeatherApi: KmaWeatherApi,
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     /**
      * 단기예보 조회
      *
@@ -37,23 +36,17 @@ class KmaWeatherClient(
         nx: Int,
         ny: Int,
         numOfRows: Int = 1000,
-    ): Mono<KmaWeatherResponse> =
-        webClient
-            .get()
-            .uri { uriBuilder ->
-                uriBuilder
-                    .path("/getVilageFcst")
-                    .queryParam("serviceKey", serviceKey)
-                    .queryParam("numOfRows", numOfRows)
-                    .queryParam("pageNo", 1)
-                    .queryParam("dataType", "JSON")
-                    .queryParam("base_date", baseDate)
-                    .queryParam("base_time", baseTime)
-                    .queryParam("nx", nx)
-                    .queryParam("ny", ny)
-                    .build()
-            }.retrieve()
-            .bodyToMono<KmaWeatherResponse>()
+    ): KmaWeatherResponse {
+        logger.info("Fetching Vilage Forecast: baseDate=$baseDate, baseTime=$baseTime, nx=$nx, ny=$ny")
+        return kmaWeatherApi.getVilageForecast(
+            serviceKey = serviceKey,
+            numOfRows = numOfRows,
+            baseDate = baseDate,
+            baseTime = baseTime,
+            nx = nx,
+            ny = ny,
+        )
+    }
 
     /**
      * 현재 시각 기준 최신 발표 시각 조회
@@ -87,20 +80,4 @@ class KmaWeatherClient(
 
         return Pair(baseDate, baseTime)
     }
-}
-
-/**
- * WebClient Bean 설정
- */
-@org.springframework.context.annotation.Configuration
-class KmaWebClientConfig {
-    @org.springframework.context.annotation.Bean
-    fun kmaWebClient(
-        @Value("\${kma.api.base-url:http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0}")
-        baseUrl: String,
-    ): WebClient =
-        WebClient
-            .builder()
-            .baseUrl(baseUrl)
-            .build()
 }

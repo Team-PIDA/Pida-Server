@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 @Service
 class WeatherServiceImpl(
     private val kmaWeatherClient: KmaWeatherClient,
-) : com.pida.weather.WeatherService {
+) : WeatherService {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun getWeather(location: WeatherLocation): Weather {
@@ -26,11 +26,12 @@ class WeatherServiceImpl(
         )
 
         val response =
-            kmaWeatherClient
-                .getVilageForecast(baseDate, baseTime, location.nx, location.ny)
-                .doOnError { error ->
-                    logger.error("Failed to fetch weather forecast", error)
-                }.block() ?: throw RuntimeException("Failed to fetch weather data")
+            try {
+                kmaWeatherClient.getVilageForecast(baseDate, baseTime, location.nx, location.ny)
+            } catch (error: Exception) {
+                logger.error("Failed to fetch weather forecast", error)
+                throw RuntimeException("Failed to fetch weather data", error)
+            }
 
         return parseWeatherResponse(response, location)
     }
