@@ -105,6 +105,7 @@ spring_restdocs_mockmvc = { module = "org.springframework.restdocs:spring-restdo
 spring_restdocs_restassured = { module = "org.springframework.restdocs:spring-restdocs-restassured" }
 spring_boot_starter_redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 spring_boot_starter_security = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring_boot_starter_webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
 spring_security_test = { module = "org.springframework.security:spring-security-test" }
 jakarta_annotation_api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotation" }
 bouncycastle_bcpkix = { module = "org.bouncycastle:bcpkix-jdk15on", version.ref = "bouncycastle" }
@@ -202,5 +203,6 @@ caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "c
 line_kotlin_jdsl = ["line_kotlin_jdsl_jpql_dsl", "line_kotlin_jdsl_jpql_render", "line_kotlin_jdsl_spring_data_jpa_support"]
 aws_client = ["aws_sdk_s3"]
 openfeign = ["spring_cloud_openfeign", "openfeign_hc5", "openfeign_micrometer"]
+jackson = ["jackson_kotlin", "jackson_datatype_jsr310"]
 testcontainers_postgres = ["test_containers_postgres", "spring_boot_testcontainers", "test_containers_junit_jupiter", "spring_boot_starter_test"]
 kotest = ["kotest_assertions", "kotest_property", "kotest_extensions"]
