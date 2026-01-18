@@ -1,6 +1,6 @@
 package com.pida.client.weather
 
-import org.slf4j.LoggerFactory
+import com.pida.support.extension.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -18,7 +18,7 @@ class KmaWeatherClient internal constructor(
     private val serviceKey: String,
     private val kmaWeatherApi: KmaWeatherApi,
 ) {
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val logger by logger()
 
     /**
      * 단기예보 조회

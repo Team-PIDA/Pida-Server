@@ -57,5 +57,10 @@ enum class ErrorType(
     /** Rate Limit */
     EXCEED_RATE_LIMIT(429, ErrorKind.TOO_MANY_REQUESTS, "요청 횟수 제한을 초과했습니다.", ErrorLevel.WARN),
 
+    /** FCM */
     NOT_FOUND_FCM_CREDENTIALS(500, ErrorKind.INTERNAL_SERVER_ERROR, "FCM 인증 정보가 없습니다.", ErrorLevel.ERROR),
+
+    /** Weather */
+    WEATHER_API_CALL_FAILED(500, ErrorKind.INTERNAL_SERVER_ERROR, "날씨 정보를 가져오는데 실패했습니다.", ErrorLevel.ERROR),
+    WEATHER_DATA_NOT_AVAILABLE(500, ErrorKind.INTERNAL_SERVER_ERROR, "날씨 데이터를 사용할 수 없습니다.", ErrorLevel.ERROR),
 }

@@ -1,13 +1,17 @@
 package com.pida.client.weather
 
+import com.pida.support.error.ErrorException
+import com.pida.support.error.ErrorType
+import com.pida.support.extension.logger
 import com.pida.weather.PrecipitationType
 import com.pida.weather.SkyCondition
 import com.pida.weather.Weather
 import com.pida.weather.WeatherLocation
 import com.pida.weather.WeatherService
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 /**
  * 날씨 서비스 구현체
@@ -16,7 +20,7 @@ import java.time.LocalDateTime
 class WeatherServiceImpl(
     private val kmaWeatherClient: KmaWeatherClient,
 ) : WeatherService {
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val logger by logger()
 
     override fun getWeather(location: WeatherLocation): Weather {
         val (baseDate, baseTime) = kmaWeatherClient.getLatestBaseTime()
@@ -30,7 +34,7 @@ class WeatherServiceImpl(
                 kmaWeatherClient.getVilageForecast(baseDate, baseTime, location.nx, location.ny)
             } catch (error: Exception) {
                 logger.error("Failed to fetch weather forecast", error)
-                throw RuntimeException("Failed to fetch weather data", error)
+                throw ErrorException(ErrorType.WEATHER_API_CALL_FAILED)
             }
 
         return parseWeatherResponse(response, location)
@@ -45,6 +49,11 @@ class WeatherServiceImpl(
     ): Weather {
         val items = response.response.body.items.item
 
+        if (items.isEmpty()) {
+            logger.warn("KMA response contains no forecast items for nx=${location.nx}, ny=${location.ny}")
+            throw ErrorException(ErrorType.WEATHER_DATA_NOT_AVAILABLE)
+        }
+
         // 현재 시각과 가장 가까운 예보 시각의 데이터 추출
         val now = LocalDateTime.now()
         val nearestForecast =
@@ -52,7 +61,7 @@ class WeatherServiceImpl(
                 .groupBy { "${it.fcstDate}${it.fcstTime}" }
                 .minByOrNull { (dateTime, _) ->
                     val forecastDateTime = parseForecastDateTime(dateTime)
-                    kotlin.math.abs(
+                    abs(
                         java.time.Duration
                             .between(now, forecastDateTime)
                             .toMinutes(),
@@ -99,7 +108,7 @@ class WeatherServiceImpl(
     private fun parseForecastDateTime(dateTime: String): LocalDateTime =
         LocalDateTime.parse(
             dateTime,
-            java.time.format.DateTimeFormatter
+            DateTimeFormatter
                 .ofPattern("yyyyMMddHHmm"),
         )
 
