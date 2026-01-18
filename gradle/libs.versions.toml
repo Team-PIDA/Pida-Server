@@ -105,7 +105,6 @@ spring_restdocs_mockmvc = { module = "org.springframework.restdocs:spring-restdo
 spring_restdocs_restassured = { module = "org.springframework.restdocs:spring-restdocs-restassured" }
 spring_boot_starter_redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 spring_boot_starter_security = { module = "org.springframework.boot:spring-boot-starter-security" }
-spring_boot_starter_webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
 spring_security_test = { module = "org.springframework.security:spring-security-test" }
 jakarta_annotation_api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotation" }
 bouncycastle_bcpkix = { module = "org.bouncycastle:bcpkix-jdk15on", version.ref = "bouncycastle" }
