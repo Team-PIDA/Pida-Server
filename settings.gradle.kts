@@ -29,6 +29,7 @@ include(
     "pida-clients:aws-client",
     "pida-clients:notification",
     "pida-clients:oauth-client",
+    "pida-clients:map-client",
 )
 
 include(
