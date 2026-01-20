@@ -17,6 +17,7 @@ spring:
       - rsa.yml
       - notification.yml
       - aws.yml
+      - weather.yml
       - map.yml
   web.resources.add-mappings: false
 
