@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":pida-clients:notification"))
     implementation(project(":pida-clients:oauth-client"))
     implementation(project(":pida-clients:weather-client"))
+    implementation(project(":pida-clients:map-client"))
     implementation(project(":pida-supports:swagger"))
 
     runtimeOnly(project(":pida-supports:logging"))
