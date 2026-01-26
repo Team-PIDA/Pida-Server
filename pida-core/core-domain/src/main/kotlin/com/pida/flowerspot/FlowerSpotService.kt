@@ -23,5 +23,10 @@ class FlowerSpotService(
 
     suspend fun readOneFlowerSpot(spotId: Long): FlowerSpot = flowerSpotFinder.readBy(spotId)
 
-    fun searchFlowerSpots(query: String): List<FlowerSpot> = flowerSpotFinder.searchByStreetName(query)
+    fun searchFlowerSpots(query: String): List<FlowerSpot> {
+        val trimmed = query.trim()
+        if (trimmed.isEmpty()) return emptyList()
+
+        return flowerSpotFinder.searchByStreetName(trimmed)
+    }
 }

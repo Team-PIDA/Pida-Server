@@ -24,7 +24,7 @@ class KakaoMapClient internal constructor(
                 radius = null,
             )
 
-        logger.info("Kakao Map search API requested: query='$query', found=${response.documents.size}")
+        logger.debug("Kakao Map search API requested: query='$query', found=${response.documents.size}")
 
         return response.documents.map { document ->
             NewLandmark(

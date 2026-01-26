@@ -15,7 +15,7 @@ data class FlowerSpotSearchResponse(
     )
     val landmarks: List<PlaceSearchResponse>,
     @field:ArraySchema(
-        schema = Schema(implementation = FlowerSpotResponseDto::class),
+        schema = Schema(implementation = PlaceSearchResponse::class),
         arraySchema = Schema(description = "벚꽃길 목록"),
     )
     val flowerSpots: List<PlaceSearchResponse>,

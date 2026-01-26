@@ -38,7 +38,7 @@ class LandmarkCoreRepository(
                     region = it.region,
                 )
             }
-        landmarkJpaRepository.saveAll(entities).map { it.toLandmark() }
+        landmarkJpaRepository.saveAll(entities)
     }
 
     override fun existsByName(name: String): Boolean = landmarkJpaRepository.existsByNameAndDeletedAtIsNull(name)

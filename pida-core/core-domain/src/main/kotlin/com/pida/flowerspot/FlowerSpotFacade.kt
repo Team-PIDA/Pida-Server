@@ -10,7 +10,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class FlowerSpotFacade(
@@ -66,7 +65,6 @@ class FlowerSpotFacade(
         }
     }
 
-    @Transactional
     suspend fun search(
         query: String,
         user: User?,

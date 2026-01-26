@@ -16,9 +16,9 @@ class SearchHistoryService(
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun handleSearchEvent(event: FlowerSpotSearchEvent) {
-        logger.info("Recording search history: query='${event.query}', userId='${event.userId}'")
+        logger.info("Recording search history: query='${event.query}', authenticated=${event.userId != null}")
 
-        return recordSearchHistory(
+        recordSearchHistory(
             query = event.query,
             userId = event.userId,
         )
