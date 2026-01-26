@@ -56,7 +56,7 @@ class FlowerSpotController(
 
     @Operation(summary = "랜드마크 및 벚꽃길 검색", description = "검색 우선순위에 맞게 랜드마크와 벚꽃길을 검색합니다.")
     @GetMapping("/flower-spot/search")
-    fun searchFlowerSpot(
+    suspend fun searchFlowerSpot(
         @RequestParam @Parameter(name = "query", description = "검색 키워드") query: String,
         @Parameter(hidden = true, required = false) user: User?,
     ): FlowerSpotSearchResponse {

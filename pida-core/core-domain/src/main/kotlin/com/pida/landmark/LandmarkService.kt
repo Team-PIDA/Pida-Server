@@ -14,7 +14,7 @@ class LandmarkService(
 ) {
     private val logger by logger()
 
-    fun searchLandmarks(query: String): List<Landmark> = landmarkFinder.searchByName(query)
+    suspend fun searchLandmarks(query: String): List<Landmark> = landmarkFinder.searchByName(query)
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)

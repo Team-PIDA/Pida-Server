@@ -67,7 +67,7 @@ class FlowerSpotFacade(
     }
 
     @Transactional
-    fun search(
+    suspend fun search(
         query: String,
         user: User?,
     ): FlowerSpotSearchResult {
@@ -78,7 +78,7 @@ class FlowerSpotFacade(
 
         val landmarks =
             if (hasEnough(cachedLandmarks)) {
-                // 캐시된 랜드마크가 충분한 경우 즉시 응답
+                // 캐시된 랜드마크가 충분한 경우 즉시 응답 후에 비동기적으로 보정
                 publishLandmarkFetchEvent(query, null)
                 cachedLandmarks
             } else {
