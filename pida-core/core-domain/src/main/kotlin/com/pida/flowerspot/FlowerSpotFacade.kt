@@ -1,6 +1,8 @@
 package com.pida.flowerspot
 
 import com.pida.blooming.BloomingService
+import com.pida.history.NewSearchHistory
+import com.pida.history.SearchHistoryService
 import com.pida.landmark.LandmarkSearchClient
 import com.pida.landmark.LandmarkService
 import com.pida.support.aws.ImagePrefix
@@ -16,6 +18,7 @@ class FlowerSpotFacade(
     private val flowerSpotService: FlowerSpotService,
     private val bloomingService: BloomingService,
     private val landmarkService: LandmarkService,
+    private val searchHistoryService: SearchHistoryService,
     private val landmarkSearchClient: LandmarkSearchClient,
     private val imageS3Caller: ImageS3Caller,
 ) {
@@ -66,10 +69,12 @@ class FlowerSpotFacade(
 
     fun search(
         query: String,
-        user: User,
+        user: User?,
     ): FlowerSpotSearchResult {
         val landmarks = landmarkService.searchLandmarks(query)
         val flowerSpots = flowerSpotService.searchFlowerSpots(query)
+
+        recordSearchHistory(user, query)
 
         // 랜드마크 데이터가 충분하면 바로 응답
         if (landmarks.size >= MIN_SEARCH_RESULT_COUNT) {
@@ -85,5 +90,18 @@ class FlowerSpotFacade(
             landmarks = apiLandmarks.map { it.toLandmark() },
             flowerSpots = flowerSpots,
         )
+    }
+
+    private fun recordSearchHistory(
+        user: User?,
+        query: String,
+    ) {
+        val searchHistory =
+            when (user) {
+                null -> NewSearchHistory.Anonymous(query = query)
+                else -> NewSearchHistory.Authenticated(userId = user.id, query = query)
+            }
+
+        searchHistoryService.add(searchHistory)
     }
 }

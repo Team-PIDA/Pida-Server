@@ -58,7 +58,7 @@ class FlowerSpotController(
     @GetMapping("/flower-spot/search")
     fun searchFlowerSpot(
         @RequestParam @Parameter(name = "query", description = "검색 키워드") query: String,
-        @Parameter(hidden = true, required = false) user: User,
+        @Parameter(hidden = true, required = false) user: User?,
     ): FlowerSpotSearchResponse {
         val searchResult = flowerSpotFacade.search(query, user)
 
