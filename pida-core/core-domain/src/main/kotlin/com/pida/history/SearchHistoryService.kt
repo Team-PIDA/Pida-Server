@@ -30,8 +30,8 @@ class SearchHistoryService(
     ) {
         val searchHistory =
             when (userId) {
-                null -> NewSearchHistory.Anonymous(query = query)
-                else -> NewSearchHistory.Authenticated(userId = userId, query = query)
+                null -> NewSearchHistory.Anonymous(query = query) // 익명 사용자
+                else -> NewSearchHistory.Authenticated(userId = userId, query = query) // 로그인한 사용자
             }
 
         add(searchHistory)

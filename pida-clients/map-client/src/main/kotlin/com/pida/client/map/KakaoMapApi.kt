@@ -34,4 +34,24 @@ internal interface KakaoMapApi {
         @RequestParam("y", required = false) y: String?,
         @RequestParam("radius", required = false) radius: Int?,
     ): KakaoSearchResponse
+
+    /**
+     * 카카오 로컬 좌표-행정구역 변환 API
+     *
+     * @param authorization 카카오 REST API 키 (형식: "KakaoAK {REST_API_KEY}")
+     * @param x 변환을 원하는 좌표의 X 혹은 경도(longitude) 값
+     * @param y 변환을 원하는 좌표의 Y 혹은 위도(latitude) 값
+     * @return 좌표에 해당하는 행정구역 정보
+     */
+    @RequestMapping(
+        method = [RequestMethod.GET],
+        value = ["/v2/local/geo/coord2regioncode"],
+        consumes = ["application/x-www-form-urlencoded;charset=utf-8"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+    )
+    fun convertToRegion(
+        @RequestHeader(name = "Authorization") authorization: String,
+        @RequestParam("x") x: String,
+        @RequestParam("y") y: String,
+    ): KakaoRegionResponse
 }
