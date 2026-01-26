@@ -3,8 +3,8 @@ package com.pida.presentation.v1.flowerspot.response
 import com.pida.blooming.BloomingStatus
 import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpotDetails
-import com.pida.flowerspot.GeoJson
-import com.pida.flowerspot.Region
+import com.pida.support.geo.GeoJson
+import com.pida.support.geo.Region
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime

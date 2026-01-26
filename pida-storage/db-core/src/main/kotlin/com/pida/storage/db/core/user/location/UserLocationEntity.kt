@@ -1,7 +1,7 @@
 package com.pida.storage.db.core.user.location
 
-import com.pida.flowerspot.GeoJson
 import com.pida.storage.db.core.support.BaseEntity
+import com.pida.support.geo.GeoJson
 import com.pida.user.location.UserLocation
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
