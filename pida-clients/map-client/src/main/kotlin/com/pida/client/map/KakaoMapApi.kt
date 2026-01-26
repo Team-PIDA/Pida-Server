@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 
 @FeignClient(value = "kakao-map-api", url = "https://dapi.kakao.com")
-internal interface KaKaoMapApi {
+internal interface KakaoMapApi {
     /**
      * 카카오 로컬 키워드 검색 API
      *
@@ -30,8 +30,8 @@ internal interface KaKaoMapApi {
         @RequestHeader(name = "Authorization") authorization: String,
         @RequestParam("query") query: String,
         @RequestParam("category_group_code", required = false) categoryGroupCode: String?,
-        @RequestParam("x", required = false) x: String,
-        @RequestParam("y", required = false) y: String,
-        @RequestParam("radius", required = false) radius: Int,
+        @RequestParam("x", required = false) x: String?,
+        @RequestParam("y", required = false) y: String?,
+        @RequestParam("radius", required = false) radius: Int?,
     ): KakaoSearchResponse
 }

@@ -16,3 +16,6 @@ spring:
   httpclient:
     max-connections: 2000
     max-connections-per-route: 500
+
+kakao:
+  rest-api-key: ${KAKAO_REST_API_KEY}
