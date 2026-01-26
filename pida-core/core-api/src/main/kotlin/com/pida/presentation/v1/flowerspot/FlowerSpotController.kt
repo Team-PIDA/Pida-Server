@@ -2,11 +2,14 @@ package com.pida.presentation.v1.flowerspot
 
 import com.pida.flowerspot.FlowerSpotFacade
 import com.pida.flowerspot.FlowerSpotLocation
-import com.pida.flowerspot.Region
 import com.pida.presentation.v1.annotation.ApiV1Controller
 import com.pida.presentation.v1.flowerspot.response.FlowerSpotAllResponse
 import com.pida.presentation.v1.flowerspot.response.FlowerSpotDetailsResponse
 import com.pida.presentation.v1.flowerspot.response.FlowerSpotResponseDto
+import com.pida.presentation.v1.flowerspot.response.FlowerSpotSearchResponse
+import com.pida.presentation.v1.flowerspot.response.PlaceSearchResponse
+import com.pida.support.geo.Region
+import com.pida.user.User
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -50,4 +53,34 @@ class FlowerSpotController(
         val flowerSpot = flowerSpotFacade.readFlowerSpotDetails(spotId)
         return FlowerSpotDetailsResponse.of(flowerSpot)
     }
+
+    @Operation(summary = "랜드마크 및 벚꽃길 검색 polling", description = "검색 우선순위에 맞게 랜드마크와 벚꽃길을 검색합니다.")
+    @GetMapping("/flower-spot/search")
+    fun searchFlowerSpot(
+        @RequestParam @Parameter(name = "query", description = "검색 키워드") query: String,
+        @Parameter(hidden = true, required = false) user: User,
+    ): FlowerSpotSearchResponse {
+        val searchResult = flowerSpotFacade.search(query, user)
+
+        return FlowerSpotSearchResponse.of(
+            landmarks = searchResult.landmarks.map { PlaceSearchResponse.from(it) },
+            flowerSpots = searchResult.flowerSpots.map { PlaceSearchResponse.from(it) },
+        )
+    }
+
+    /*
+    @Operation(summary = "랜드마크 및 벚꽃길 검색 보정", description = "지도 API에 의해 보정된 검색 결과를 업데이트 합니다.")
+    @GetMapping("/flower-spot/search/refresh")
+    suspend fun refreshSearchFlowerSpot(
+        @RequestParam @Parameter(name = "snapshotId", description = "보정용 스냅샷 ID") snapshotId: String,
+    ): FlowerSpotSearchResponse {
+        val (landmarks, flowerSpots) = flowerSpotFacade.refreshSearch(snapshotId)
+
+        return FlowerSpotSearchResponse.of(
+            landmarks = landmarks.map { PlaceSearchResponse.from(it) },
+            flowerSpots = flowerSpots.map { FlowerSpotResponseDto.from(it) },
+        )
+    }
+
+     */
 }

@@ -2,6 +2,7 @@ package com.pida.flowerspot
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.pida.support.cache.CacheAdvice
+import com.pida.support.geo.Region
 import org.springframework.stereotype.Component
 
 @Component
@@ -47,4 +48,6 @@ class FlowerSpotFinder(
         region: Region,
         location: FlowerSpotLocation,
     ): List<FlowerSpot> = flowerSpotRepository.findAllByLocationAndRegion(region, location)
+
+    fun searchByStreetName(streetName: String): List<FlowerSpot> = flowerSpotRepository.findByStreetNameContaining(streetName)
 }
