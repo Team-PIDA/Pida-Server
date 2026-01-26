@@ -1,29 +1,28 @@
 package com.pida.flowerspot
 
 import com.pida.blooming.BloomingService
-import com.pida.history.NewSearchHistory
-import com.pida.history.SearchHistoryService
-import com.pida.landmark.LandmarkSearchClient
-import com.pida.landmark.LandmarkService
+import com.pida.landmark.*
 import com.pida.support.aws.ImagePrefix
 import com.pida.support.aws.ImageS3Caller
 import com.pida.support.geo.Region
 import com.pida.user.User
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class FlowerSpotFacade(
     private val flowerSpotService: FlowerSpotService,
     private val bloomingService: BloomingService,
     private val landmarkService: LandmarkService,
-    private val searchHistoryService: SearchHistoryService,
     private val landmarkSearchClient: LandmarkSearchClient,
     private val imageS3Caller: ImageS3Caller,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     companion object {
-        private const val MIN_SEARCH_RESULT_COUNT = 2
+        private const val MIN_SEARCH_RESULT_COUNT = 3
     }
 
     suspend fun readFlowerSpotDetails(spotId: Long): FlowerSpotDetails =
@@ -67,41 +66,51 @@ class FlowerSpotFacade(
         }
     }
 
+    @Transactional
     fun search(
         query: String,
         user: User?,
     ): FlowerSpotSearchResult {
-        val landmarks = landmarkService.searchLandmarks(query)
+        publishSearchEvent(query, user)
+
         val flowerSpots = flowerSpotService.searchFlowerSpots(query)
+        val cachedLandmarks = landmarkService.searchLandmarks(query)
 
-        recordSearchHistory(user, query)
+        val landmarks =
+            if (hasEnough(cachedLandmarks)) {
+                // 캐시된 랜드마크가 충분한 경우 즉시 응답
+                publishLandmarkFetchEvent(query, null)
+                cachedLandmarks
+            } else {
+                // 캐시된 랜드마크가 충분하지 않은 경우, 외부 API 호출 대기
+                val fetched = landmarkSearchClient.searchByKeyword(query)
+                publishLandmarkFetchEvent(query, fetched)
+                fetched.map { it.toLandmark() }
+            }
 
-        // 랜드마크 데이터가 충분하면 바로 응답
-        if (landmarks.size >= MIN_SEARCH_RESULT_COUNT) {
-            return FlowerSpotSearchResult(landmarks, flowerSpots)
-        }
-        // 보정용 외부 API 이벤트 발행
+        return FlowerSpotSearchResult(landmarks, flowerSpots)
+    }
 
-        // 데이터가 부족하면 외부 API 응답을 대기
-        val apiLandmarks = landmarkSearchClient.searchByKeyword(query)
-        landmarkService.addLandmarks(apiLandmarks)
-
-        return FlowerSpotSearchResult(
-            landmarks = apiLandmarks.map { it.toLandmark() },
-            flowerSpots = flowerSpots,
+    private fun publishLandmarkFetchEvent(
+        query: String,
+        fetchedLandmark: List<NewLandmark>?,
+    ) {
+        eventPublisher.publishEvent(
+            LandmarkFetchEvent.from(query, fetchedLandmark),
         )
     }
 
-    private fun recordSearchHistory(
-        user: User?,
+    private fun publishSearchEvent(
         query: String,
+        user: User?,
     ) {
-        val searchHistory =
-            when (user) {
-                null -> NewSearchHistory.Anonymous(query = query)
-                else -> NewSearchHistory.Authenticated(userId = user.id, query = query)
-            }
-
-        searchHistoryService.add(searchHistory)
+        eventPublisher.publishEvent(
+            FlowerSpotSearchEvent(
+                query = query,
+                userId = user?.id,
+            ),
+        )
     }
+
+    private fun hasEnough(landmarks: List<Landmark>) = landmarks.size >= MIN_SEARCH_RESULT_COUNT
 }

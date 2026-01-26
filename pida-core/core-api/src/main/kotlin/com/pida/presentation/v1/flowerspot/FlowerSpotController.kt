@@ -54,7 +54,7 @@ class FlowerSpotController(
         return FlowerSpotDetailsResponse.of(flowerSpot)
     }
 
-    @Operation(summary = "랜드마크 및 벚꽃길 검색 polling", description = "검색 우선순위에 맞게 랜드마크와 벚꽃길을 검색합니다.")
+    @Operation(summary = "랜드마크 및 벚꽃길 검색", description = "검색 우선순위에 맞게 랜드마크와 벚꽃길을 검색합니다.")
     @GetMapping("/flower-spot/search")
     fun searchFlowerSpot(
         @RequestParam @Parameter(name = "query", description = "검색 키워드") query: String,
@@ -67,20 +67,4 @@ class FlowerSpotController(
             flowerSpots = searchResult.flowerSpots.map { PlaceSearchResponse.from(it) },
         )
     }
-
-    /*
-    @Operation(summary = "랜드마크 및 벚꽃길 검색 보정", description = "지도 API에 의해 보정된 검색 결과를 업데이트 합니다.")
-    @GetMapping("/flower-spot/search/refresh")
-    suspend fun refreshSearchFlowerSpot(
-        @RequestParam @Parameter(name = "snapshotId", description = "보정용 스냅샷 ID") snapshotId: String,
-    ): FlowerSpotSearchResponse {
-        val (landmarks, flowerSpots) = flowerSpotFacade.refreshSearch(snapshotId)
-
-        return FlowerSpotSearchResponse.of(
-            landmarks = landmarks.map { PlaceSearchResponse.from(it) },
-            flowerSpots = flowerSpots.map { FlowerSpotResponseDto.from(it) },
-        )
-    }
-
-     */
 }

@@ -2,6 +2,7 @@ package com.pida.client.map
 
 import com.pida.landmark.LandmarkSearchClient
 import com.pida.landmark.NewLandmark
+import com.pida.support.extension.logger
 import com.pida.support.geo.toRegion
 import org.springframework.stereotype.Component
 
@@ -10,6 +11,8 @@ class KakaoMapClient internal constructor(
     private val kakaoMapApi: KakaoMapApi,
     private val kakaoMapProperties: KakaoMapProperties,
 ) : LandmarkSearchClient {
+    private val logger by logger()
+
     override fun searchByKeyword(query: String): List<NewLandmark> {
         val response =
             kakaoMapApi.searchKeyword(
@@ -20,6 +23,8 @@ class KakaoMapClient internal constructor(
                 y = null,
                 radius = null,
             )
+
+        logger.info("Kakao Map search API requested: query='$query', found=${response.documents.size}")
 
         return response.documents.map { document ->
             NewLandmark(
