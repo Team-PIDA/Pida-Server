@@ -45,21 +45,25 @@ class WeekendNotificationScheduler(
      * @param day 실행 요일
      */
     private fun executeIfNotThisWeek(day: DayOfWeek) {
-        val currentWeek = LocalDate.now().get(ChronoField.ALIGNED_WEEK_OF_YEAR)
+        val today = LocalDate.now()
+        val currentWeek = today.get(ChronoField.ALIGNED_WEEK_OF_YEAR)
+        val currentYear = today.year
+        val weekKey = currentYear * 100 + currentWeek
 
         // 이번 주에 이미 실행되었는지 확인
-        if (lastExecutedWeek == currentWeek) {
+        if (lastExecutedWeek == weekKey) {
             return
         }
 
-        // 50% 확률로 실행
-        val shouldExecute = Random.nextBoolean()
+        // Deterministically choose Saturday or Sunday based on week
+        val chosenDay = if (weekKey % 2 == 0) DayOfWeek.SATURDAY else DayOfWeek.SUNDAY
 
-        if (shouldExecute) {
+        if (day == chosenDay) {
             weekendNotificationService.sendWeekendNotifications()
-            lastExecutedWeek = currentWeek
+            lastExecutedWeek = weekKey
         } else {
             logger.info("Skipped weekend notification on $day (random selection, week: $currentWeek)")
         }
+    }
     }
 }
