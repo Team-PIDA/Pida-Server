@@ -41,6 +41,8 @@ class AirKoreaClient internal constructor(
             }
 
             response
+        } catch (e: ErrorException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to fetch air quality data", e)
             throw ErrorException(ErrorType.AIR_QUALITY_API_CALL_FAILED)
