@@ -1,6 +1,6 @@
 package com.pida.user.location
 
-import com.pida.flowerspot.GeoJson
+import com.pida.support.geo.GeoJson
 import org.locationtech.jts.geom.Point
 import java.time.LocalDateTime
 

@@ -1,4 +1,4 @@
-package com.pida.flowerspot
+package com.pida.support.geo
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo

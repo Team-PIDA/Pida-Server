@@ -2,6 +2,8 @@ package com.pida.flowerspot
 
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingStatus
+import com.pida.support.geo.GeoJson
+import com.pida.support.geo.Region
 import java.time.LocalDateTime
 
 data class FlowerSpotDetails(

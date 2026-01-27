@@ -1,5 +1,7 @@
 package com.pida.flowerspot
 
+import com.pida.support.geo.Region
+
 sealed class FindFlowerSpotPolicyCondition {
     data object All : FindFlowerSpotPolicyCondition()
 
