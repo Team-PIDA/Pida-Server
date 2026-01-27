@@ -15,6 +15,13 @@ import org.locationtech.jts.geom.Point
 @Table(name = "t_landmark")
 class LandmarkEntity(
     val name: String,
+    @Column(
+        name = "name_tsv",
+        columnDefinition = "tsvector",
+        insertable = false,
+        updatable = false,
+    )
+    val nameTsv: String? = null, // Full Text Search 를 위한 형태소 데이터 타입
     val address: String?,
     @Column(columnDefinition = "geometry(Point, 4326)")
     val pinPoint: Point,

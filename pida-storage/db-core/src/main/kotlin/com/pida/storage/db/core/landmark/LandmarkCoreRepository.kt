@@ -3,7 +3,6 @@ package com.pida.storage.db.core.landmark
 import com.pida.landmark.Landmark
 import com.pida.landmark.LandmarkRepository
 import com.pida.landmark.NewLandmark
-import com.pida.support.tx.TransactionTemplates
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Repository
 @Repository
 class LandmarkCoreRepository(
     private val landmarkJpaRepository: LandmarkJpaRepository,
-    private val tx: TransactionTemplates,
 ) : LandmarkRepository {
     companion object {
         private val GEOMETRY_FACTORY = GeometryFactory(PrecisionModel(), 4326)
@@ -42,4 +40,6 @@ class LandmarkCoreRepository(
     }
 
     override fun existsByName(name: String): Boolean = landmarkJpaRepository.existsByNameAndDeletedAtIsNull(name)
+
+    override fun updateNameTsv() = landmarkJpaRepository.updateNameTsv()
 }

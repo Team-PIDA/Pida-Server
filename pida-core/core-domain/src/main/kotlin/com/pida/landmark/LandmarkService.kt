@@ -1,10 +1,9 @@
 package com.pida.landmark
 
 import com.pida.support.extension.logger
+import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Service
 class LandmarkService(
@@ -17,7 +16,7 @@ class LandmarkService(
     suspend fun searchLandmarks(query: String): List<Landmark> = landmarkFinder.searchByName(query)
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     fun handleFetchEvent(event: LandmarkFetchEvent) =
         when (event) {
             is LandmarkFetchEvent.Requested -> {
@@ -28,8 +27,6 @@ class LandmarkService(
                         logger.error("Failed to fetch landmarks for query='${event.query}'", e)
                         emptyList<NewLandmark>()
                     }
-
-                logger.info("Fetched landmarks for query='${event.query}': ${landmarks.size} found")
 
                 addLandmarks(landmarks)
             }

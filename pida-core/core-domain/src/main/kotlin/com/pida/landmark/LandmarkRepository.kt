@@ -8,4 +8,6 @@ interface LandmarkRepository {
     fun saveAll(newLandmarks: List<NewLandmark>)
 
     fun existsByName(name: String): Boolean
+
+    fun updateNameTsv()
 }

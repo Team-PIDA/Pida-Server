@@ -1,7 +1,11 @@
 package com.pida.flowerspot
 
 import com.pida.blooming.BloomingService
-import com.pida.landmark.*
+import com.pida.landmark.Landmark
+import com.pida.landmark.LandmarkFetchEvent
+import com.pida.landmark.LandmarkSearchClient
+import com.pida.landmark.LandmarkService
+import com.pida.landmark.NewLandmark
 import com.pida.support.aws.ImagePrefix
 import com.pida.support.aws.ImageS3Caller
 import com.pida.support.geo.Region
@@ -21,7 +25,7 @@ class FlowerSpotFacade(
     private val eventPublisher: ApplicationEventPublisher,
 ) {
     companion object {
-        private const val MIN_SEARCH_RESULT_COUNT = 3
+        private const val MIN_SEARCH_RESULT_COUNT = 2
     }
 
     suspend fun readFlowerSpotDetails(spotId: Long): FlowerSpotDetails =
