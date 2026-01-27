@@ -1,5 +1,7 @@
 package com.pida.flowerspot
 
+import com.pida.support.geo.Region
+
 interface FlowerSpotRepository {
     suspend fun findBy(spotId: Long): FlowerSpot
 
@@ -27,4 +29,6 @@ interface FlowerSpotRepository {
         longitude: Double,
         radiusMeters: Double,
     ): List<FlowerSpot>
+
+    fun findByStreetNameContaining(streetName: String): List<FlowerSpot>
 }

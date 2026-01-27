@@ -3,8 +3,8 @@ package com.pida.fixture.flowerspot
 import com.navercorp.fixturemonkey.kotlin.setExp
 import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpot
-import com.pida.flowerspot.GeoJson
-import com.pida.flowerspot.Region
+import com.pida.support.geo.GeoJson
+import com.pida.support.geo.Region
 import com.pida.test.helper.fixtureBuilder
 
 object FlowerSpotFixture {

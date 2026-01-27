@@ -1,5 +1,6 @@
 package com.pida.flowerspot
 
+import com.pida.support.geo.Region
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,4 +22,11 @@ class FlowerSpotService(
     }
 
     suspend fun readOneFlowerSpot(spotId: Long): FlowerSpot = flowerSpotFinder.readBy(spotId)
+
+    fun searchFlowerSpots(query: String): List<FlowerSpot> {
+        val trimmed = query.trim()
+        if (trimmed.isEmpty()) return emptyList()
+
+        return flowerSpotFinder.searchByStreetName(trimmed)
+    }
 }

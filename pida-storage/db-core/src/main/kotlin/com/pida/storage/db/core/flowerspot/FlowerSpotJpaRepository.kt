@@ -1,7 +1,7 @@
 package com.pida.storage.db.core.flowerspot
 
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.repository.KotlinJdslJpqlExecutor
-import com.pida.flowerspot.Region
+import com.pida.support.geo.Region
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -74,4 +74,6 @@ interface FlowerSpotJpaRepository :
         @Param("lng") lng: Double,
         @Param("radiusMeters") radiusMeters: Double,
     ): List<FlowerSpotEntity>
+
+    fun findByStreetNameContainingAndDeletedAtIsNull(streetName: String): List<FlowerSpotEntity>
 }

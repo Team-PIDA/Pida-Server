@@ -2,9 +2,9 @@ package com.pida.storage.db.core.flowerspot
 
 import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpot
-import com.pida.flowerspot.GeoJson
-import com.pida.flowerspot.Region
 import com.pida.storage.db.core.support.BaseEntity
+import com.pida.support.geo.GeoJson
+import com.pida.support.geo.Region
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
