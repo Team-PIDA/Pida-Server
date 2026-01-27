@@ -26,7 +26,7 @@ class LandmarkFinder(
 
     suspend fun searchByName(query: String): List<Landmark> =
         cacheAdvice.invoke(
-            ttl = 0L,
+            ttl = 180L,
             key = "$SEARCH_KEY:$query",
             typeReference = object : TypeReference<List<Landmark>>() {},
         ) {

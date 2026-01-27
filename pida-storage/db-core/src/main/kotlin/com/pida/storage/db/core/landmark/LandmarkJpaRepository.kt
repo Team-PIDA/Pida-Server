@@ -11,7 +11,7 @@ interface LandmarkJpaRepository : JpaRepository<LandmarkEntity, Long> {
         """
         SELECT *
         FROM t_landmark
-        WHERE name_tsv @@ to_tsquery('simple', :query)
+        WHERE name_tsv @@ plainto_tsquery('simple', :query)
         AND deleted_at IS NULL
         """,
         nativeQuery = true,
