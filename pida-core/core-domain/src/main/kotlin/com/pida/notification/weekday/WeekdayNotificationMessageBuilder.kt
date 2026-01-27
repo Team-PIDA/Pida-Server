@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component
 class WeekdayNotificationMessageBuilder {
     companion object {
         private const val MESSAGE_CONTENT =
-            "퇴근길 잠깐 들러볼까요? 🌸\n지금 근처에 만개한 벚꽃이 기다리고 있어요."
+            "오늘 하루도 고생했어요. \uD83C\uDF19 \n" +
+                "퇴근길은 가까운 벚꽃 구경 어때요?"
 
         private const val DESTINATION = "home"
     }

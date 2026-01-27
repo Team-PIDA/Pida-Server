@@ -77,7 +77,6 @@ class WeekdayNotificationScheduler(
 
         // 이미 주당 2회 실행했으면 스킵
         if (executionCountThisWeek >= MAX_EXECUTIONS_PER_WEEK) {
-            logger.info("Weekday notification already sent $MAX_EXECUTIONS_PER_WEEK times this week, skipping $day")
             return
         }
 
@@ -85,8 +84,6 @@ class WeekdayNotificationScheduler(
             when {
                 // 금요일인데 아직 2회 실행 안 했으면 무조건 실행
                 day == DayOfWeek.FRIDAY && executionCountThisWeek < MAX_EXECUTIONS_PER_WEEK -> {
-                    val remaining = MAX_EXECUTIONS_PER_WEEK - executionCountThisWeek
-                    logger.info("Friday: executing all remaining notifications ($remaining)")
                     true
                 }
                 // 목요일인데 아직 1회도 실행 안 했으면 확률 높여서 실행
@@ -98,7 +95,6 @@ class WeekdayNotificationScheduler(
             }
 
         if (shouldExecute) {
-            logger.info("Executing weekday notification on $day (count: ${executionCountThisWeek + 1}/$MAX_EXECUTIONS_PER_WEEK)")
             weekdayNotificationService.sendWeekdayNotifications()
             executionCountThisWeek++
 
