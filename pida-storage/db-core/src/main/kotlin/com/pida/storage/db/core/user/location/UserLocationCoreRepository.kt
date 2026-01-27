@@ -23,6 +23,17 @@ class UserLocationCoreRepository(
                 ?.toUserLocation()
         }
 
+    override fun findByUserIds(userIds: List<Long>): List<UserLocation.Info> =
+        Tx.readable {
+            if (userIds.isEmpty()) {
+                emptyList()
+            } else {
+                userLocationJpaRepository
+                    .findByUserIdIn(userIds)
+                    .map { it.toUserLocation() }
+            }
+        }
+
     override fun saveOrUpdate(
         userId: Long,
         latitude: Double,

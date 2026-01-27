@@ -57,4 +57,9 @@ class BloomingCoreRepository(
         Tx.readable {
             bloomingCustomRepository.findTodayBloomingByUserId(userId, flowerSpotId)?.toBlooming()
         }
+
+    override fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long> =
+        Tx.readable {
+            bloomingCustomRepository.findBloomedSpotIdsByFlowerSpotIds(spotIds)
+        }
 }

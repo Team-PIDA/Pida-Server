@@ -136,6 +136,7 @@ class SecurityConfig(
                     "/api/v1/flower-spot",
                     "/api/v1/auth",
                     "/api/v1/blooming/{spotId}/details",
+                    "/test/**",
                 ).permitAll()
 
             // 추가로 열어줄 API

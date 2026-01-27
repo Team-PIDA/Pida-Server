@@ -2,6 +2,7 @@ package com.pida.notification
 
 import com.pida.support.cursor.Cursor
 import com.pida.support.cursor.CursorRequest
+import java.time.LocalDateTime
 
 interface NotificationStoredRepository {
     fun save(notificationStored: NotificationStored.Create): NotificationStored.Info
@@ -24,6 +25,12 @@ interface NotificationStoredRepository {
         userId: Long,
         readStatus: ReadStatus?,
     ): Long
+
+    fun countByUserIdsAndTypeAndCreatedAtAfter(
+        userIds: List<Long>,
+        type: NotificationType,
+        createdAtAfter: LocalDateTime,
+    ): Map<Long, Long>
 
     fun markAsRead(notificationId: Long)
 }
