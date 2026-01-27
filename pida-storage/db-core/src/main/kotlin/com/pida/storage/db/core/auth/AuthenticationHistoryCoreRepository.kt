@@ -8,10 +8,12 @@ import com.pida.support.error.AuthenticationErrorException
 import com.pida.support.error.AuthenticationErrorType
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Repository
 class AuthenticationHistoryCoreRepository(
     private val repository: AuthenticationHistoryJpaRepository,
+    private val customRepository: AuthenticationHistoryCustomRepository,
 ) : AuthenticationHistoryRepository {
     @Transactional
     override fun create(newAuthenticationHistory: NewAuthenticationHistory): AuthenticationHistory {
@@ -80,4 +82,6 @@ class AuthenticationHistoryCoreRepository(
         authenticationHistory.delete()
         return authenticationHistory.refreshToken
     }
+
+    override fun findActiveUsersSince(sinceDate: LocalDateTime): List<Long> = customRepository.findActiveUserIdsSince(sinceDate)
 }

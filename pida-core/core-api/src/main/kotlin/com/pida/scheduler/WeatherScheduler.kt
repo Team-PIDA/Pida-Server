@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
  * 10분마다 서울 중구의 날씨 데이터를 조회하여 로그로 출력합니다.
  */
 @Component
-class WeatherTestScheduler(
+class WeatherScheduler(
     private val weatherService: WeatherService,
 ) {
     private val logger by logger()

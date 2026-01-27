@@ -3,6 +3,7 @@ package com.pida.storage.db.core.blooming
 import com.linecorp.kotlinjdsl.dsl.jpql.jpql
 import com.linecorp.kotlinjdsl.render.RenderContext
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.extension.createQuery
+import com.pida.blooming.BloomingStatus
 import jakarta.persistence.EntityManager
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
@@ -69,5 +70,24 @@ class BloomingCustomRepository(
             }
 
         return entityManager.createQuery(query, jdslRenderContext).resultList.firstOrNull()
+    }
+
+    fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long> {
+        if (spotIds.isEmpty()) return emptyList()
+
+        val threshold = LocalDateTime.now().minusDays(DATE_THRESHOLD)
+
+        val query =
+            jpql {
+                selectDistinct(path(BloomingEntity::flowerSpotId))
+                    .from(entity(BloomingEntity::class))
+                    .whereAnd(
+                        path(BloomingEntity::flowerSpotId).`in`(spotIds),
+                        path(BloomingEntity::status).eq(BloomingStatus.BLOOMED),
+                        path(BloomingEntity::createdAt).greaterThan(threshold),
+                    )
+            }
+
+        return entityManager.createQuery(query, jdslRenderContext).resultList
     }
 }

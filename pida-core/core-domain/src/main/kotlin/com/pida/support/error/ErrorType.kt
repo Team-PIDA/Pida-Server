@@ -63,4 +63,9 @@ enum class ErrorType(
     /** Weather */
     WEATHER_API_CALL_FAILED(500, ErrorKind.INTERNAL_SERVER_ERROR, "날씨 정보를 가져오는데 실패했습니다.", ErrorLevel.ERROR),
     WEATHER_DATA_NOT_AVAILABLE(500, ErrorKind.INTERNAL_SERVER_ERROR, "날씨 데이터를 사용할 수 없습니다.", ErrorLevel.ERROR),
+
+    /** Air Quality */
+    AIR_QUALITY_API_CALL_FAILED(500, ErrorKind.INTERNAL_SERVER_ERROR, "대기질 정보를 가져오는데 실패했습니다.", ErrorLevel.ERROR),
+    AIR_QUALITY_DATA_NOT_AVAILABLE(500, ErrorKind.INTERNAL_SERVER_ERROR, "대기질 데이터를 사용할 수 없습니다.", ErrorLevel.ERROR),
+    AIR_QUALITY_STATION_NOT_FOUND(500, ErrorKind.INTERNAL_SERVER_ERROR, "근처 대기질 측정소를 찾을 수 없습니다.", ErrorLevel.ERROR),
 }

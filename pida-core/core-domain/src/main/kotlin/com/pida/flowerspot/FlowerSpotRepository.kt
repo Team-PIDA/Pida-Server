@@ -16,5 +16,11 @@ interface FlowerSpotRepository {
         location: FlowerSpotLocation,
     ): List<FlowerSpot>
 
+    suspend fun findWithinRadius(
+        latitude: Double,
+        longitude: Double,
+        radiusMeters: Double,
+    ): List<FlowerSpot>
+
     fun findByStreetNameContaining(streetName: String): List<FlowerSpot>
 }

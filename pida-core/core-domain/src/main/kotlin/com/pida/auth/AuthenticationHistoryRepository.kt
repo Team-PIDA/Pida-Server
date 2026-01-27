@@ -1,5 +1,7 @@
 package com.pida.auth
 
+import java.time.LocalDateTime
+
 interface AuthenticationHistoryRepository {
     fun create(newAuthenticationHistory: NewAuthenticationHistory): AuthenticationHistory
 
@@ -18,4 +20,6 @@ interface AuthenticationHistoryRepository {
     fun removeToken(userKey: String): List<String>?
 
     fun remove(token: String): String
+
+    fun findActiveUsersSince(sinceDate: LocalDateTime): List<Long>
 }

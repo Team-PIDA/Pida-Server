@@ -19,6 +19,7 @@ spring:
       - aws.yml
       - weather.yml
       - map.yml
+      - airkorea.yml
   web.resources.add-mappings: false
 
 server:

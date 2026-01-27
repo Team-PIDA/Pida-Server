@@ -53,4 +53,4 @@ out/
 logs
 
 ### Key Files ###
-pida-firebase-key.json
+**/pida-firebase-key.json

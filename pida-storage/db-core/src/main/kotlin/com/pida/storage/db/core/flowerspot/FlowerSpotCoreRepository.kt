@@ -61,6 +61,17 @@ class FlowerSpotCoreRepository(
                 ).map { it.toFlowerSpot() }
         }
 
+    override suspend fun findWithinRadius(
+        latitude: Double,
+        longitude: Double,
+        radiusMeters: Double,
+    ): List<FlowerSpot> =
+        tx.reader.coExecute {
+            flowerSpotJpaRepository
+                .findWithinRadius(latitude, longitude, radiusMeters)
+                .map { it.toFlowerSpot() }
+        }
+
     override fun findByStreetNameContaining(streetName: String): List<FlowerSpot> =
         flowerSpotJpaRepository
             .findByStreetNameContainingAndDeletedAtIsNull(streetName)

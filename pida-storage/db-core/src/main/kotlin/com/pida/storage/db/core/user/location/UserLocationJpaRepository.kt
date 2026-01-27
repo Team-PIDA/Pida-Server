@@ -7,4 +7,6 @@ interface UserLocationJpaRepository :
     JpaRepository<UserLocationEntity, Long>,
     KotlinJdslJpqlExecutor {
     fun findByUserId(userId: Long): UserLocationEntity?
+
+    fun findByUserIdIn(userIds: List<Long>): List<UserLocationEntity>
 }

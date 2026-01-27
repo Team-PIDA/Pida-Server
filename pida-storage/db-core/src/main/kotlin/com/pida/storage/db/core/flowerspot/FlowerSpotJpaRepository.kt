@@ -52,5 +52,28 @@ interface FlowerSpotJpaRepository :
         @Param("region") region: String,
     ): List<FlowerSpotEntity>
 
+    @Query(
+        """
+        SELECT *
+        FROM t_flower_spot
+        WHERE ST_DWithin(
+            pin_point::geography,
+            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
+            :radiusMeters
+        )
+        AND deleted_at IS NULL
+        ORDER BY ST_Distance(
+            pin_point::geography,
+            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography
+        )
+        """,
+        nativeQuery = true,
+    )
+    fun findWithinRadius(
+        @Param("lat") lat: Double,
+        @Param("lng") lng: Double,
+        @Param("radiusMeters") radiusMeters: Double,
+    ): List<FlowerSpotEntity>
+
     fun findByStreetNameContainingAndDeletedAtIsNull(streetName: String): List<FlowerSpotEntity>
 }

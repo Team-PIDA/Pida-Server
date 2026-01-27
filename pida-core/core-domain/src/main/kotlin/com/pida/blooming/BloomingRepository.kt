@@ -20,4 +20,6 @@ interface BloomingRepository {
         userId: Long,
         flowerSpotId: Long,
     ): Blooming?
+
+    fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long>
 }
