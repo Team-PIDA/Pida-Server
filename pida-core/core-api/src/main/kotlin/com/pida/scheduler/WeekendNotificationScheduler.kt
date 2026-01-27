@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoField
-import kotlin.random.Random
 
 /**
  * 주말 힐링 푸시 알림 스케줄러
@@ -64,6 +63,5 @@ class WeekendNotificationScheduler(
         } else {
             logger.info("Skipped weekend notification on $day (random selection, week: $currentWeek)")
         }
-    }
     }
 }

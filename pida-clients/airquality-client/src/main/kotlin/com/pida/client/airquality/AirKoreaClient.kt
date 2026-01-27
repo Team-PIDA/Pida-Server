@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component
 
 /**
  * 에어코리아 API 클라이언트
- *
- * API 문서: https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15073861
  */
 @Component
 class AirKoreaClient internal constructor(
@@ -25,10 +23,8 @@ class AirKoreaClient internal constructor(
      * @param stationName 측정소 이름
      * @return 대기질 정보
      */
-    fun getAirQualityByStation(stationName: String): AirKoreaResponse {
-        logger.info("Fetching air quality for station: $stationName")
-
-        return try {
+    fun getAirQualityByStation(stationName: String): AirKoreaResponse =
+        try {
             val response =
                 airKoreaApi.getMsrstnAcctoRltmMesureDnsty(
                     serviceKey = serviceKey,
@@ -47,7 +43,6 @@ class AirKoreaClient internal constructor(
             logger.error("Failed to fetch air quality data", e)
             throw ErrorException(ErrorType.AIR_QUALITY_API_CALL_FAILED)
         }
-    }
 
     /**
      * TM 좌표로 근접 측정소 조회
@@ -77,15 +72,11 @@ class AirKoreaClient internal constructor(
 
             val stations = response.response.body.items
             if (stations.isNullOrEmpty()) {
-                logger.warn("No nearby station found for TM coordinates: ($tmX, $tmY)")
                 throw ErrorException(ErrorType.AIR_QUALITY_STATION_NOT_FOUND)
             }
 
             // 가장 가까운 측정소 반환 (첫 번째 항목)
-            val nearestStation = stations.first().stationName
-            logger.info("Found nearest station: $nearestStation (distance: ${stations.first().tm}m)")
-
-            nearestStation
+            stations.first().stationName
         } catch (e: ErrorException) {
             throw e
         } catch (e: Exception) {

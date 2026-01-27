@@ -87,7 +87,7 @@ class WeekendNotificationService(
                     userId = user.userId,
                     type = NotificationType.WEEKEND_HEALING,
                     parameterValue = "",
-                    topic = "weekend_healing",
+                    topic = "피다",
                     contents = weekendNotificationMessageBuilder.getMessageContent(),
                     readStatus = ReadStatus.UNREAD,
                 )

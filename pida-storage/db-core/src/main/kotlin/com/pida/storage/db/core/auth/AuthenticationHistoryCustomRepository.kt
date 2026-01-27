@@ -12,12 +12,6 @@ class AuthenticationHistoryCustomRepository(
     private val entityManager: EntityManager,
     private val jdslRenderContext: RenderContext,
 ) {
-    /**
-     * 특정 날짜 이후 로그인한 활성 사용자 ID 목록 조회
-     *
-     * @param sinceDate 기준 날짜
-     * @return 중복 제거된 사용자 ID 목록
-     */
     fun findActiveUserIdsSince(sinceDate: LocalDateTime): List<Long> {
         val query =
             jpql {

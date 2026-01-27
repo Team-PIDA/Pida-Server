@@ -21,11 +21,5 @@ interface AuthenticationHistoryRepository {
 
     fun remove(token: String): String
 
-    /**
-     * 특정 날짜 이후 로그인한 활성 사용자 ID 목록 조회
-     *
-     * @param sinceDate 기준 날짜
-     * @return 사용자 ID 목록
-     */
     fun findActiveUsersSince(sinceDate: LocalDateTime): List<Long>
 }

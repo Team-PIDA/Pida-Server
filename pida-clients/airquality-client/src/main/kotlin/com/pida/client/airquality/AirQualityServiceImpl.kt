@@ -39,7 +39,6 @@ class AirQualityServiceImpl(
 
             val items = response.response.body.items
             if (items.isNullOrEmpty()) {
-                logger.warn("No air quality data available for station: $stationName")
                 throw ErrorException(ErrorType.AIR_QUALITY_DATA_NOT_AVAILABLE)
             }
 
@@ -83,7 +82,6 @@ class AirQualityServiceImpl(
         val falseEasting = 200000.0
         val scaleFactor = 1.0
         val centralMeridian = 127.0 // 중부원점 경도
-        val latitudeOfOrigin = 38.0 // 원점 위도
 
         // 각도를 라디안으로 변환
         val lat = Math.toRadians(latitude)
@@ -131,8 +129,6 @@ class AirQualityServiceImpl(
 
         val tmX = (x + falseEasting).toInt().toString()
         val tmY = (y + falseNorthing).toInt().toString()
-
-        logger.debug("Converted WGS84 ($latitude, $longitude) to TM ($tmX, $tmY)")
 
         return Pair(tmX, tmY)
     }

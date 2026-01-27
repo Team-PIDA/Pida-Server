@@ -3,9 +3,6 @@ package com.pida.notification.weekday
 import com.pida.notification.NewFirebaseCloudMessage
 import org.springframework.stereotype.Component
 
-/**
- * 평일 알림 메시지 빌더
- */
 @Component
 class WeekdayNotificationMessageBuilder {
     companion object {
@@ -16,12 +13,6 @@ class WeekdayNotificationMessageBuilder {
         private const val DESTINATION = "home"
     }
 
-    /**
-     * FCM 메시지 생성
-     *
-     * @param fcmToken FCM 토큰
-     * @return FCM 메시지
-     */
     fun buildMessage(fcmToken: String): NewFirebaseCloudMessage =
         NewFirebaseCloudMessage(
             fcmToken = fcmToken,
@@ -30,10 +21,5 @@ class WeekdayNotificationMessageBuilder {
             destination = DESTINATION,
         )
 
-    /**
-     * 메시지 내용 반환 (NotificationStored 저장용)
-     *
-     * @return 메시지 전체 내용
-     */
     fun getMessageContent(): String = MESSAGE_CONTENT
 }

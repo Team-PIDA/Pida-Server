@@ -32,7 +32,6 @@ class WeekendNotificationEligibilityChecker(
         val activeUsers = weekendNotificationUserReader.findActiveUsersWithLocation()
 
         if (activeUsers.isEmpty()) {
-            logger.info("No active users found, skipping notification")
             return emptyList()
         }
 

@@ -72,12 +72,6 @@ class BloomingCustomRepository(
         return entityManager.createQuery(query, jdslRenderContext).resultList.firstOrNull()
     }
 
-    /**
-     * 주어진 FlowerSpot ID 목록 중 BLOOMED 상태인 spot ID 목록 조회
-     *
-     * @param spotIds FlowerSpot ID 목록
-     * @return BLOOMED 상태인 중복 제거된 spot ID 목록
-     */
     fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long> {
         if (spotIds.isEmpty()) return emptyList()
 

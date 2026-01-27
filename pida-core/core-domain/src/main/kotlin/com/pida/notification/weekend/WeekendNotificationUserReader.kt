@@ -1,8 +1,8 @@
 package com.pida.notification.weekend
 
 import com.pida.auth.AuthenticationHistoryRepository
-import com.pida.flowerspot.GeoJson
 import com.pida.support.extension.logger
+import com.pida.support.geo.GeoJson
 import com.pida.user.location.UserLocation
 import com.pida.user.location.UserLocationReader
 import org.springframework.stereotype.Component
