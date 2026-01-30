@@ -2,6 +2,7 @@ package com.pida.place
 
 import com.pida.flowerspot.FlowerSpotSearchEvent
 import com.pida.flowerspot.FlowerSpotService
+import com.pida.support.geo.Region
 import com.pida.user.User
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -20,6 +21,7 @@ class PlaceFacade(
         private const val MAX_DISTRICT_SEARCH_COUNT = 2
         private const val MIN_LANDMARK_SEARCH_COUNT = 2
         private const val MAX_LANDMARK_SEARCH_COUNT = 5
+        private val SEARCH_REGIONS = setOf(Region.SEOUL, Region.GYEONGGI)
     }
 
     suspend fun search(
@@ -43,12 +45,12 @@ class PlaceFacade(
                     // 저장된 랜드마크가 충분하지 않은 경우, 외부 API 호출 대기
                     val fetched = landmarkSearchClient.searchByKeyword(query)
                     publishLandmarkFetchEvent(query, fetched)
-                    fetched.map { it.toLandmark() }
+                    fetched.map { it.toLandmark() }.filter { it.region in SEARCH_REGIONS }
                 }
 
             PlaceSearchResult(
                 districts = districtsDeferred.await().take(MAX_DISTRICT_SEARCH_COUNT),
-                landmarks = landmarks.take(MAX_LANDMARK_SEARCH_COUNT),
+                landmarks = landmarks.filter { it.region in SEARCH_REGIONS }.take(MAX_LANDMARK_SEARCH_COUNT),
                 flowerSpots = flowerSpotsDeferred.await(),
             )
         }
