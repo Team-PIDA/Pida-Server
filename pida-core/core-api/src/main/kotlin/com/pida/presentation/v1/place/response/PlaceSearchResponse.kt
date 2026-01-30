@@ -1,4 +1,4 @@
-package com.pida.presentation.v1.flowerspot.response
+package com.pida.presentation.v1.place.response
 
 import com.pida.flowerspot.FlowerSpot
 import com.pida.place.Landmark
@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "랜드마크 및 벚꽃길 검색 응답")
-data class FlowerSpotSearchResponse(
+data class PlaceSearchResultResponse(
     @field:ArraySchema(
         schema = Schema(implementation = PlaceSearchResponse::class),
         arraySchema = Schema(description = "랜드마크 목록"),
@@ -24,7 +24,7 @@ data class FlowerSpotSearchResponse(
         fun of(
             landmarks: List<PlaceSearchResponse>,
             flowerSpots: List<PlaceSearchResponse>,
-        ) = FlowerSpotSearchResponse(landmarks, flowerSpots)
+        ) = PlaceSearchResultResponse(landmarks, flowerSpots)
     }
 }
 
