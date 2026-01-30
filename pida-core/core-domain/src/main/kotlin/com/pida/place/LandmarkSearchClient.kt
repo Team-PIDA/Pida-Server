@@ -1,4 +1,4 @@
-package com.pida.landmark
+package com.pida.place
 
 interface LandmarkSearchClient {
     fun searchByKeyword(query: String): List<NewLandmark>

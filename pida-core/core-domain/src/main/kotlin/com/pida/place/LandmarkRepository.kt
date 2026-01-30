@@ -1,4 +1,4 @@
-package com.pida.landmark
+package com.pida.place
 
 interface LandmarkRepository {
     fun findAll(): List<Landmark>

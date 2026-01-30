@@ -1,11 +1,11 @@
 package com.pida.flowerspot
 
 import com.pida.blooming.BloomingService
-import com.pida.landmark.Landmark
-import com.pida.landmark.LandmarkFetchEvent
-import com.pida.landmark.LandmarkSearchClient
-import com.pida.landmark.LandmarkService
-import com.pida.landmark.NewLandmark
+import com.pida.place.Landmark
+import com.pida.place.LandmarkFetchEvent
+import com.pida.place.LandmarkSearchClient
+import com.pida.place.LandmarkService
+import com.pida.place.NewLandmark
 import com.pida.support.aws.ImagePrefix
 import com.pida.support.aws.ImageS3Caller
 import com.pida.support.geo.Region

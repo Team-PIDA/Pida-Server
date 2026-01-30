@@ -1,7 +1,7 @@
 package com.pida.presentation.v1.flowerspot.response
 
 import com.pida.flowerspot.FlowerSpot
-import com.pida.landmark.Landmark
+import com.pida.place.Landmark
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import io.swagger.v3.oas.annotations.media.ArraySchema

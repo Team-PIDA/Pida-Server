@@ -1,6 +1,6 @@
 package com.pida.storage.db.core.landmark
 
-import com.pida.landmark.Landmark
+import com.pida.place.Landmark
 import com.pida.storage.db.core.support.BaseEntity
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region

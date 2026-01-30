@@ -1,4 +1,4 @@
-package com.pida.landmark
+package com.pida.place
 
 import com.pida.support.tx.TransactionTemplates
 import org.springframework.stereotype.Component

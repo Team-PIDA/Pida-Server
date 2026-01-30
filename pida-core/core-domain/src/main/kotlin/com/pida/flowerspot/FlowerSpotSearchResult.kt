@@ -1,6 +1,6 @@
 package com.pida.flowerspot
 
-import com.pida.landmark.Landmark
+import com.pida.place.Landmark
 
 data class FlowerSpotSearchResult(
     val landmarks: List<Landmark>,

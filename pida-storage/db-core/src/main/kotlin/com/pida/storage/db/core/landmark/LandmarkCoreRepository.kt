@@ -1,8 +1,8 @@
 package com.pida.storage.db.core.landmark
 
-import com.pida.landmark.Landmark
-import com.pida.landmark.LandmarkRepository
-import com.pida.landmark.NewLandmark
+import com.pida.place.Landmark
+import com.pida.place.LandmarkRepository
+import com.pida.place.NewLandmark
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
