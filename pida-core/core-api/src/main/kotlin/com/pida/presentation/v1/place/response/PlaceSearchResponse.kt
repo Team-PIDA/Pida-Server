@@ -1,6 +1,7 @@
 package com.pida.presentation.v1.place.response
 
 import com.pida.flowerspot.FlowerSpot
+import com.pida.place.District
 import com.pida.place.Landmark
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
@@ -9,6 +10,11 @@ import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "랜드마크 및 벚꽃길 검색 응답")
 data class PlaceSearchResultResponse(
+    @field:ArraySchema(
+        schema = Schema(implementation = PlaceSearchResponse::class),
+        arraySchema = Schema(description = "행정구역 목록"),
+    )
+    val district: List<PlaceSearchResponse>,
     @field:ArraySchema(
         schema = Schema(implementation = PlaceSearchResponse::class),
         arraySchema = Schema(description = "랜드마크 목록"),
@@ -22,9 +28,10 @@ data class PlaceSearchResultResponse(
 ) {
     companion object {
         fun of(
+            district: List<PlaceSearchResponse>,
             landmarks: List<PlaceSearchResponse>,
             flowerSpots: List<PlaceSearchResponse>,
-        ) = PlaceSearchResultResponse(landmarks, flowerSpots)
+        ) = PlaceSearchResultResponse(district, landmarks, flowerSpots)
     }
 }
 
@@ -62,6 +69,16 @@ data class PlaceSearchResponse(
                 address = flowerSpot.address,
                 pinPoint = flowerSpot.pinPoint,
                 region = flowerSpot.region,
+            )
+
+        fun from(district: District) =
+            PlaceSearchResponse(
+                name =
+                    listOfNotNull(district.sigungu, district.eupmyeondonggu, district.eupmyeonridong, district.ri)
+                        .joinToString(" "),
+                address = null,
+                pinPoint = district.pinPoint,
+                region = district.sido,
             )
     }
 }

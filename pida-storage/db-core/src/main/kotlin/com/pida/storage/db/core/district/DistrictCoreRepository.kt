@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class DistrictCoreRepository(
     private val districtJpaRepository: DistrictJpaRepository,
+    private val districtCustomRepository: DistrictCustomRepository,
 ) : DistrictRepository {
     companion object {
         private val GEOMETRY_FACTORY = GeometryFactory(PrecisionModel(), 4326)
@@ -31,4 +32,9 @@ class DistrictCoreRepository(
             }
         districtJpaRepository.saveAll(entities)
     }
+
+    override fun searchByKeyword(keyword: String): List<District> =
+        districtCustomRepository
+            .searchByKeyword(keyword)
+            .map { it.toDistrict() }
 }

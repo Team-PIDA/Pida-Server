@@ -8,11 +8,20 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.Index
 import jakarta.persistence.Table
 import org.locationtech.jts.geom.Point
 
 @Entity
-@Table(name = "t_district")
+@Table(
+    name = "t_district",
+    indexes = [
+        Index(name = "idx_district_sigungu", columnList = "sigungu"),
+        Index(name = "idx_district_eupmyeondonggu", columnList = "eupmyeondonggu"),
+        Index(name = "idx_district_eupmyeonridong", columnList = "eupmyeonridong"),
+        Index(name = "idx_district_ri", columnList = "ri"),
+    ],
+)
 class DistrictEntity(
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(50)")

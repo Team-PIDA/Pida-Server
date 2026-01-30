@@ -44,6 +44,7 @@ class PlaceController(
         val searchResult = placeFacade.search(query, user)
 
         return PlaceSearchResultResponse.of(
+            district = searchResult.districts.map { PlaceSearchResponse.from(it) },
             landmarks = searchResult.landmarks.map { PlaceSearchResponse.from(it) },
             flowerSpots = searchResult.flowerSpots.map { PlaceSearchResponse.from(it) },
         )

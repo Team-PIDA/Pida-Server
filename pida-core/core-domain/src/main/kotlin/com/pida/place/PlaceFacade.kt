@@ -1,7 +1,6 @@
 package com.pida.place
 
 import com.pida.flowerspot.FlowerSpotSearchEvent
-import com.pida.flowerspot.FlowerSpotSearchResult
 import com.pida.flowerspot.FlowerSpotService
 import com.pida.user.User
 import org.springframework.context.ApplicationEventPublisher
@@ -11,19 +10,23 @@ import org.springframework.stereotype.Service
 class PlaceFacade(
     private val flowerSpotService: FlowerSpotService,
     private val landmarkService: LandmarkService,
+    private val districtService: DistrictService,
     private val landmarkSearchClient: LandmarkSearchClient,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
     companion object {
-        private const val MIN_SEARCH_RESULT_COUNT = 2
+        private const val MAX_DISTRICT_SEARCH_COUNT = 2
+        private const val MIN_LANDMARK_SEARCH_COUNT = 2
+        private const val MAX_LANDMARK_SEARCH_COUNT = 5
     }
 
     suspend fun search(
         query: String,
         user: User?,
-    ): FlowerSpotSearchResult {
+    ): PlaceSearchResult {
         publishSearchEvent(query, user)
 
+        val districts = districtService.searchDistricts(query).take(MAX_DISTRICT_SEARCH_COUNT)
         val flowerSpots = flowerSpotService.searchFlowerSpots(query)
         val cachedLandmarks = landmarkService.searchLandmarks(query)
 
@@ -31,15 +34,15 @@ class PlaceFacade(
             if (hasEnough(cachedLandmarks)) {
                 // 캐시된 랜드마크가 충분한 경우 즉시 응답 후에 비동기적으로 보정
                 publishLandmarkFetchEvent(query, null)
-                cachedLandmarks
+                cachedLandmarks.take(MAX_LANDMARK_SEARCH_COUNT)
             } else {
                 // 캐시된 랜드마크가 충분하지 않은 경우, 외부 API 호출 대기
                 val fetched = landmarkSearchClient.searchByKeyword(query)
                 publishLandmarkFetchEvent(query, fetched)
-                fetched.map { it.toLandmark() }
+                fetched.map { it.toLandmark() }.take(MAX_LANDMARK_SEARCH_COUNT)
             }
 
-        return FlowerSpotSearchResult(landmarks, flowerSpots)
+        return PlaceSearchResult(districts, landmarks, flowerSpots)
     }
 
     private fun publishLandmarkFetchEvent(
@@ -63,5 +66,5 @@ class PlaceFacade(
         )
     }
 
-    private fun hasEnough(landmarks: List<Landmark>) = landmarks.size >= MIN_SEARCH_RESULT_COUNT
+    private fun hasEnough(landmarks: List<Landmark>) = landmarks.size >= MIN_LANDMARK_SEARCH_COUNT
 }
