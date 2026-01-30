@@ -11,7 +11,8 @@ class FlowerSpotFinder(
     private val cacheAdvice: CacheAdvice,
 ) {
     companion object {
-        val ALL_SPOT = "spot:all"
+        const val ALL_SPOT = "spot:all"
+        const val SEARCH_KEY = "spot:search"
     }
 
     suspend fun readAll(): List<FlowerSpot> =
@@ -49,5 +50,12 @@ class FlowerSpotFinder(
         location: FlowerSpotLocation,
     ): List<FlowerSpot> = flowerSpotRepository.findAllByLocationAndRegion(region, location)
 
-    fun searchByStreetName(streetName: String): List<FlowerSpot> = flowerSpotRepository.findByStreetNameContaining(streetName)
+    suspend fun searchByStreetName(streetName: String): List<FlowerSpot> =
+        cacheAdvice.invoke(
+            ttl = 180L,
+            key = "$SEARCH_KEY:$streetName",
+            typeReference = object : TypeReference<List<FlowerSpot>>() {},
+        ) {
+            flowerSpotRepository.findByStreetNameContaining(streetName)
+        }
 }

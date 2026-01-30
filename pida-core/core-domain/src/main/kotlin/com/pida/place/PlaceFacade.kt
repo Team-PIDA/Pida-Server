@@ -3,6 +3,8 @@ package com.pida.place
 import com.pida.flowerspot.FlowerSpotSearchEvent
 import com.pida.flowerspot.FlowerSpotService
 import com.pida.user.User
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
@@ -23,27 +25,33 @@ class PlaceFacade(
     suspend fun search(
         query: String,
         user: User?,
-    ): PlaceSearchResult {
-        publishSearchEvent(query, user)
+    ): PlaceSearchResult =
+        coroutineScope {
+            publishSearchEvent(query, user)
 
-        val districts = districtService.searchDistricts(query).take(MAX_DISTRICT_SEARCH_COUNT)
-        val flowerSpots = flowerSpotService.searchFlowerSpots(query)
-        val cachedLandmarks = landmarkService.searchLandmarks(query)
+            val districtsDeferred = async { districtService.searchDistricts(query) }
+            val landmarksDeferred = async { landmarkService.searchLandmarks(query) }
+            val flowerSpotsDeferred = async { flowerSpotService.searchFlowerSpots(query) }
 
-        val landmarks =
-            if (hasEnough(cachedLandmarks)) {
-                // 캐시된 랜드마크가 충분한 경우 즉시 응답 후에 비동기적으로 보정
-                publishLandmarkFetchEvent(query, null)
-                cachedLandmarks.take(MAX_LANDMARK_SEARCH_COUNT)
-            } else {
-                // 캐시된 랜드마크가 충분하지 않은 경우, 외부 API 호출 대기
-                val fetched = landmarkSearchClient.searchByKeyword(query)
-                publishLandmarkFetchEvent(query, fetched)
-                fetched.map { it.toLandmark() }.take(MAX_LANDMARK_SEARCH_COUNT)
-            }
+            val storedLandmarks = landmarksDeferred.await()
+            val landmarks =
+                if (hasEnough(storedLandmarks)) {
+                    // 저장된 랜드마크가 충분한 경우 즉시 응답 후에 비동기적으로 보정
+                    publishLandmarkFetchEvent(query, null)
+                    storedLandmarks
+                } else {
+                    // 저장된 랜드마크가 충분하지 않은 경우, 외부 API 호출 대기
+                    val fetched = landmarkSearchClient.searchByKeyword(query)
+                    publishLandmarkFetchEvent(query, fetched)
+                    fetched.map { it.toLandmark() }
+                }
 
-        return PlaceSearchResult(districts, landmarks, flowerSpots)
-    }
+            PlaceSearchResult(
+                districts = districtsDeferred.await().take(MAX_DISTRICT_SEARCH_COUNT),
+                landmarks = landmarks.take(MAX_LANDMARK_SEARCH_COUNT),
+                flowerSpots = flowerSpotsDeferred.await(),
+            )
+        }
 
     private fun publishLandmarkFetchEvent(
         query: String,
