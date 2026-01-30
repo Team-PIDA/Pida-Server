@@ -22,8 +22,8 @@ enum class Region {
 
 fun String.toRegion(): Region =
     when {
-        startsWith("서울") -> Region.SEOUL
-        startsWith("경기") -> Region.GYEONGGI
+        startsWith("서울") || startsWith("서울특별시") -> Region.SEOUL
+        startsWith("경기") || startsWith("경기도") -> Region.GYEONGGI
         startsWith("부산") -> Region.BUSAN
         startsWith("대구") -> Region.DAEGU
         startsWith("인천") -> Region.INCHEON
