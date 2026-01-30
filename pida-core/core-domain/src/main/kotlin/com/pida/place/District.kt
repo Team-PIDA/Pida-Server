@@ -7,7 +7,8 @@ data class District(
     val id: Long,
     val sido: Region,
     val sigungu: String,
-    val eupmyeondong: String?,
+    val eupmyeondonggu: String?,
+    val eupmyeonridong: String?,
     val ri: String?,
     val pinPoint: GeoJson,
 )
