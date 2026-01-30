@@ -21,21 +21,24 @@ class DistrictCustomRepository(
                     .whereAnd(
                         path(DistrictEntity::deletedAt).isNull(),
                         or(
+                            path(DistrictEntity::sido).like(pattern),
                             path(DistrictEntity::sigungu).like(pattern),
                             path(DistrictEntity::eupmyeondonggu).like(pattern),
                             path(DistrictEntity::eupmyeonridong).like(pattern),
                             path(DistrictEntity::ri).like(pattern),
                         ),
                     ).orderBy(
-                        caseWhen(path(DistrictEntity::sigungu).like(pattern))
+                        caseWhen(path(DistrictEntity::sido).like(pattern))
                             .then(value(1))
-                            .`when`(path(DistrictEntity::eupmyeondonggu).like(pattern))
+                            .`when`(path(DistrictEntity::sigungu).like(pattern))
                             .then(value(2))
-                            .`when`(path(DistrictEntity::eupmyeonridong).like(pattern))
+                            .`when`(path(DistrictEntity::eupmyeondonggu).like(pattern))
                             .then(value(3))
-                            .`when`(path(DistrictEntity::ri).like(pattern))
+                            .`when`(path(DistrictEntity::eupmyeonridong).like(pattern))
                             .then(value(4))
-                            .`else`(value(5))
+                            .`when`(path(DistrictEntity::ri).like(pattern))
+                            .then(value(5))
+                            .`else`(value(6))
                             .asc(),
                     )
             }

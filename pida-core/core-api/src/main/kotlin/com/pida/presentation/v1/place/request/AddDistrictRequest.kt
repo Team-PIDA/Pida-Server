@@ -12,9 +12,8 @@ data class AddDistrictRequest(
     @field:NotBlank
     @field:Schema(description = "시도", example = "경기도", requiredMode = Schema.RequiredMode.REQUIRED)
     val sido: String,
-    @field:NotBlank
-    @field:Schema(description = "시군구", example = "용인시", requiredMode = Schema.RequiredMode.REQUIRED)
-    val sigungu: String,
+    @field:Schema(description = "시군구", example = "용인시", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    val sigungu: String?,
     @field:Schema(description = "읍면동구", example = "처인구", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     val eupmyeondonggu: String?,
     @field:Schema(description = "읍면리동", example = "남사면", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
@@ -31,11 +30,12 @@ data class AddDistrictRequest(
     fun toDistrict(): District =
         District(
             id = 0L,
-            sido = sido.toRegion(),
+            sido = sido,
             sigungu = sigungu,
             eupmyeondonggu = eupmyeondonggu,
             eupmyeonridong = eupmyeonridong,
             ri = ri,
             pinPoint = GeoJson.Point(listOf(x, y)),
+            region = sido.toRegion(),
         )
 }

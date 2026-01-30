@@ -28,6 +28,7 @@ class DistrictCoreRepository(
                     eupmyeonridong = it.eupmyeonridong,
                     ri = it.ri,
                     pinPoint = GEOMETRY_FACTORY.createPoint(Coordinate(point.coordinates[0], point.coordinates[1])),
+                    region = it.region,
                 )
             }
         districtJpaRepository.saveAll(entities)

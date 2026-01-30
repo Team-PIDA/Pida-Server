@@ -78,7 +78,7 @@ data class PlaceSearchResponse(
                         .joinToString(" "),
                 address = null,
                 pinPoint = district.pinPoint,
-                region = district.sido,
+                region = district.region,
             )
     }
 }

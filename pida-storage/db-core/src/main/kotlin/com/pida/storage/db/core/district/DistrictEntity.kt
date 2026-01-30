@@ -16,6 +16,7 @@ import org.locationtech.jts.geom.Point
 @Table(
     name = "t_district",
     indexes = [
+        Index(name = "idx_district_sido", columnList = "sido"),
         Index(name = "idx_district_sigungu", columnList = "sigungu"),
         Index(name = "idx_district_eupmyeondonggu", columnList = "eupmyeondonggu"),
         Index(name = "idx_district_eupmyeonridong", columnList = "eupmyeonridong"),
@@ -23,15 +24,16 @@ import org.locationtech.jts.geom.Point
     ],
 )
 class DistrictEntity(
-    @Enumerated(value = EnumType.STRING)
-    @Column(columnDefinition = "varchar(50)")
-    val sido: Region,
-    val sigungu: String,
+    val sido: String,
+    val sigungu: String?,
     val eupmyeondonggu: String?,
     val eupmyeonridong: String?,
     val ri: String?,
     @Column(columnDefinition = "geometry(Point, 4326)")
     val pinPoint: Point,
+    @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "varchar(50)")
+    val region: Region,
 ) : BaseEntity() {
     fun toDistrict(): District =
         District(
@@ -42,5 +44,6 @@ class DistrictEntity(
             eupmyeonridong = eupmyeonridong,
             ri = ri,
             pinPoint = GeoJson.Point(listOf(pinPoint.x, pinPoint.y)),
+            region = region,
         )
 }

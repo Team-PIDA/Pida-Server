@@ -20,7 +20,7 @@ class DistrictService(
         return results.filter { district ->
             // 나머지 키워드들로 필터링
             val fullText =
-                listOfNotNull(district.sigungu, district.eupmyeondonggu, district.eupmyeonridong, district.ri)
+                listOfNotNull(district.sido, district.sigungu, district.eupmyeondonggu, district.eupmyeonridong, district.ri)
                     .joinToString(" ")
             keywords.drop(1).all { keyword -> fullText.contains(keyword) }
         }
