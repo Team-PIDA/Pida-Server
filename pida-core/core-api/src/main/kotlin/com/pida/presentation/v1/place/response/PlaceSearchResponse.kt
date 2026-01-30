@@ -74,9 +74,13 @@ data class PlaceSearchResponse(
         fun from(district: District) =
             PlaceSearchResponse(
                 name =
+                    listOfNotNull(district.sido, district.sigungu, district.eupmyeondonggu, district.eupmyeonridong, district.ri)
+                        .last(),
+                address =
                     listOfNotNull(district.sigungu, district.eupmyeondonggu, district.eupmyeonridong, district.ri)
-                        .joinToString(" "),
-                address = null,
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { listOf(district.sido) + it }
+                        ?.joinToString(" "),
                 pinPoint = district.pinPoint,
                 region = district.region,
             )
