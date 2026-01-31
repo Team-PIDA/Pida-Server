@@ -12,6 +12,7 @@ class DistrictService(
     }
 
     suspend fun searchDistricts(query: String): List<District> {
+        if (query.isBlank()) return emptyList() // 빈 쿼리인 경우 빈 리스트 반환
         val keywords = query.trim().split("\\s+".toRegex()) // 공백 제거 후 단어별로 분리
         val results = districtFinder.searchByKeyword(keywords.first()) // 첫 번째 키워드로 검색
 
