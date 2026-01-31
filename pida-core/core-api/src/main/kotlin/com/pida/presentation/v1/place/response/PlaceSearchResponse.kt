@@ -1,14 +1,20 @@
-package com.pida.presentation.v1.flowerspot.response
+package com.pida.presentation.v1.place.response
 
 import com.pida.flowerspot.FlowerSpot
-import com.pida.landmark.Landmark
+import com.pida.place.District
+import com.pida.place.Landmark
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "랜드마크 및 벚꽃길 검색 응답")
-data class FlowerSpotSearchResponse(
+data class PlaceSearchResultResponse(
+    @field:ArraySchema(
+        schema = Schema(implementation = PlaceSearchResponse::class),
+        arraySchema = Schema(description = "행정구역 목록"),
+    )
+    val district: List<PlaceSearchResponse>,
     @field:ArraySchema(
         schema = Schema(implementation = PlaceSearchResponse::class),
         arraySchema = Schema(description = "랜드마크 목록"),
@@ -22,9 +28,10 @@ data class FlowerSpotSearchResponse(
 ) {
     companion object {
         fun of(
+            district: List<PlaceSearchResponse>,
             landmarks: List<PlaceSearchResponse>,
             flowerSpots: List<PlaceSearchResponse>,
-        ) = FlowerSpotSearchResponse(landmarks, flowerSpots)
+        ) = PlaceSearchResultResponse(district, landmarks, flowerSpots)
     }
 }
 
@@ -62,6 +69,20 @@ data class PlaceSearchResponse(
                 address = flowerSpot.address,
                 pinPoint = flowerSpot.pinPoint,
                 region = flowerSpot.region,
+            )
+
+        fun from(district: District) =
+            PlaceSearchResponse(
+                name =
+                    listOfNotNull(district.sido, district.sigungu, district.eupmyeondonggu, district.eupmyeonridong, district.ri)
+                        .last(),
+                address =
+                    listOfNotNull(district.sigungu, district.eupmyeondonggu, district.eupmyeonridong, district.ri)
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { listOf(district.sido) + it }
+                        ?.joinToString(" "),
+                pinPoint = district.pinPoint,
+                region = district.region,
             )
     }
 }

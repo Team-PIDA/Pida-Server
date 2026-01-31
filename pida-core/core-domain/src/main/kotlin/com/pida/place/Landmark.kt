@@ -1,4 +1,4 @@
-package com.pida.landmark
+package com.pida.place
 
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region

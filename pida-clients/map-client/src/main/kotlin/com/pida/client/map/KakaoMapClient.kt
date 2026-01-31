@@ -1,7 +1,7 @@
 package com.pida.client.map
 
-import com.pida.landmark.LandmarkSearchClient
-import com.pida.landmark.NewLandmark
+import com.pida.place.LandmarkSearchClient
+import com.pida.place.NewLandmark
 import com.pida.support.extension.logger
 import com.pida.support.geo.toRegion
 import org.springframework.stereotype.Component

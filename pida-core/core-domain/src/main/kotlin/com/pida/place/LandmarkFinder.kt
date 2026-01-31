@@ -1,4 +1,4 @@
-package com.pida.landmark
+package com.pida.place
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.pida.support.cache.CacheAdvice

@@ -1,4 +1,4 @@
-package com.pida.landmark
+package com.pida.place
 
 import com.pida.support.extension.logger
 import org.springframework.context.event.EventListener

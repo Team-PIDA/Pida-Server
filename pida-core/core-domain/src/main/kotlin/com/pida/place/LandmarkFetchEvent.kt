@@ -1,4 +1,4 @@
-package com.pida.landmark
+package com.pida.place
 
 sealed interface LandmarkFetchEvent {
     val query: String
