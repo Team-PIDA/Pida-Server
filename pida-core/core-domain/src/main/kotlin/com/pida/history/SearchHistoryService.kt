@@ -2,10 +2,9 @@ package com.pida.history
 
 import com.pida.flowerspot.FlowerSpotSearchEvent
 import com.pida.support.extension.logger
+import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Service
 class SearchHistoryService(
@@ -14,7 +13,7 @@ class SearchHistoryService(
     private val logger by logger()
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     fun handleSearchEvent(event: FlowerSpotSearchEvent) {
         logger.info("Recording search history: query='${event.query}', authenticated=${event.userId != null}")
 
