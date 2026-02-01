@@ -136,6 +136,7 @@ class SecurityConfig(
                     "/api/v1/flower-spot",
                     "/api/v1/auth",
                     "/api/v1/blooming/{spotId}/details",
+                    "/api/v1/places/search",
                     "/test/**",
                 ).permitAll()
 
