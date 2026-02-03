@@ -10,6 +10,14 @@ services:
       - ~/.env
     depends_on:
       - redis
+    deploy:
+      resources:
+        limits:
+          cpus: '0.80'
+          memory: 768M
+        reservations:
+          cpus: '0.20'
+          memory: 256M
   redis:
     image: redis:7.2-alpine
     container_name: p-local-redis
@@ -26,3 +34,11 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '0.20'
+          memory: 64M
+        reservations:
+          cpus: '0.10'
+          memory: 32M
