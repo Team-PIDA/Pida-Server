@@ -52,11 +52,8 @@ data class FlowerSpotDetailsResponse(
     val region: Region,
     @Schema(description = "꽃 종류", example = "BLOSSOM")
     val kind: FlowerKind,
-    @Schema(
-        description = "이미지 URL 목록",
-        example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]",
-    )
-    val imageUrls: List<String> = emptyList(),
+    @Schema(description = "이미지 목록")
+    val imageUrls: List<FlowerSpotImageResponse> = emptyList(),
     @Schema(description = "삭제 일자", example = "2025-04-01T00:00:00")
     val deletedAt: LocalDateTime?,
 ) {
@@ -74,7 +71,7 @@ data class FlowerSpotDetailsResponse(
                 pinPoint = flowerSpotDetails.pinPoint,
                 region = flowerSpotDetails.region,
                 kind = flowerSpotDetails.kind,
-                imageUrls = flowerSpotDetails.imageUrls,
+                imageUrls = flowerSpotDetails.images.map { FlowerSpotImageResponse.from(it) },
                 deletedAt = flowerSpotDetails.deletedAt,
             )
     }
