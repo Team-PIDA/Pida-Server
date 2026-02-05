@@ -3,6 +3,7 @@ package com.pida.client.aws.s3
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
@@ -12,6 +13,7 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
 import java.nio.charset.Charset
 import java.time.Duration
+import java.time.Instant
 
 @Component
 class AwsS3Client(
@@ -109,6 +111,19 @@ class AwsS3Client(
             .contents(allObjects)
             .keyCount(allObjects.size)
             .build()
+    }
+
+    fun getObjectLastModified(
+        bucketName: String,
+        key: String,
+    ): Instant {
+        val request =
+            HeadObjectRequest
+                .builder()
+                .bucket(bucketName)
+                .key(key)
+                .build()
+        return s3Client.headObject(request).lastModified()
     }
 
     fun getObjectAsBytes(

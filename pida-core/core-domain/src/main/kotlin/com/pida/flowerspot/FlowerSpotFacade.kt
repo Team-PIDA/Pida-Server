@@ -18,7 +18,7 @@ class FlowerSpotFacade(
         coroutineScope {
             val flowerSpotDeferred = async { flowerSpotService.readOneFlowerSpot(spotId) }
             val bloomings = async { bloomingService.recentlyBloomingBySpotId(spotId) }
-            val imageUrls =
+            val images =
                 async {
                     imageS3Caller.getImageUrl(
                         prefix = ImagePrefix.FLOWERSPOT.value,
@@ -30,7 +30,7 @@ class FlowerSpotFacade(
             return@coroutineScope FlowerSpotDetails.of(
                 flowerSpot = flowerSpotDeferred.await(),
                 bloomings = bloomings.await().groupBy { it.flowerSpotId }[spotId] ?: emptyList(),
-                imageUrls = imageUrls.await(),
+                images = images.await(),
             )
         }
 
@@ -45,7 +45,7 @@ class FlowerSpotFacade(
             FlowerSpotDetails.of(
                 flowerSpot = flowerSpot,
                 bloomings = recentlyBlooming.groupBy { it.flowerSpotId }[flowerSpot.id] ?: emptyList(),
-                imageUrls =
+                images =
                     imageS3Caller.getImageUrl(
                         prefix = ImagePrefix.FLOWERSPOT.value,
                         prefixId = flowerSpot.id,

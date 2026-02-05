@@ -59,7 +59,7 @@ data class PlaceSearchResponse(
     @field:Schema(
         description = "벚꽃길 ID (벚꽃길인 경우에만 포함)",
         example = "1",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
     )
     val flowerSpotId: Long? = null,
 ) {
