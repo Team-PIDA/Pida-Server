@@ -50,13 +50,17 @@ data class PlaceSearchResponse(
           "coordinates": [126.9340, 37.5284]
         }
     """,
-        requiredMode = Schema.RequiredMode.REQUIRED
+        requiredMode = Schema.RequiredMode.REQUIRED,
     )
     val pinPoint: GeoJson,
     @field:Schema(description = "지역", example = "SEOUL", requiredMode = Schema.RequiredMode.REQUIRED)
     val region: Region,
     @field:JsonInclude(JsonInclude.Include.NON_NULL)
-    @field:Schema(description = "벚꽃길 ID (벚꽃길인 경우에만 포함)", example = "1", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @field:Schema(
+        description = "벚꽃길 ID (벚꽃길인 경우에만 포함)",
+        example = "1",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED
+    )
     val flowerSpotId: Long? = null,
 ) {
     companion object {
@@ -86,8 +90,7 @@ data class PlaceSearchResponse(
                         district.eupmyeondonggu,
                         district.eupmyeonridong,
                         district.ri,
-                    )
-                        .last(),
+                    ).last(),
                 address =
                     listOfNotNull(district.sigungu, district.eupmyeondonggu, district.eupmyeonridong, district.ri)
                         .takeIf { it.isNotEmpty() }
