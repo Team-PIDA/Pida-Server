@@ -1,6 +1,7 @@
 package com.pida.storage.db.core.landmark
 
 import com.pida.place.Landmark
+import com.pida.place.LandmarkCategory
 import com.pida.storage.db.core.support.BaseEntity
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
@@ -28,6 +29,9 @@ class LandmarkEntity(
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(50)")
     val region: Region,
+    @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "varchar(50)")
+    val category: LandmarkCategory? = null,
 ) : BaseEntity() {
     fun toLandmark(): Landmark =
         Landmark(
@@ -36,6 +40,7 @@ class LandmarkEntity(
             address = address,
             pinPoint = GeoJson.Point(listOf(pinPoint.x, pinPoint.y)),
             region = region,
+            category = category,
             deletedAt = deletedAt,
         )
 }

@@ -33,6 +33,7 @@ class KakaoMapClient internal constructor(
                 x = document.x.toDouble(),
                 y = document.y.toDouble(),
                 region = document.addressName.toRegion(),
+                category = document.toLandmarkCategory(),
             )
         }
     }
