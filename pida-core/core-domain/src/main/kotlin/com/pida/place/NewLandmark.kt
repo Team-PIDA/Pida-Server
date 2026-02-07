@@ -9,7 +9,7 @@ data class NewLandmark(
     val x: Double,
     val y: Double,
     val region: Region,
-    val category: LandmarkCategory,
+    val category: LandmarkCategory?,
 ) {
     fun toLandmark(): Landmark =
         Landmark(

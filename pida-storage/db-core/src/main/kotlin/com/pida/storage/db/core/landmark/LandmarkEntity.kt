@@ -31,7 +31,7 @@ class LandmarkEntity(
     val region: Region,
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(50)")
-    val category: LandmarkCategory,
+    val category: LandmarkCategory? = null,
 ) : BaseEntity() {
     fun toLandmark(): Landmark =
         Landmark(

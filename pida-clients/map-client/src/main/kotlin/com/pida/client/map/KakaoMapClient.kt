@@ -1,6 +1,5 @@
 package com.pida.client.map
 
-import com.pida.place.LandmarkCategory
 import com.pida.place.LandmarkSearchClient
 import com.pida.place.NewLandmark
 import com.pida.support.extension.logger
@@ -34,7 +33,7 @@ class KakaoMapClient internal constructor(
                 x = document.x.toDouble(),
                 y = document.y.toDouble(),
                 region = document.addressName.toRegion(),
-                category = LandmarkCategory.SUBWAY,
+                category = document.toLandmarkCategory(),
             )
         }
     }
