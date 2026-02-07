@@ -9,6 +9,7 @@ data class NewLandmark(
     val x: Double,
     val y: Double,
     val region: Region,
+    val category: LandmarkCategory,
 ) {
     fun toLandmark(): Landmark =
         Landmark(
@@ -17,6 +18,7 @@ data class NewLandmark(
             address = address,
             pinPoint = GeoJson.Point(listOf(x, y)),
             region = region,
+            category = category,
             deletedAt = null,
         )
 }

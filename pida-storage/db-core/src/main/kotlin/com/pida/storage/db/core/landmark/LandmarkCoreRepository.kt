@@ -34,6 +34,7 @@ class LandmarkCoreRepository(
                     address = it.address,
                     pinPoint = GEOMETRY_FACTORY.createPoint(Coordinate(it.x, it.y)),
                     region = it.region,
+                    category = it.category,
                 )
             }
         landmarkJpaRepository.saveAll(entities)
