@@ -14,11 +14,22 @@ class BloomingCoreRepository(
     override fun add(newBlooming: NewBlooming): Blooming =
         Tx.writeable {
             val bloomingEntity =
-                BloomingEntity(
-                    userId = newBlooming.userId,
-                    flowerSpotId = newBlooming.flowerSpotId,
-                    status = newBlooming.status,
-                )
+                when (newBlooming) {
+                    is NewBlooming.ForSpot ->
+                        BloomingEntity(
+                            userId = newBlooming.userId,
+                            flowerSpotId = newBlooming.flowerSpotId,
+                            flowerEventId = null,
+                            status = newBlooming.status,
+                        )
+                    is NewBlooming.ForEvent ->
+                        BloomingEntity(
+                            userId = newBlooming.userId,
+                            flowerSpotId = null,
+                            flowerEventId = newBlooming.flowerEventId,
+                            status = newBlooming.status,
+                        )
+                }
             bloomingJpaRepository.save(bloomingEntity).toBlooming()
         }
 

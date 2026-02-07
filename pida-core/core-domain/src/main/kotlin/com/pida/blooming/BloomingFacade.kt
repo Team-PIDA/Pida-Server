@@ -67,7 +67,7 @@ class BloomingFacade(
             )
         }
 
-    suspend fun uploadBloomingStatus(newBlooming: NewBlooming): BloomingImageUploadUrl {
+    suspend fun uploadBloomingStatus(newBlooming: NewBlooming.ForSpot): BloomingImageUploadUrl {
         bloomingService.add(newBlooming)
 
         return BloomingImageUploadUrl.from(
