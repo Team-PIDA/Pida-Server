@@ -15,14 +15,14 @@ class BloomingCoreRepository(
         Tx.writeable {
             val bloomingEntity =
                 when (newBlooming) {
-                    is NewBlooming.ForSpot ->
+                    is NewBlooming.FlowerSpot ->
                         BloomingEntity(
                             userId = newBlooming.userId,
                             flowerSpotId = newBlooming.flowerSpotId,
                             flowerEventId = null,
                             status = newBlooming.status,
                         )
-                    is NewBlooming.ForEvent ->
+                    is NewBlooming.FlowerEvent ->
                         BloomingEntity(
                             userId = newBlooming.userId,
                             flowerSpotId = null,

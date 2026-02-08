@@ -11,8 +11,8 @@ data class AddBloomingRequest(
     @Schema(description = "개화 상태", example = "BLOOMED")
     val status: BloomingStatus,
 ) {
-    fun toNewBlooming(userId: Long): NewBlooming.ForSpot =
-        NewBlooming.ForSpot(
+    fun toNewBlooming(userId: Long): NewBlooming.FlowerSpot =
+        NewBlooming.FlowerSpot(
             userId = userId,
             flowerSpotId = flowerSpotId,
             status = status,
