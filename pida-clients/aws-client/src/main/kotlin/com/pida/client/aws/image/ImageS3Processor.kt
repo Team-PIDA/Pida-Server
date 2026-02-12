@@ -114,5 +114,6 @@ class ImageS3Processor(
                         ),
                     uploadedAt = LocalDateTime.ofInstant(s3Object.lastModified(), ZoneId.of("Asia/Seoul")),
                 )
-            }.toList()
+            }.sortedByDescending { it.uploadedAt }
+            .toList()
 }
