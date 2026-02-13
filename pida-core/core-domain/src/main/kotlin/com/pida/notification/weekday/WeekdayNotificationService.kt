@@ -1,12 +1,12 @@
 package com.pida.notification.weekday
 
 import com.pida.notification.CreateNotificationStoredCommand
+import com.pida.notification.EligibleUser
 import com.pida.notification.FcmSender
 import com.pida.notification.NewFirebaseCloudMessage
 import com.pida.notification.NotificationService
 import com.pida.notification.NotificationType
 import com.pida.notification.ReadStatus
-import com.pida.notification.weekend.EligibleUser
 import com.pida.support.extension.logger
 import com.pida.user.device.UserDeviceReader
 import org.springframework.scheduling.annotation.Async

@@ -3,7 +3,7 @@ package com.pida.blooming
 interface BloomingRepository {
     fun add(newBlooming: NewBlooming): Blooming
 
-    suspend fun findTopByUserIdAndSpotIdDecs(
+    suspend fun findTopByUserIdAndSpotIdDesc(
         userId: Long,
         flowerSpotId: Long,
     ): Blooming?
@@ -22,4 +22,11 @@ interface BloomingRepository {
     ): Blooming?
 
     fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long>
+
+    /**
+     * 지역별, 상태별 최근 5일간 투표 수를 집계합니다.
+     *
+     * @return 지역별 상태별 투표 수 리스트
+     */
+    fun countByRegionAndStatus(): List<RegionStatusCount>
 }

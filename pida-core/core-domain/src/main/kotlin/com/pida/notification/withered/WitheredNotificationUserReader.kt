@@ -1,4 +1,4 @@
-package com.pida.notification.weekend
+package com.pida.notification.withered
 
 import com.pida.auth.AuthenticationHistoryRepository
 import com.pida.notification.EligibleUser
@@ -10,29 +10,31 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 /**
- * 주말 알림 대상 사용자 조회 컴포넌트
+ * WITHERED 알림 대상 사용자 조회 컴포넌트
+ *
+ * 최근 7일 내 활성 사용자 중 위치 정보가 있는 사용자 목록을 조회합니다.
  */
 @Component
-class WeekendNotificationUserReader(
+class WitheredNotificationUserReader(
     private val authenticationHistoryRepository: AuthenticationHistoryRepository,
     private val userLocationReader: UserLocationReader,
 ) {
     private val logger by logger()
 
     companion object {
-        private const val ACTIVE_USER_DAYS = 30L
+        private const val ACTIVE_USER_DAYS = 7L
     }
 
     /**
-     * 최근 30일 내 활성 사용자 중 위치 정보가 있는 사용자 목록 조회
+     * 최근 7일 내 활성 사용자 중 위치 정보가 있는 사용자 목록 조회
      *
      * @return 대상 사용자 목록
      */
     fun findActiveUsersWithLocation(): List<EligibleUser> {
-        val thirtyDaysAgo = LocalDateTime.now().minusDays(ACTIVE_USER_DAYS)
+        val sevenDaysAgo = LocalDateTime.now().minusDays(ACTIVE_USER_DAYS)
 
-        // 1. 최근 30일 내 로그인한 활성 사용자 ID 조회
-        val activeUserIds = authenticationHistoryRepository.findActiveUsersSince(thirtyDaysAgo)
+        // 1. 최근 7일 내 로그인한 활성 사용자 ID 조회
+        val activeUserIds = authenticationHistoryRepository.findActiveUsersSince(sevenDaysAgo)
 
         logger.info("Found ${activeUserIds.size} active users in last $ACTIVE_USER_DAYS days")
 
@@ -41,7 +43,8 @@ class WeekendNotificationUserReader(
         }
 
         // 2. 활성 사용자들의 위치 정보 일괄 조회 (N+1 문제 해결)
-        val userLocations: List<UserLocation.Info> = userLocationReader.readUserLocationsByUserIds(activeUserIds).distinctBy { it.userId }
+        val userLocations: List<UserLocation.Info> =
+            userLocationReader.readUserLocationsByUserIds(activeUserIds).distinctBy { it.userId }
 
         logger.info("Found ${userLocations.size} user locations")
 

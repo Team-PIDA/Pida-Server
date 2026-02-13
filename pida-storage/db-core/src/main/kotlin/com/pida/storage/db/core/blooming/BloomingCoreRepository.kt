@@ -3,6 +3,7 @@ package com.pida.storage.db.core.blooming
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingRepository
 import com.pida.blooming.NewBlooming
+import com.pida.blooming.RegionStatusCount
 import com.pida.support.tx.Tx
 import org.springframework.stereotype.Repository
 
@@ -22,7 +23,7 @@ class BloomingCoreRepository(
             bloomingJpaRepository.save(bloomingEntity).toBlooming()
         }
 
-    override suspend fun findTopByUserIdAndSpotIdDecs(
+    override suspend fun findTopByUserIdAndSpotIdDesc(
         userId: Long,
         flowerSpotId: Long,
     ): Blooming? =
@@ -61,5 +62,10 @@ class BloomingCoreRepository(
     override fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long> =
         Tx.readable {
             bloomingCustomRepository.findBloomedSpotIdsByFlowerSpotIds(spotIds)
+        }
+
+    override fun countByRegionAndStatus(): List<RegionStatusCount> =
+        Tx.readable {
+            bloomingCustomRepository.countByRegionAndStatus()
         }
 }

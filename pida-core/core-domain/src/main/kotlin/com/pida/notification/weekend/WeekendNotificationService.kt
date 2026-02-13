@@ -1,6 +1,7 @@
 package com.pida.notification.weekend
 
 import com.pida.notification.CreateNotificationStoredCommand
+import com.pida.notification.EligibleUser
 import com.pida.notification.FcmSender
 import com.pida.notification.NewFirebaseCloudMessage
 import com.pida.notification.NotificationService

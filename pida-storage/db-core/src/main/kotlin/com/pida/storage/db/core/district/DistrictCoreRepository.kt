@@ -38,4 +38,12 @@ class DistrictCoreRepository(
         districtCustomRepository
             .searchByKeyword(keyword)
             .map { it.toDistrict() }
+
+    override fun findNearestDistrict(
+        latitude: Double,
+        longitude: Double,
+    ): District? =
+        districtCustomRepository
+            .findNearestDistrict(latitude, longitude)
+            ?.toDistrict()
 }

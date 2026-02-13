@@ -11,6 +11,41 @@ class DistrictCustomRepository(
     private val entityManager: EntityManager,
     private val jdslRenderContext: RenderContext,
 ) {
+    /**
+     * 주어진 좌표에서 가장 가까운 District를 PostGIS ST_Distance 함수로 찾습니다.
+     *
+     * @param latitude 위도
+     * @param longitude 경도
+     * @return 가장 가까운 DistrictEntity, 없으면 null
+     */
+    fun findNearestDistrict(
+        latitude: Double,
+        longitude: Double,
+    ): DistrictEntity? {
+        val query =
+            entityManager.createNativeQuery(
+                """
+                SELECT *
+                FROM t_district
+                WHERE deleted_at IS NULL
+                ORDER BY ST_Distance(
+                    pin_point,
+                    ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
+                )
+                LIMIT 1
+                """,
+                DistrictEntity::class.java,
+            )
+
+        query.setParameter("lat", latitude)
+        query.setParameter("lng", longitude)
+
+        @Suppress("UNCHECKED_CAST")
+        val results = query.resultList as List<DistrictEntity>
+
+        return results.firstOrNull()
+    }
+
     fun searchByKeyword(keyword: String): List<DistrictEntity> {
         val pattern = "$keyword%" // B-tree index 활용을 위한 접두사 일치 패턴
 
