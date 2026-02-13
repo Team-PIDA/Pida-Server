@@ -3,8 +3,8 @@ package com.pida.storage.db.core.flowerspot
 import com.pida.flowerspot.FlowerSpot
 import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.flowerspot.FlowerSpotRepository
-import com.pida.flowerspot.Region
 import com.pida.storage.db.core.support.findByIdAndDeletedAtIsNullOrElseThrow
+import com.pida.support.geo.Region
 import com.pida.support.tx.TransactionTemplates
 import com.pida.support.tx.coExecute
 import org.springframework.stereotype.Repository
@@ -60,4 +60,20 @@ class FlowerSpotCoreRepository(
                     region.name,
                 ).map { it.toFlowerSpot() }
         }
+
+    override suspend fun findWithinRadius(
+        latitude: Double,
+        longitude: Double,
+        radiusMeters: Double,
+    ): List<FlowerSpot> =
+        tx.reader.coExecute {
+            flowerSpotJpaRepository
+                .findWithinRadius(latitude, longitude, radiusMeters)
+                .map { it.toFlowerSpot() }
+        }
+
+    override fun findByStreetNameContaining(streetName: String): List<FlowerSpot> =
+        flowerSpotJpaRepository
+            .findByStreetNameContainingAndDeletedAtIsNull(streetName)
+            .map { it.toFlowerSpot() }
 }

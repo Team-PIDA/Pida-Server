@@ -40,7 +40,7 @@ swaggerVersion = "2.8.5"
 sentry = "7.3.0"
 
 # AWS version
-aws = "2.25.47"
+aws = "2.40.13"
 
 # Slack Version
 slack = "1.39.2"
@@ -52,12 +52,18 @@ line_kotlin_jdsl = "3.4.1"
 spring_mockk = "4.0.2"
 
 # firebase
-firebase = "9.2.0"
+firebase = "9.4.0"
 
 # OpenFeign
 spring_cloud_openfeign = "4.2.0"
 openfeign_hc5 = "13.1"
 openfeign_micrometer = "13.1"
+
+# Bucket4j
+bucket4j = "8.15.0"
+
+# Caffeine
+caffeine = "3.2.3"
 
 [plugins]
 # Kotlin Plugins
@@ -186,9 +192,16 @@ aws_sdk_s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
 # Firebase
 firebase = { module = "com.google.firebase:firebase-admin", version.ref = "firebase" }
 
+# Bucket4j
+bucket4j_core = { module = "com.bucket4j:bucket4j_jdk17-core", version.ref = "bucket4j" }
+
+# Caffeine
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+
 [bundles]
 line_kotlin_jdsl = ["line_kotlin_jdsl_jpql_dsl", "line_kotlin_jdsl_jpql_render", "line_kotlin_jdsl_spring_data_jpa_support"]
 aws_client = ["aws_sdk_s3"]
 openfeign = ["spring_cloud_openfeign", "openfeign_hc5", "openfeign_micrometer"]
+jackson = ["jackson_kotlin", "jackson_datatype_jsr310"]
 testcontainers_postgres = ["test_containers_postgres", "spring_boot_testcontainers", "test_containers_junit_jupiter", "spring_boot_starter_test"]
 kotest = ["kotest_assertions", "kotest_property", "kotest_extensions"]

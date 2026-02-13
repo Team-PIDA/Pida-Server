@@ -14,14 +14,11 @@ jobs:
   deploy:
     name: CD
     runs-on: ubuntu-latest
+    environment: production
 
     env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      ECS_CLUSTER_NAME: ${{ secrets.ECS_CLUSTER_NAME }}
-      ECS_CONTAINER_SERVICE_NAME: ${{ secrets.ECS_CONTAINER_SERVICE_NAME }}
-      ECR_CONTAINER_NAME: ${{ secrets.ECR_CONTAINER_NAME }}
-      ECS_TASK_NAME: ${{ secrets.ECS_TASK_NAME }}
-      ECR_REPOSITORY_NAME: ${{ secrets.ECR_REPOSITORY_NAME }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_IMAGE_NAME: pida-prod
 
     strategy:
       matrix:
@@ -54,58 +51,71 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ap-northeast-2
           role-to-assume: ${{ secrets.OIDC_ROLE_TO_ASSUME }}
           role-session-name: pida-server
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+          # Dockerhub 로그인
+      - name: Login to Dockerhub
+        uses: docker/login-action@v3
         with:
-          mask-password: 'false'
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
+          # Docker 메타데이터 추출
+      - name: Extract Docker metadata
+        id: metadata
+        uses: docker/metadata-action@v5.5.0
+        env:
+          DOCKERHUB_IMAGE_FULL_NAME: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}
+        with:
+          images: ${{ env.DOCKERHUB_IMAGE_FULL_NAME }}
+          tags: |
+            type=sha,prefix=
+
+      # 멀티 아키텍처 지원을 위한 QEMU 설정
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
+      # 도커 확장 빌드를 위한 Buildx 설정
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Docker 빌드 시 파일 포함
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
+      # Docker 이미지 빌드 및 도커허브로 푸시
+      - name: Docker Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/DockerfileDev
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+
+      # 서버로 docker-compose 파일 전송
+      - name: Copy docker-compose file to EC2
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+          remote_host: ${{ secrets.EC2_HOST }}
+          remote_user: ${{ secrets.EC2_USERNAME }}
+          remote_key: ${{ secrets.EC2_PRIVATE_KEY }}
+          path: ./docker/docker-compose.yml
+          remote_path: /home/ec2-user/app
+
+      # EC2로 배포
+      - name: Deploy to EC2 Server
+        uses: appleboy/ssh-action@v1.0.3
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY_NAME }}
-          IMAGE_TAG: ${{ steps.vars.outputs.short_sha }}
-        run: |
-          docker buildx build \
-            --platform linux/arm64 \
-            --build-arg PROFILE=prod \
-            -f ./docker/DockerfileProd \
-            -t $ECR_REPOSITORY:latest \
-            --load .
-          docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:latest"
-
-      - name: Download Task Definition Template
-        run: |
-          aws ecs describe-task-definition \
-            --task-definition $ECS_TASK_NAME \
-            --query taskDefinition \
-            > task-definition.json
-
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
+          IMAGE_FULL_URL: ${{ steps.metadata.outputs.tags }}
+          DOCKERHUB_IMAGE_NAME: ${{ env.DOCKERHUB_IMAGE_NAME }}
         with:
-          task-definition: task-definition.json
-          container-name: ${{ env.ECR_CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_CONTAINER_SERVICE_NAME }}
-          cluster: ${{ env.ECS_CLUSTER_NAME }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          envs: IMAGE_FULL_URL, DOCKERHUB_IMAGE_NAME
+          debug: true
+          script: |
+            echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+            cd ~/app
+            docker compose up -d
+            docker image prune -a -f

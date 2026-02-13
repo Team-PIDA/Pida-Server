@@ -1,0 +1,4 @@
+kma:
+  api:
+    base-url: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
+    service-key: ${KMA_API_SERVICE_KEY:}

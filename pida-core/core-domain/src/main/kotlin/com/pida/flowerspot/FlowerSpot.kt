@@ -1,5 +1,7 @@
 package com.pida.flowerspot
 
+import com.pida.support.geo.GeoJson
+import com.pida.support.geo.Region
 import java.time.LocalDateTime
 
 data class FlowerSpot(
@@ -11,5 +13,6 @@ data class FlowerSpot(
     val geom: GeoJson, // LineString GeoJson
     val pinPoint: GeoJson, // Point GeoJson
     val region: Region,
+    val kind: FlowerKind,
     val deletedAt: LocalDateTime?,
 )

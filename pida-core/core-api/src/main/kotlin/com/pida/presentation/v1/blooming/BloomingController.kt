@@ -1,10 +1,10 @@
 package com.pida.presentation.v1.blooming
 
 import com.pida.blooming.BloomingFacade
+import com.pida.blooming.BloomingImageUploadUrl
 import com.pida.blooming.BloomingService
 import com.pida.presentation.v1.annotation.ApiV1Controller
 import com.pida.presentation.v1.blooming.request.AddBloomingRequest
-import com.pida.presentation.v1.blooming.response.AddBloomingResponse
 import com.pida.presentation.v1.blooming.response.BloomingDetailsResponse
 import com.pida.presentation.v1.blooming.response.VerifyTodayBloomingResponse
 import com.pida.user.User
@@ -27,10 +27,7 @@ class BloomingController(
     suspend fun bloomingAdd(
         @Parameter(hidden = true, required = false) user: User,
         @RequestBody addBloomingRequest: AddBloomingRequest,
-    ): AddBloomingResponse {
-        bloomingService.add(addBloomingRequest.toNewBlooming(user.id))
-        return AddBloomingResponse("개화 상태가 추가되었습니다.")
-    }
+    ): BloomingImageUploadUrl = bloomingFacade.uploadBloomingStatus(addBloomingRequest.toNewBlooming(user.id))
 
     @Operation(summary = "개화 상태 상세 조회", description = "개화 상태 상세 조회합니다.")
     @GetMapping("/blooming/{spotId}/details")

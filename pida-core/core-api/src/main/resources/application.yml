@@ -2,8 +2,6 @@ spring.application.name: pida-server
 spring.profiles.active: ${SPRING_PROFILES_ACTIVE}
 
 spring:
-  main:
-    lazy-initialization: true
   threads:
     virtual:
       enabled: true
@@ -18,7 +16,10 @@ spring:
       - oauth.yml
       - rsa.yml
       - notification.yml
-#      - aws.yml
+      - aws.yml
+      - weather.yml
+      - map.yml
+      - airkorea.yml
   web.resources.add-mappings: false
 
 server:

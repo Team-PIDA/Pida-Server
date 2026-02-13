@@ -1,18 +1,20 @@
 package com.pida.flowerspot
 
-sealed class FindSpotPolicyCondition {
-    data object All : FindSpotPolicyCondition()
+import com.pida.support.geo.Region
+
+sealed class FindFlowerSpotPolicyCondition {
+    data object All : FindFlowerSpotPolicyCondition()
 
     data class ByRegion(
         val region: Region,
-    ) : FindSpotPolicyCondition()
+    ) : FindFlowerSpotPolicyCondition()
 
     data class ByLocation(
         val location: FlowerSpotLocation,
-    ) : FindSpotPolicyCondition()
+    ) : FindFlowerSpotPolicyCondition()
 
     data class ByRegionAndLocation(
         val region: Region,
         val location: FlowerSpotLocation,
-    ) : FindSpotPolicyCondition()
+    ) : FindFlowerSpotPolicyCondition()
 }

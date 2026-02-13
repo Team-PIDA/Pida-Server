@@ -1,2 +1,2 @@
 fcm:
-  key-json: ${FIREBASE_KEY_JSON}
+  key-json: ${FIREBASE_KEY_JSON:classpath:/pida-firebase-key.json}

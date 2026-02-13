@@ -1,0 +1,21 @@
+spring:
+  cloud:
+    discovery:
+      enabled: false
+    openfeign:
+      client:
+        config:
+          kakao-map-api:
+            connectTimeOut: 2100
+            readTimeout: 5000
+            loggerLevel: full
+          # 추후 naver map api 연동 예정
+  compression:
+    response:
+      enabled: false
+  httpclient:
+    max-connections: 2000
+    max-connections-per-route: 500
+
+kakao:
+  rest-api-key: ${KAKAO_REST_API_KEY}

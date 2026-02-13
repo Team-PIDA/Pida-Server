@@ -3,20 +3,16 @@ package com.pida.storage.db.core.blooming
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingRepository
 import com.pida.blooming.NewBlooming
-import com.pida.support.tx.TransactionTemplates
-import com.pida.support.tx.TxAdvice
-import com.pida.support.tx.coExecute
+import com.pida.support.tx.Tx
 import org.springframework.stereotype.Repository
 
 @Repository
 class BloomingCoreRepository(
     private val bloomingJpaRepository: BloomingJpaRepository,
     private val bloomingCustomRepository: BloomingCustomRepository,
-    private val txAdvice: TxAdvice,
-    private val tx: TransactionTemplates,
 ) : BloomingRepository {
     override fun add(newBlooming: NewBlooming): Blooming =
-        txAdvice.write {
+        Tx.writeable {
             val bloomingEntity =
                 BloomingEntity(
                     userId = newBlooming.userId,
@@ -30,27 +26,27 @@ class BloomingCoreRepository(
         userId: Long,
         flowerSpotId: Long,
     ): Blooming? =
-        txAdvice.readOnly {
+        Tx.readable {
             bloomingJpaRepository.findTopByUserIdAndFlowerSpotIdOrderByCreatedAtDesc(userId, flowerSpotId)?.toBlooming()
         }
 
     override suspend fun findAllByUserId(userId: Long): List<Blooming> =
-        txAdvice.readOnly {
+        Tx.readable {
             bloomingJpaRepository.findAllByUserId(userId).map { it.toBlooming() }
         }
 
     override suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<Blooming> =
-        txAdvice.readOnly {
+        Tx.readable {
             bloomingJpaRepository.findAllByFlowerSpotId(flowerSpotId).map { it.toBlooming() }
         }
 
     override suspend fun findRecentlyBySpotId(spotId: Long): List<Blooming> =
-        tx.reader.coExecute {
+        Tx.coReadable {
             bloomingCustomRepository.recentlyBySpotId(spotId).map { it.toBlooming() }
         }
 
     override fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming> =
-        txAdvice.readOnly {
+        Tx.readable {
             bloomingCustomRepository.recentlyBySpotIds(spotIds).map { it.toBlooming() }
         }
 
@@ -58,7 +54,12 @@ class BloomingCoreRepository(
         userId: Long,
         flowerSpotId: Long,
     ): Blooming? =
-        txAdvice.readOnly {
+        Tx.readable {
             bloomingCustomRepository.findTodayBloomingByUserId(userId, flowerSpotId)?.toBlooming()
+        }
+
+    override fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long> =
+        Tx.readable {
+            bloomingCustomRepository.findBloomedSpotIdsByFlowerSpotIds(spotIds)
         }
 }

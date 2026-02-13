@@ -1,5 +1,6 @@
 package com.pida.flowerspot
 
+import com.pida.support.geo.Region
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,13 +13,20 @@ class FlowerSpotService(
     ): List<FlowerSpot> {
         val condition =
             when {
-                !location.isNotSet() && region == null -> FindSpotPolicyCondition.All
-                !location.isNotSet() -> FindSpotPolicyCondition.ByRegion(region!!)
-                region == null -> FindSpotPolicyCondition.ByLocation(location)
-                else -> FindSpotPolicyCondition.ByRegionAndLocation(region, location)
+                !location.isNotSet() && region == null -> FindFlowerSpotPolicyCondition.All
+                !location.isNotSet() -> FindFlowerSpotPolicyCondition.ByRegion(region!!)
+                region == null -> FindFlowerSpotPolicyCondition.ByLocation(location)
+                else -> FindFlowerSpotPolicyCondition.ByRegionAndLocation(region, location)
             }
         return flowerSpotFinder.findByCondition(condition)
     }
 
     suspend fun readOneFlowerSpot(spotId: Long): FlowerSpot = flowerSpotFinder.readBy(spotId)
+
+    suspend fun searchFlowerSpots(query: String): List<FlowerSpot> {
+        val trimmed = query.trim()
+        if (trimmed.isEmpty()) return emptyList()
+
+        return flowerSpotFinder.searchByStreetName(trimmed)
+    }
 }

@@ -26,9 +26,12 @@ include(
 )
 
 include(
+    "pida-clients:airquality-client",
     "pida-clients:aws-client",
     "pida-clients:notification",
     "pida-clients:oauth-client",
+    "pida-clients:weather-client",
+    "pida-clients:map-client",
 )
 
 include(

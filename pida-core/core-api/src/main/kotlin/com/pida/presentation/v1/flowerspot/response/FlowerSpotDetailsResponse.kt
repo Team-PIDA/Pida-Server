@@ -1,9 +1,10 @@
 package com.pida.presentation.v1.flowerspot.response
 
 import com.pida.blooming.BloomingStatus
+import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpotDetails
-import com.pida.flowerspot.GeoJson
-import com.pida.flowerspot.Region
+import com.pida.support.geo.GeoJson
+import com.pida.support.geo.Region
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
@@ -49,6 +50,10 @@ data class FlowerSpotDetailsResponse(
     val pinPoint: GeoJson, // Point GeoJson
     @Schema(description = "지역", example = "SEOUL")
     val region: Region,
+    @Schema(description = "꽃 종류", example = "BLOSSOM")
+    val kind: FlowerKind,
+    @Schema(description = "이미지 목록")
+    val imageUrls: List<FlowerSpotImageResponse> = emptyList(),
     @Schema(description = "삭제 일자", example = "2025-04-01T00:00:00")
     val deletedAt: LocalDateTime?,
 ) {
@@ -65,6 +70,8 @@ data class FlowerSpotDetailsResponse(
                 geom = flowerSpotDetails.geom,
                 pinPoint = flowerSpotDetails.pinPoint,
                 region = flowerSpotDetails.region,
+                kind = flowerSpotDetails.kind,
+                imageUrls = flowerSpotDetails.images.map { FlowerSpotImageResponse.from(it) },
                 deletedAt = flowerSpotDetails.deletedAt,
             )
     }

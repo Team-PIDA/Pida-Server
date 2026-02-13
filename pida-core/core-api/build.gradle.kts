@@ -19,9 +19,12 @@ dependencies {
     runtimeOnly(libs.jjwt.impl)
 
     implementation(project(":pida-core:core-domain"))
+    implementation(project(":pida-clients:airquality-client"))
     implementation(project(":pida-clients:aws-client"))
     implementation(project(":pida-clients:notification"))
     implementation(project(":pida-clients:oauth-client"))
+    implementation(project(":pida-clients:weather-client"))
+    implementation(project(":pida-clients:map-client"))
     implementation(project(":pida-supports:swagger"))
 
     runtimeOnly(project(":pida-supports:logging"))

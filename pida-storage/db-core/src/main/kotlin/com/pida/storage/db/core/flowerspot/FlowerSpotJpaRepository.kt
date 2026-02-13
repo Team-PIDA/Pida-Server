@@ -1,7 +1,7 @@
 package com.pida.storage.db.core.flowerspot
 
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.repository.KotlinJdslJpqlExecutor
-import com.pida.flowerspot.Region
+import com.pida.support.geo.Region
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -51,4 +51,29 @@ interface FlowerSpotJpaRepository :
         @Param("neLng") neLng: Double,
         @Param("region") region: String,
     ): List<FlowerSpotEntity>
+
+    @Query(
+        """
+        SELECT *
+        FROM t_flower_spot
+        WHERE ST_DWithin(
+            pin_point::geography,
+            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
+            :radiusMeters
+        )
+        AND deleted_at IS NULL
+        ORDER BY ST_Distance(
+            pin_point::geography,
+            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography
+        )
+        """,
+        nativeQuery = true,
+    )
+    fun findWithinRadius(
+        @Param("lat") lat: Double,
+        @Param("lng") lng: Double,
+        @Param("radiusMeters") radiusMeters: Double,
+    ): List<FlowerSpotEntity>
+
+    fun findByStreetNameContainingAndDeletedAtIsNull(streetName: String): List<FlowerSpotEntity>
 }
