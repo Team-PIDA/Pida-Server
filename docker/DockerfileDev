@@ -13,4 +13,5 @@ EXPOSE 8080
 CMD java \
     -javaagent:/opt/sentry/agent.jar \
     -Dsentry.auto.init=false \
-    -jar -Xmx2048m /service/pida/core-api-0.0.1.jar
+    -Xmx2048m \
+    -jar /service/pida/core-api-0.0.1.jar
