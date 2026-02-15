@@ -6,3 +6,8 @@ management:
   health:
     defaults:
       enabled: false
+
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0
+  environment: ${SPRING_PROFILES_ACTIVE:local}
