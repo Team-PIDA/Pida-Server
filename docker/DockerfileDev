@@ -1,9 +1,16 @@
+FROM alpine:latest AS agent-downloader
+RUN wget -O /sentry-opentelemetry-agent.jar https://get.sentry.io/sentry-opentelemetry-agent.jar
+
 FROM amazoncorretto:21
 ENV TZ="Asia/Seoul"
 
-RUN mkdir -p /service/pida
+RUN mkdir -p /service/pida /opt/sentry
+COPY --from=agent-downloader /sentry-opentelemetry-agent.jar /opt/sentry/agent.jar
 COPY pida-core/core-api/build/libs/core-api-0.0.1.jar /service/pida/core-api-0.0.1.jar
 
 EXPOSE 8080
 
-CMD java -jar -Xmx2048m /service/pida/core-api-0.0.1.jar
+CMD java \
+    -javaagent:/opt/sentry/agent.jar \
+    -Dsentry.auto.init=false \
+    -jar -Xmx2048m /service/pida/core-api-0.0.1.jar

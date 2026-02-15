@@ -2,10 +2,12 @@ plugins {
     id("io.sentry.jvm.gradle")
 }
 
+val hasSentryToken = System.getenv("SENTRY_AUTH_TOKEN") != null
+
 sentry {
-    includeSourceContext.set(true)
+    includeSourceContext.set(hasSentryToken)
     org.set("pida-za")
-    projectName.set("java-spring-boot")
+    projectName.set("pida")
     authToken.set(System.getenv("SENTRY_AUTH_TOKEN"))
 }
 

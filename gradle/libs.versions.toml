@@ -37,7 +37,7 @@ hidetake_swagger_generator = "2.18.2"
 swaggerVersion = "2.8.5"
 
 # Sentry version
-sentry = "7.3.0"
+sentry = "8.31.0"
 sentry_gradle = "6.0.0"
 
 # AWS version
