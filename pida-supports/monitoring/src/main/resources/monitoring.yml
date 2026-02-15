@@ -16,3 +16,11 @@ sentry:
   logging:
     minimum-event-level: error
     minimum-breadcrumb-level: info
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+sentry:
+  traces-sample-rate: 0.1
