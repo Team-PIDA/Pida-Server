@@ -189,6 +189,7 @@ epages_restdocs_api_spec_restassured = { module = "com.epages:restdocs-api-spec-
 micrometer_tracing_bridge_brave = { module = "io.micrometer:micrometer-tracing-bridge-brave" }
 micrometer_registry_prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
 sentry_spring_boot_starter_jakarta = { module = "io.sentry:sentry-spring-boot-starter-jakarta", version.ref = "sentry" }
+sentry_opentelemetry_agent = { module = "io.sentry:sentry-opentelemetry-agent", version.ref = "sentry" }
 slf4j = { module = "org.slf4j:slf4j-api", version = "2.0.9" }
 
 # AWS Libraries
