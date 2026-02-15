@@ -1,5 +1,5 @@
 FROM alpine:latest AS agent-downloader
-RUN wget -O /sentry-opentelemetry-agent.jar https://get.sentry.io/sentry-opentelemetry-agent.jar
+RUN wget -O /sentry-opentelemetry-agent.jar https://repo1.maven.org/maven2/io/sentry/sentry-opentelemetry-agent/8.31.0/sentry-opentelemetry-agent-8.31.0.jar
 
 FROM amazoncorretto:21
 ENV TZ="Asia/Seoul"
