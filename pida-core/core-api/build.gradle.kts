@@ -1,3 +1,14 @@
+plugins {
+    id("io.sentry.jvm.gradle")
+}
+
+sentry {
+    includeSourceContext.set(true)
+    org.set("pida-za")
+    projectName.set("java-spring-boot")
+    authToken.set(System.getenv("SENTRY_AUTH_TOKEN"))
+}
+
 tasks.getByName("bootJar") {
     enabled = true
 }

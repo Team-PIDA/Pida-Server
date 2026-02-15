@@ -38,6 +38,7 @@ swaggerVersion = "2.8.5"
 
 # Sentry version
 sentry = "7.3.0"
+sentry_gradle = "6.0.0"
 
 # AWS version
 aws = "2.40.13"
@@ -78,6 +79,9 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 # Spring Plugins
 spring_boot = { id = "org.springframework.boot", version.ref = "spring_boot" }
 spring_dependency_management = { id = "io.spring.dependency-management", version.ref = "spring_dependency_management" }
+
+# Sentry Plugin
+sentry_jvm_gradle = { id = "io.sentry.jvm.gradle", version.ref = "sentry_gradle" }
 
 # Api-Docs Plugins
 asciidoctor_convert = { id = "org.asciidoctor.jvm.convert", version.ref = "asciidoctor_convert" }
