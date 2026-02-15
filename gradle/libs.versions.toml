@@ -37,7 +37,8 @@ hidetake_swagger_generator = "2.18.2"
 swaggerVersion = "2.8.5"
 
 # Sentry version
-sentry = "7.3.0"
+sentry = "8.31.0"
+sentry_gradle = "6.0.0"
 
 # AWS version
 aws = "2.40.13"
@@ -78,6 +79,9 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 # Spring Plugins
 spring_boot = { id = "org.springframework.boot", version.ref = "spring_boot" }
 spring_dependency_management = { id = "io.spring.dependency-management", version.ref = "spring_dependency_management" }
+
+# Sentry Plugin
+sentry_jvm_gradle = { id = "io.sentry.jvm.gradle", version.ref = "sentry_gradle" }
 
 # Api-Docs Plugins
 asciidoctor_convert = { id = "org.asciidoctor.jvm.convert", version.ref = "asciidoctor_convert" }
@@ -184,6 +188,8 @@ epages_restdocs_api_spec_restassured = { module = "com.epages:restdocs-api-spec-
 # Monitoring & Logging Libraries
 micrometer_tracing_bridge_brave = { module = "io.micrometer:micrometer-tracing-bridge-brave" }
 micrometer_registry_prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
+sentry_spring_boot_starter_jakarta = { module = "io.sentry:sentry-spring-boot-starter-jakarta", version.ref = "sentry" }
+sentry_opentelemetry_agent = { module = "io.sentry:sentry-opentelemetry-agent", version.ref = "sentry" }
 slf4j = { module = "org.slf4j:slf4j-api", version = "2.0.9" }
 
 # AWS Libraries
