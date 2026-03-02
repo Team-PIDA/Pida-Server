@@ -9,6 +9,7 @@ import com.pida.weather.Weather
 import com.pida.weather.WeatherLocation
 import com.pida.weather.WeatherService
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
@@ -21,34 +22,37 @@ class WeatherServiceImpl(
     private val kmaWeatherClient: KmaWeatherClient,
 ) : WeatherService {
     private val logger by logger()
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     override fun getWeather(location: WeatherLocation): Weather {
-        val (baseDate, baseTime) = kmaWeatherClient.getLatestBaseTime()
+        val items = fetchForecastItems(location)
+        return parseWeatherResponse(items, location)
+    }
 
-        logger.info(
-            "Fetching weather for location: lat=${location.latitude}, lon=${location.longitude}, nx=${location.nx}, ny=${location.ny}",
-        )
+    override fun getTomorrowMaxPrecipitationProbability(location: WeatherLocation): Int {
+        val items = fetchForecastItems(location)
 
-        val response =
-            try {
-                kmaWeatherClient.getVilageForecast(baseDate, baseTime, location.nx, location.ny)
-            } catch (error: Exception) {
-                logger.error("Failed to fetch weather forecast", error)
-                throw ErrorException(ErrorType.WEATHER_API_CALL_FAILED)
-            }
+        if (items.isEmpty()) {
+            logger.warn("KMA response contains no forecast items for nx=${location.nx}, ny=${location.ny}")
+            throw ErrorException(ErrorType.WEATHER_DATA_NOT_AVAILABLE)
+        }
 
-        return parseWeatherResponse(response, location)
+        val tomorrowDate = LocalDate.now().plusDays(1).format(dateFormatter)
+
+        return items
+            .asSequence()
+            .filter { it.category == "POP" && it.fcstDate == tomorrowDate }
+            .mapNotNull { it.fcstValue.toIntOrNull() }
+            .maxOrNull() ?: 0
     }
 
     /**
      * 기상청 API 응답을 Weather 도메인 모델로 변환
      */
     private fun parseWeatherResponse(
-        response: KmaWeatherResponse,
+        items: List<KmaWeatherResponse.Item>,
         location: WeatherLocation,
     ): Weather {
-        val items = response.response.body.items.item
-
         if (items.isEmpty()) {
             logger.warn("KMA response contains no forecast items for nx=${location.nx}, ny=${location.ny}")
             throw ErrorException(ErrorType.WEATHER_DATA_NOT_AVAILABLE)
@@ -100,6 +104,24 @@ class WeatherServiceImpl(
             humidity = humidity,
             forecastDateTime = forecastDateTime,
         )
+    }
+
+    private fun fetchForecastItems(location: WeatherLocation): List<KmaWeatherResponse.Item> {
+        val (baseDate, baseTime) = kmaWeatherClient.getLatestBaseTime()
+
+        logger.info(
+            "Fetching weather for location: lat=${location.latitude}, lon=${location.longitude}, nx=${location.nx}, ny=${location.ny}",
+        )
+
+        val response =
+            try {
+                kmaWeatherClient.getVilageForecast(baseDate, baseTime, location.nx, location.ny)
+            } catch (error: Exception) {
+                logger.error("Failed to fetch weather forecast", error)
+                throw ErrorException(ErrorType.WEATHER_API_CALL_FAILED)
+            }
+
+        return response.response.body.items.item
     }
 
     /**

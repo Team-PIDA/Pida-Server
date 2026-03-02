@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.aop)
     implementation(libs.spring.boot.starter.validation)
+    compileOnly(libs.redisson)
 
     // Security
     implementation(libs.spring.boot.starter.security)

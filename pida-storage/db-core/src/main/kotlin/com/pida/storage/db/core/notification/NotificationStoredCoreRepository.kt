@@ -79,6 +79,19 @@ class NotificationStoredCoreRepository(
             )
         }
 
+    override fun countByUserIdsAndTypeNotAndCreatedAtAfter(
+        userIds: List<Long>,
+        excludedType: NotificationType,
+        createdAtAfter: LocalDateTime,
+    ): Map<Long, Long> =
+        Tx.readable {
+            notificationStoredCustomRepository.countByUserIdsAndTypeNotAndCreatedAtAfter(
+                userIds = userIds,
+                excludedType = excludedType,
+                createdAtAfter = createdAtAfter,
+            )
+        }
+
     override fun markAsRead(notificationId: Long) =
         Tx.writeable {
             val notificationStored =

@@ -32,5 +32,11 @@ interface NotificationStoredRepository {
         createdAtAfter: LocalDateTime,
     ): Map<Long, Long>
 
+    fun countByUserIdsAndTypeNotAndCreatedAtAfter(
+        userIds: List<Long>,
+        excludedType: NotificationType,
+        createdAtAfter: LocalDateTime,
+    ): Map<Long, Long>
+
     fun markAsRead(notificationId: Long)
 }

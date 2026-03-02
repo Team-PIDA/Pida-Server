@@ -2,7 +2,6 @@ package com.pida.scheduler
 
 import com.pida.notification.weekday.WeekdayNotificationService
 import com.pida.support.extension.logger
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -11,7 +10,8 @@ import kotlin.random.Random
 /**
  * 평일 힐링 푸시 알림 스케줄러
  *
- * 평일(월~금) 중 주당 랜덤으로 2회, 오후 6시에 실행
+ * 평일(월~금) 중 주당 랜덤으로 2회 실행 여부를 결정합니다.
+ * 실행 트리거는 EveningNotificationScheduler(매일 18:00)에서 호출합니다.
  */
 @Component
 class WeekdayNotificationScheduler(
@@ -27,8 +27,7 @@ class WeekdayNotificationScheduler(
         private const val THURSDAY_BOOSTED_PROBABILITY = 0.6
     }
 
-    @Scheduled(cron = "0 0 18 ? * MON-FRI")
-    fun executeWeekdayNotification() = executeIfEligible(LocalDate.now())
+    fun executeWeekdayNotification(today: LocalDate = LocalDate.now()) = executeIfEligible(today)
 
     /**
      * 평일 알림 실행 여부 결정
@@ -70,7 +69,7 @@ class WeekdayNotificationScheduler(
                 logger = logger,
                 failureMessage = "Failed to execute weekday notification scheduler",
             ) {
-                weekdayNotificationService.sendWeekdayNotifications()
+                weekdayNotificationService.sendWeekdayNotificationsSync()
             }
 
         if (executed) {
@@ -85,7 +84,7 @@ class WeekdayNotificationScheduler(
                     logger = logger,
                     failureMessage = "Failed to execute weekday notification scheduler",
                 ) {
-                    weekdayNotificationService.sendWeekdayNotifications()
+                    weekdayNotificationService.sendWeekdayNotificationsSync()
                 }
 
             if (!executed) {

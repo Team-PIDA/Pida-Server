@@ -24,7 +24,6 @@ class BloomedFirstVoteNotificationEventListener(
     @Async
     @EventListener
     fun handleBloomingAddedEvent(event: BloomingAddedEvent) {
-
         if (event.newBlooming.status != BloomingStatus.BLOOMED) {
             return
         }

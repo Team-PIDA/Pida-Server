@@ -7,6 +7,7 @@ enum class NotificationType {
     WEEKDAY_HEALING, // 평일 힐링 푸시 알림
     WITHERED_ALERT, // 저물었어요 알림 (지역별 WITHERED 30% 이상 시)
     BLOOMED_ALERT, // 만개했어요 알림 (지역별 BLOOMED 80% 이상 또는 첫 BLOOMED 투표 시)
+    RAIN_FORECAST_ALERT, // 비 예보 알림 (내일 POP 60% 이상 시)
     ;
 
     companion object {
@@ -18,6 +19,7 @@ enum class NotificationType {
                 "WEEKDAY_HEALING" -> WEEKDAY_HEALING
                 "WITHERED_ALERT" -> WITHERED_ALERT
                 "BLOOMED_ALERT" -> BLOOMED_ALERT
+                "RAIN_FORECAST_ALERT" -> RAIN_FORECAST_ALERT
                 else -> throw IllegalArgumentException("Unknown NotificationType: $type")
             }
     }

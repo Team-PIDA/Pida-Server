@@ -1,6 +1,7 @@
 package com.pida.presentation.v1.notification
 
 import com.pida.notification.bloomed.BloomedNotificationService
+import com.pida.notification.rain.RainForecastNotificationService
 import com.pida.notification.weekday.WeekdayNotificationService
 import com.pida.notification.weekend.WeekendNotificationService
 import com.pida.notification.withered.WitheredNotificationService
@@ -8,8 +9,8 @@ import com.pida.support.geo.Region
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 
@@ -21,6 +22,7 @@ class NotificationTestController(
     private val weekdayNotificationService: WeekdayNotificationService,
     private val witheredNotificationService: WitheredNotificationService,
     private val bloomedNotificationService: BloomedNotificationService,
+    private val rainForecastNotificationService: RainForecastNotificationService,
 ) {
     @PostMapping("/weekend-notification")
     @Operation(
@@ -88,6 +90,24 @@ class NotificationTestController(
 
         return NotificationTriggerResponse(
             message = "Bloomed notification triggered successfully",
+            triggeredAt = startTime,
+        )
+    }
+
+    @PostMapping("/rain-forecast-notification")
+    @Operation(
+        summary = "비 예보 알림 수동 트리거",
+        description =
+            "내일 POP(강수확률) 최대값이 60 이상인 위치의 사용자에게 비 예보 알림을 수동 발송합니다. (테스트용)\n\n" +
+                "제외 조건: 당일 다른 푸시 수신 사용자, 당주 이미 비 예보 알림 수신 사용자",
+    )
+    fun triggerRainForecastNotification(): NotificationTriggerResponse {
+        val startTime = LocalDateTime.now()
+
+        rainForecastNotificationService.sendRainForecastNotifications()
+
+        return NotificationTriggerResponse(
+            message = "Rain forecast notification triggered successfully",
             triggeredAt = startTime,
         )
     }

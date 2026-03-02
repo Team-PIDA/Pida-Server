@@ -72,16 +72,11 @@ class BloomedNotificationService(
             if (messages.isEmpty()) {
                 return 0
             }
-
-            logger.info("Region $region: ${messages.size} FCM messages prepared")
-
             // 3. FCM 발송
             fcmSender.sendAllAsync(messages)
 
             // 4. 알림 이력 저장
             storeNotificationRecords(eligibleUsers, region)
-
-            logger.info("Region $region: Notifications sent successfully to ${messages.size} users")
 
             return messages.size
         } catch (e: Exception) {

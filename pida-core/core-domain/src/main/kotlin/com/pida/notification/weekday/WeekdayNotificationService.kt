@@ -30,7 +30,14 @@ class WeekdayNotificationService(
      * 3. 알림 이력 저장
      */
     @Async
-    fun sendWeekdayNotifications() {
+    fun sendWeekdayNotifications() = sendWeekdayNotificationsSync()
+
+    /**
+     * 평일 알림 동기 실행
+     *
+     * evening 오케스트레이터에서 실행 순서를 보장하기 위해 사용됩니다.
+     */
+    fun sendWeekdayNotificationsSync() {
         try {
             // Step 1: 대상 사용자 조회
             val eligibleUsers = weekdayNotificationEligibilityChecker.findEligibleUsers()
