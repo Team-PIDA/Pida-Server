@@ -65,12 +65,14 @@ class WeekdayNotificationService(
     }
 
     private fun buildNotificationMessages(users: List<EligibleUser>): Set<NewFirebaseCloudMessage> =
-        users
-            .mapNotNull { user ->
-                userDeviceReader.readLastByUserId(user.userId)?.let { device ->
-                    weekdayNotificationMessageBuilder.buildMessage(device.fcmToken)
-                }
-            }.toSet()
+        userDeviceReader.readLastByUserIds(users.map { it.userId }).let { latestDevicesByUserId ->
+            users
+                .mapNotNull { user ->
+                    latestDevicesByUserId[user.userId]?.let { device ->
+                        weekdayNotificationMessageBuilder.buildMessage(device.fcmToken)
+                    }
+                }.toSet()
+        }
 
     private fun storeNotificationRecords(users: List<EligibleUser>) {
         val commands =

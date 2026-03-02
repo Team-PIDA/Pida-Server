@@ -112,12 +112,14 @@ class WitheredNotificationService(
      * @return FCM 메시지 집합
      */
     private fun buildNotificationMessages(users: List<EligibleUserWithRegion>): Set<NewFirebaseCloudMessage> =
-        users
-            .mapNotNull { user ->
-                userDeviceReader.readLastByUserId(user.userId)?.let { device ->
-                    witheredNotificationMessageBuilder.buildMessage(device.fcmToken)
-                }
-            }.toSet()
+        userDeviceReader.readLastByUserIds(users.map { it.userId }).let { latestDevicesByUserId ->
+            users
+                .mapNotNull { user ->
+                    latestDevicesByUserId[user.userId]?.let { device ->
+                        witheredNotificationMessageBuilder.buildMessage(device.fcmToken)
+                    }
+                }.toSet()
+        }
 
     /**
      * 알림 이력 저장

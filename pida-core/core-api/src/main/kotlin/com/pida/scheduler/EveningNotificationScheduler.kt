@@ -22,8 +22,24 @@ class EveningNotificationScheduler(
 
     @Scheduled(cron = "0 0 18 * * *")
     fun executeEveningNotifications() {
-        notificationExecutionLock.runWithEveningLock {
-            executeInOrder(LocalDate.now())
+        val today = LocalDate.now()
+        val result =
+            notificationExecutionLock.runWithEveningLock(date = today) {
+                executeInOrder(today)
+            }
+
+        when (result) {
+            NotificationExecutionLock.ExecutionResult.ACQUIRED -> {
+                logger.info("Evening notification orchestration completed with distributed lock: date=$today")
+            }
+
+            NotificationExecutionLock.ExecutionResult.SKIPPED_BY_CONTENTION -> {
+                logger.info("Skipped evening notification orchestration due to lock contention: date=$today")
+            }
+
+            NotificationExecutionLock.ExecutionResult.FAIL_OPEN -> {
+                logger.warn("Evening notification orchestration executed in fail-open mode: date=$today")
+            }
         }
     }
 

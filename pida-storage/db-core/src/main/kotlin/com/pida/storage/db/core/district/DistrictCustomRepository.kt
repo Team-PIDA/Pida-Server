@@ -12,7 +12,7 @@ class DistrictCustomRepository(
     private val jdslRenderContext: RenderContext,
 ) {
     /**
-     * 주어진 좌표에서 가장 가까운 District를 PostGIS ST_Distance 함수로 찾습니다.
+     * 주어진 좌표에서 가장 가까운 District를 PostGIS KNN 정렬로 찾습니다.
      *
      * @param latitude 위도
      * @param longitude 경도
@@ -28,10 +28,7 @@ class DistrictCustomRepository(
                 SELECT *
                 FROM t_district
                 WHERE deleted_at IS NULL
-                ORDER BY ST_Distance(
-                    pin_point,
-                    ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
-                )
+                ORDER BY pin_point <-> ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
                 LIMIT 1
                 """,
                 DistrictEntity::class.java,

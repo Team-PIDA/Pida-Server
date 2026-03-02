@@ -38,10 +38,11 @@ class BloomedSpotNotificationService(
                 return
             }
 
+            val latestDevicesByUserId = userDeviceReader.readLastByUserIds(eligibleUserIds)
             val targets =
                 eligibleUserIds
                     .mapNotNull { userId ->
-                        userDeviceReader.readLastByUserId(userId)?.let { device ->
+                        latestDevicesByUserId[userId]?.let { device ->
                             PushTarget(
                                 userId = userId,
                                 fcmToken = device.fcmToken,

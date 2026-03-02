@@ -57,15 +57,17 @@ class RainForecastNotificationService(
     }
 
     private fun resolvePushTargets(users: List<EligibleUser>): List<PushTarget> =
-        users
-            .mapNotNull { user ->
-                userDeviceReader.readLastByUserId(user.userId)?.let { device ->
-                    PushTarget(
-                        userId = user.userId,
-                        fcmToken = device.fcmToken,
-                    )
-                }
-            }.distinctBy { it.userId }
+        userDeviceReader.readLastByUserIds(users.map { it.userId }).let { latestDevicesByUserId ->
+            users
+                .mapNotNull { user ->
+                    latestDevicesByUserId[user.userId]?.let { device ->
+                        PushTarget(
+                            userId = user.userId,
+                            fcmToken = device.fcmToken,
+                        )
+                    }
+                }.distinctBy { it.userId }
+        }
 
     private fun sendMessagesAndStoreRecords(
         messages: Set<NewFirebaseCloudMessage>,

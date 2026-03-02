@@ -22,15 +22,32 @@ class NotificationExecutionLock(
         private val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.BASIC_ISO_DATE
         private const val LOCK_KEY_PREFIX = "notification:evening"
         private const val WAIT_SECONDS = 1L
-        private const val LEASE_SECONDS = 900L
+        private const val LEASE_SECONDS = 3600L
+    }
+
+    enum class ExecutionResult {
+        ACQUIRED,
+        SKIPPED_BY_CONTENTION,
+        FAIL_OPEN,
     }
 
     fun runWithEveningLock(
         date: LocalDate = LocalDate.now(),
         action: () -> Unit,
-    ): Boolean {
+    ): ExecutionResult {
         val lockKey = "$LOCK_KEY_PREFIX:${date.format(DATE_FORMATTER)}"
-        val lock = redissonClient.getLock(lockKey)
+
+        val lock =
+            try {
+                redissonClient.getLock(lockKey)
+            } catch (error: RuntimeException) {
+                logger.error(
+                    "Failed to create evening notification lock. Executing action with fail-open: key=$lockKey, date=$date, errorType=${error::class.simpleName}",
+                    error,
+                )
+                action()
+                return ExecutionResult.FAIL_OPEN
+            }
 
         val acquired =
             try {
@@ -38,20 +55,34 @@ class NotificationExecutionLock(
             } catch (error: InterruptedException) {
                 Thread.currentThread().interrupt()
                 logger.warn("Interrupted while acquiring evening notification lock: $lockKey", error)
-                false
+                return ExecutionResult.SKIPPED_BY_CONTENTION
+            } catch (error: RuntimeException) {
+                logger.error(
+                    "Failed to acquire evening notification lock. Executing action with fail-open: key=$lockKey, date=$date, errorType=${error::class.simpleName}",
+                    error,
+                )
+                action()
+                return ExecutionResult.FAIL_OPEN
             }
 
         if (!acquired) {
             logger.info("Skipped evening notifications due to lock contention: $lockKey")
-            return false
+            return ExecutionResult.SKIPPED_BY_CONTENTION
         }
 
         return try {
             action()
-            true
+            ExecutionResult.ACQUIRED
         } finally {
-            if (lock.isHeldByCurrentThread) {
-                lock.unlock()
+            runCatching {
+                if (lock.isHeldByCurrentThread) {
+                    lock.unlock()
+                }
+            }.onFailure { error ->
+                logger.warn(
+                    "Failed to release evening notification lock: $lockKey, errorType=${error::class.simpleName}",
+                    error,
+                )
             }
         }
     }
