@@ -1,6 +1,7 @@
 package com.pida.presentation.v1.notification
 
 import com.pida.notification.bloomed.BloomedNotificationService
+import com.pida.notification.bloomedspot.BloomedSpotNotificationService
 import com.pida.notification.rain.RainForecastNotificationService
 import com.pida.notification.weekday.WeekdayNotificationService
 import com.pida.notification.weekend.WeekendNotificationService
@@ -22,6 +23,7 @@ class NotificationTestController(
     private val weekdayNotificationService: WeekdayNotificationService,
     private val witheredNotificationService: WitheredNotificationService,
     private val bloomedNotificationService: BloomedNotificationService,
+    private val bloomedSpotNotificationService: BloomedSpotNotificationService,
     private val rainForecastNotificationService: RainForecastNotificationService,
 ) {
     @PostMapping("/weekend-notification")
@@ -90,6 +92,27 @@ class NotificationTestController(
 
         return NotificationTriggerResponse(
             message = "Bloomed notification triggered successfully",
+            triggeredAt = startTime,
+        )
+    }
+
+    @PostMapping("/bloomed-spot-notification")
+    @Operation(
+        summary = "벚꽃길 만개 이벤트 알림 수동 트리거",
+        description =
+            "특정 벚꽃길의 BLOOMED 투표 이벤트 알림을 수동 발송합니다. (테스트용)\n\n" +
+                "조건: 반경 3km 내 위치 권한 허용 사용자\n" +
+                "제외: 당일 이미 푸시 수신 사용자, 해당 벚꽃길 시즌 내 알림 기수신 사용자",
+    )
+    fun triggerBloomedSpotNotification(
+        @RequestParam spotId: Long,
+    ): NotificationTriggerResponse {
+        val startTime = LocalDateTime.now()
+
+        bloomedSpotNotificationService.sendBloomedSpotNotification(spotId)
+
+        return NotificationTriggerResponse(
+            message = "Bloomed spot notification triggered successfully",
             triggeredAt = startTime,
         )
     }

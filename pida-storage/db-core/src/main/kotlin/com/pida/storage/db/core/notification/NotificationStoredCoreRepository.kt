@@ -79,6 +79,17 @@ class NotificationStoredCoreRepository(
             )
         }
 
+    override fun countByUserIdsAndCreatedAtAfter(
+        userIds: List<Long>,
+        createdAtAfter: LocalDateTime,
+    ): Map<Long, Long> =
+        Tx.readable {
+            notificationStoredCustomRepository.countByUserIdsAndCreatedAtAfter(
+                userIds = userIds,
+                createdAtAfter = createdAtAfter,
+            )
+        }
+
     override fun countByUserIdsAndTypeNotAndCreatedAtAfter(
         userIds: List<Long>,
         excludedType: NotificationType,
@@ -88,6 +99,21 @@ class NotificationStoredCoreRepository(
             notificationStoredCustomRepository.countByUserIdsAndTypeNotAndCreatedAtAfter(
                 userIds = userIds,
                 excludedType = excludedType,
+                createdAtAfter = createdAtAfter,
+            )
+        }
+
+    override fun countByUserIdsAndTypeAndParameterValueAndCreatedAtAfter(
+        userIds: List<Long>,
+        type: NotificationType,
+        parameterValue: String,
+        createdAtAfter: LocalDateTime,
+    ): Map<Long, Long> =
+        Tx.readable {
+            notificationStoredCustomRepository.countByUserIdsAndTypeAndParameterValueAndCreatedAtAfter(
+                userIds = userIds,
+                type = type,
+                parameterValue = parameterValue,
                 createdAtAfter = createdAtAfter,
             )
         }
