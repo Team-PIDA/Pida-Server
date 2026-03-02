@@ -1,6 +1,7 @@
 package com.pida.notification.weekend
 
 import com.pida.auth.AuthenticationHistoryRepository
+import com.pida.notification.EligibleUser
 import com.pida.support.extension.logger
 import com.pida.support.geo.GeoJson
 import com.pida.user.location.UserLocation

@@ -4,6 +4,10 @@ import com.linecorp.kotlinjdsl.dsl.jpql.jpql
 import com.linecorp.kotlinjdsl.render.RenderContext
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.extension.createQuery
 import com.pida.blooming.BloomingStatus
+import com.pida.blooming.RegionStatusCount
+import com.pida.storage.db.core.flowerspot.FlowerSpotEntity
+import com.pida.storage.db.core.support.JDSLExtensions
+import com.pida.support.geo.Region
 import jakarta.persistence.EntityManager
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
@@ -89,5 +93,62 @@ class BloomingCustomRepository(
             }
 
         return entityManager.createQuery(query, jdslRenderContext).resultList
+    }
+
+    /**
+     * 지역별, 상태별 최근 5일간 투표 수를 집계합니다.
+     * BloomingEntity와 FlowerSpotEntity를 JOIN하여 지역 정보를 가져옵니다.
+     *
+     * @return 지역별 상태별 투표 수 리스트
+     */
+    fun countByRegionAndStatus(): List<RegionStatusCount> {
+        val threshold = LocalDateTime.now().minusDays(DATE_THRESHOLD)
+
+        val query =
+            jpql(JDSLExtensions) {
+                selectNew<RegionStatusCount>(
+                    path(FlowerSpotEntity::region),
+                    path(BloomingEntity::status),
+                    count(path(BloomingEntity::id)),
+                ).from(
+                    entity(BloomingEntity::class),
+                    join(FlowerSpotEntity::class)
+                        .on(path(BloomingEntity::flowerSpotId).eq(path(FlowerSpotEntity::id))),
+                ).whereAnd(
+                    path(BloomingEntity::createdAt).greaterThan(threshold),
+                    path(FlowerSpotEntity::deletedAt).isNull(),
+                ).groupBy(
+                    path(FlowerSpotEntity::region),
+                    path(BloomingEntity::status),
+                )
+            }
+
+        return entityManager.createQuery(query, jdslRenderContext).resultList
+    }
+
+    fun countBloomedVotesByRegionAndCreatedAtAfter(
+        region: Region,
+        createdAtAfter: LocalDateTime,
+    ): Long {
+        val query =
+            jpql(JDSLExtensions) {
+                select(
+                    count(path(BloomingEntity::id)),
+                ).from(
+                    entity(BloomingEntity::class),
+                    join(FlowerSpotEntity::class)
+                        .on(path(BloomingEntity::flowerSpotId).eq(path(FlowerSpotEntity::id))),
+                ).whereAnd(
+                    path(BloomingEntity::status).eq(BloomingStatus.BLOOMED),
+                    path(FlowerSpotEntity::region).eq(region),
+                    path(BloomingEntity::createdAt).greaterThanOrEqualTo(createdAtAfter),
+                    path(FlowerSpotEntity::deletedAt).isNull(),
+                )
+            }
+
+        return entityManager
+            .createQuery(query, jdslRenderContext)
+            .resultList
+            .firstOrNull() ?: 0L
     }
 }

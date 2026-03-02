@@ -30,4 +30,17 @@ interface WeatherService {
         val weather = getWeather(location)
         return weather.hasRainForecast(probabilityThreshold) || weather.isRaining()
     }
+
+    /**
+     * 내일 시간대 예보 중 최대 강수확률(POP) 조회
+     */
+    fun getTomorrowMaxPrecipitationProbability(location: WeatherLocation): Int
+
+    /**
+     * 내일 비 예보 여부 확인
+     */
+    fun willRainTomorrow(
+        location: WeatherLocation,
+        probabilityThreshold: Int = 60,
+    ): Boolean = getTomorrowMaxPrecipitationProbability(location) >= probabilityThreshold
 }
