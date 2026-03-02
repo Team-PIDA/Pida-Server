@@ -1,5 +1,8 @@
 package com.pida.blooming
 
+import com.pida.support.geo.Region
+import java.time.LocalDateTime
+
 interface BloomingRepository {
     fun add(newBlooming: NewBlooming): Blooming
 
@@ -29,4 +32,12 @@ interface BloomingRepository {
      * @return 지역별 상태별 투표 수 리스트
      */
     fun countByRegionAndStatus(): List<RegionStatusCount>
+
+    /**
+     * 특정 지역에서 특정 시점 이후 BLOOMED 투표 수를 조회합니다.
+     */
+    fun countBloomedVotesByRegionAndCreatedAtAfter(
+        region: Region,
+        createdAtAfter: LocalDateTime,
+    ): Long
 }

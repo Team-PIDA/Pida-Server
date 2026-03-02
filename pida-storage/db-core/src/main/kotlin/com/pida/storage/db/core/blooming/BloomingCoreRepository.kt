@@ -4,8 +4,10 @@ import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingRepository
 import com.pida.blooming.NewBlooming
 import com.pida.blooming.RegionStatusCount
+import com.pida.support.geo.Region
 import com.pida.support.tx.Tx
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class BloomingCoreRepository(
@@ -67,5 +69,16 @@ class BloomingCoreRepository(
     override fun countByRegionAndStatus(): List<RegionStatusCount> =
         Tx.readable {
             bloomingCustomRepository.countByRegionAndStatus()
+        }
+
+    override fun countBloomedVotesByRegionAndCreatedAtAfter(
+        region: Region,
+        createdAtAfter: LocalDateTime,
+    ): Long =
+        Tx.readable {
+            bloomingCustomRepository.countBloomedVotesByRegionAndCreatedAtAfter(
+                region = region,
+                createdAtAfter = createdAtAfter,
+            )
         }
 }

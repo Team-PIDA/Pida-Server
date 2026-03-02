@@ -1,11 +1,14 @@
 package com.pida.presentation.v1.notification
 
+import com.pida.notification.bloomed.BloomedNotificationService
 import com.pida.notification.weekday.WeekdayNotificationService
 import com.pida.notification.weekend.WeekendNotificationService
 import com.pida.notification.withered.WitheredNotificationService
+import com.pida.support.geo.Region
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
@@ -17,6 +20,7 @@ class NotificationTestController(
     private val weekendNotificationService: WeekendNotificationService,
     private val weekdayNotificationService: WeekdayNotificationService,
     private val witheredNotificationService: WitheredNotificationService,
+    private val bloomedNotificationService: BloomedNotificationService,
 ) {
     @PostMapping("/weekend-notification")
     @Operation(
@@ -64,6 +68,26 @@ class NotificationTestController(
 
         return NotificationTriggerResponse(
             message = "Withered notification triggered successfully",
+            triggeredAt = startTime,
+        )
+    }
+
+    @PostMapping("/bloomed-notification")
+    @Operation(
+        summary = "만개했어요 알림 수동 트리거",
+        description =
+            "BLOOMED 상태 푸시 알림을 수동으로 발송합니다. (테스트용)\n\n" +
+                "입력한 지역의 사용자들에게 BLOOMED 알림을 수동 발송합니다.",
+    )
+    fun triggerBloomedNotification(
+        @RequestParam region: Region,
+    ): NotificationTriggerResponse {
+        val startTime = LocalDateTime.now()
+
+        bloomedNotificationService.sendBloomedNotificationForRegion(region)
+
+        return NotificationTriggerResponse(
+            message = "Bloomed notification triggered successfully",
             triggeredAt = startTime,
         )
     }

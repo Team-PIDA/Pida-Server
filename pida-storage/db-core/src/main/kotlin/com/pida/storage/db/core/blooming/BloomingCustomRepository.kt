@@ -7,6 +7,7 @@ import com.pida.blooming.BloomingStatus
 import com.pida.blooming.RegionStatusCount
 import com.pida.storage.db.core.flowerspot.FlowerSpotEntity
 import com.pida.storage.db.core.support.JDSLExtensions
+import com.pida.support.geo.Region
 import jakarta.persistence.EntityManager
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
@@ -123,5 +124,31 @@ class BloomingCustomRepository(
             }
 
         return entityManager.createQuery(query, jdslRenderContext).resultList
+    }
+
+    fun countBloomedVotesByRegionAndCreatedAtAfter(
+        region: Region,
+        createdAtAfter: LocalDateTime,
+    ): Long {
+        val query =
+            jpql(JDSLExtensions) {
+                select(
+                    count(path(BloomingEntity::id)),
+                ).from(
+                    entity(BloomingEntity::class),
+                    join(FlowerSpotEntity::class)
+                        .on(path(BloomingEntity::flowerSpotId).eq(path(FlowerSpotEntity::id))),
+                ).whereAnd(
+                    path(BloomingEntity::status).eq(BloomingStatus.BLOOMED),
+                    path(FlowerSpotEntity::region).eq(region),
+                    path(BloomingEntity::createdAt).greaterThanOrEqualTo(createdAtAfter),
+                    path(FlowerSpotEntity::deletedAt).isNull(),
+                )
+            }
+
+        return entityManager
+            .createQuery(query, jdslRenderContext)
+            .resultList
+            .firstOrNull() ?: 0L
     }
 }

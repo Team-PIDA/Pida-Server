@@ -6,7 +6,7 @@ enum class NotificationType {
     WEEKEND_HEALING, // 주말 힐링 푸시 알림
     WEEKDAY_HEALING, // 평일 힐링 푸시 알림
     WITHERED_ALERT, // 저물었어요 알림 (지역별 WITHERED 30% 이상 시)
-    BLOOMED_ALERT, // 만개했어요 알림 (지역별 BLOOMED 80% 이상 시)
+    BLOOMED_ALERT, // 만개했어요 알림 (지역별 BLOOMED 80% 이상 또는 첫 BLOOMED 투표 시)
     ;
 
     companion object {
