@@ -22,7 +22,7 @@ class WitheredNotificationScheduler(
      *
      * WITHERED 비율이 30% 이상인 지역의 사용자들에게 알림 발송
      */
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Seoul")
     fun executeWitheredNotification() =
         executeOncePerDay(
             logger = logger,
