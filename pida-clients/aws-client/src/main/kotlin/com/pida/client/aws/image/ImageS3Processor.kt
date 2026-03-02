@@ -4,9 +4,12 @@ import com.pida.client.aws.config.AwsProperties
 import com.pida.client.aws.s3.AwsS3Client
 import com.pida.support.aws.ImageS3Caller
 import com.pida.support.aws.PresignedUrlRateLimiter
+import com.pida.support.aws.S3ImageInfo
 import com.pida.support.aws.S3ImageUrl
 import org.springframework.stereotype.Component
 import java.time.Duration
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Component
 class ImageS3Processor(
@@ -35,7 +38,7 @@ class ImageS3Processor(
 
         return S3ImageUrl(
             presignedUrl,
-            presignedGet(imageFilePath, imageFileName),
+            generateGetUrl(imageFilePath, imageFileName),
         )
     }
 
@@ -43,7 +46,7 @@ class ImageS3Processor(
         prefix: String,
         prefixId: Long,
         fileName: String?,
-    ): List<String> {
+    ): List<S3ImageInfo> {
         val imageFilePath = imageFileConstructor.imageFilePath(prefix, prefixId)
 
         return fileName
@@ -52,7 +55,7 @@ class ImageS3Processor(
             } ?: listPresignedGets(imageFilePath) // 아니면 해당 경로 아래 모든 이미지 탐색
     }
 
-    private fun presignedGet(
+    private fun generateGetUrl(
         filePath: String,
         fileName: String,
         ttl: Duration = Duration.ofSeconds(30),
@@ -64,10 +67,33 @@ class ImageS3Processor(
             ttl = ttl,
         )
 
+    private fun presignedGet(
+        filePath: String,
+        fileName: String,
+        ttl: Duration = Duration.ofSeconds(30),
+    ): S3ImageInfo {
+        val url =
+            awsS3Client.generateUrl(
+                bucketName = awsProperties.s3.bucket,
+                filePath = filePath,
+                fileName = fileName,
+                ttl = ttl,
+            )
+        val lastModified =
+            awsS3Client.getObjectLastModified(
+                bucketName = awsProperties.s3.bucket,
+                key = "$filePath/$fileName",
+            )
+        return S3ImageInfo(
+            url = url,
+            uploadedAt = LocalDateTime.ofInstant(lastModified, ZoneId.of("Asia/Seoul")),
+        )
+    }
+
     private fun listPresignedGets(
         filePath: String,
         ttl: Duration = Duration.ofSeconds(30),
-    ): List<String> =
+    ): List<S3ImageInfo> =
         awsS3Client
             .getBucketListObjects(
                 bucketName = awsProperties.s3.bucket,
@@ -76,7 +102,18 @@ class ImageS3Processor(
             .orEmpty()
             .asSequence()
             .filterNot { it.key().endsWith("/") }
-            .map { it.key().substringAfterLast("/") }
-            .map { presignedGet(filePath, it, ttl) }
+            .map { s3Object ->
+                val fileName = s3Object.key().substringAfterLast("/")
+                S3ImageInfo(
+                    url =
+                        awsS3Client.generateUrl(
+                            bucketName = awsProperties.s3.bucket,
+                            filePath = filePath,
+                            fileName = fileName,
+                            ttl = ttl,
+                        ),
+                    uploadedAt = LocalDateTime.ofInstant(s3Object.lastModified(), ZoneId.of("Asia/Seoul")),
+                )
+            }.sortedByDescending { it.uploadedAt }
             .toList()
 }

@@ -22,6 +22,11 @@ class PlaceFacade(
         private const val MIN_LANDMARK_SEARCH_COUNT = 2
         private const val MAX_LANDMARK_SEARCH_COUNT = 5
         private val SEARCH_REGIONS = setOf(Region.SEOUL, Region.GYEONGGI)
+        private val LANDMARK_CATEGORY_PRIORITY =
+            listOf(
+                LandmarkCategory.SUBWAY,
+                // 정렬 우선순위 여기에 추가
+            )
     }
 
     suspend fun search(
@@ -50,7 +55,11 @@ class PlaceFacade(
 
             PlaceSearchResult(
                 districts = districtsDeferred.await().take(MAX_DISTRICT_SEARCH_COUNT),
-                landmarks = landmarks.filter { it.region in SEARCH_REGIONS }.take(MAX_LANDMARK_SEARCH_COUNT),
+                landmarks =
+                    landmarks
+                        .filter { it.region in SEARCH_REGIONS }
+                        .sortedBy { LANDMARK_CATEGORY_PRIORITY.indexOf(it.category).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE }
+                        .take(MAX_LANDMARK_SEARCH_COUNT),
                 flowerSpots = flowerSpotsDeferred.await(),
             )
         }

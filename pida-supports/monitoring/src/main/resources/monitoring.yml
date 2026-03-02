@@ -6,3 +6,20 @@ management:
   health:
     defaults:
       enabled: false
+
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0
+  environment: ${SPRING_PROFILES_ACTIVE:local}
+  exception-resolver-order: -2147483648
+  logging:
+    minimum-event-level: error
+    minimum-breadcrumb-level: info
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+sentry:
+  traces-sample-rate: 0.1

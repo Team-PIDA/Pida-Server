@@ -10,5 +10,6 @@ data class Landmark(
     val address: String?,
     val pinPoint: GeoJson, // Point GeoJson
     val region: Region,
+    val category: LandmarkCategory?,
     val deletedAt: LocalDateTime?,
 )

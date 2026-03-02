@@ -90,7 +90,7 @@ data class FlowerSpotResponseDto(
                 pinPoint = flowerSpot.pinPoint,
                 region = flowerSpot.region,
                 kind = flowerSpot.kind,
-                previewUrl = flowerSpot.imageUrls.firstOrNull(),
+                previewUrl = flowerSpot.images.firstOrNull()?.url,
                 deletedAt = flowerSpot.deletedAt,
             )
     }

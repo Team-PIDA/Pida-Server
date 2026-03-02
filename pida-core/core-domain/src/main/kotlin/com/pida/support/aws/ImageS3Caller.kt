@@ -21,5 +21,5 @@ interface ImageS3Caller {
         prefix: String,
         prefixId: Long,
         fileName: String?,
-    ): List<String>
+    ): List<S3ImageInfo>
 }
