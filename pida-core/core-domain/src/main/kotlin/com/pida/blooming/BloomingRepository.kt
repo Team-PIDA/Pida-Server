@@ -11,6 +11,11 @@ interface BloomingRepository {
         flowerSpotId: Long,
     ): Blooming?
 
+    suspend fun findTopByUserIdAndEventIdDesc(
+        userId: Long,
+        flowerEventId: Long,
+    ): Blooming?
+
     suspend fun findAllByUserId(userId: Long): List<Blooming>
 
     suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<Blooming>

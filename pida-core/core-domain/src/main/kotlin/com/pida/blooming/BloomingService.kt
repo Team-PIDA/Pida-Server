@@ -12,7 +12,11 @@ class BloomingService(
         val blooming =
             when (newBlooming) {
                 is NewBlooming.FlowerSpot -> bloomingFinder.readTopByUserIdAndFlowerSpotIdDesc(newBlooming.userId, newBlooming.flowerSpotId)
-                is NewBlooming.FlowerEvent -> null
+                is NewBlooming.FlowerEvent ->
+                    bloomingFinder.readTopByUserIdAndFlowerEventIdDesc(
+                        newBlooming.userId,
+                        newBlooming.flowerEventId,
+                    )
             }
         bloomingValidator.addValidate(blooming)
 

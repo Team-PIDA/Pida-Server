@@ -28,7 +28,7 @@ class BloomingCoreRepository(
                     is NewBlooming.FlowerEvent ->
                         BloomingEntity(
                             userId = newBlooming.userId,
-                            flowerSpotId = null,
+                            flowerSpotId = newBlooming.flowerSpotId,
                             flowerEventId = newBlooming.flowerEventId,
                             status = newBlooming.status,
                         )
@@ -42,6 +42,14 @@ class BloomingCoreRepository(
     ): Blooming? =
         Tx.readable {
             bloomingJpaRepository.findTopByUserIdAndFlowerSpotIdOrderByCreatedAtDesc(userId, flowerSpotId)?.toBlooming()
+        }
+
+    override suspend fun findTopByUserIdAndEventIdDesc(
+        userId: Long,
+        flowerEventId: Long,
+    ): Blooming? =
+        Tx.readable {
+            bloomingJpaRepository.findTopByUserIdAndFlowerEventIdOrderByCreatedAtDesc(userId, flowerEventId)?.toBlooming()
         }
 
     override suspend fun findAllByUserId(userId: Long): List<Blooming> =
