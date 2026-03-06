@@ -11,6 +11,11 @@ class BloomingFinder(
         flowerSpotId: Long,
     ): Blooming? = bloomingRepository.findTopByUserIdAndSpotIdDesc(userId, flowerSpotId)
 
+    suspend fun readTopByUserIdAndFlowerEventIdDesc(
+        userId: Long,
+        flowerEventId: Long,
+    ): Blooming? = bloomingRepository.findTopByUserIdAndEventIdDesc(userId, flowerEventId)
+
     suspend fun readAllByUserId(userId: Long): List<Blooming> = bloomingRepository.findAllByUserId(userId)
 
     suspend fun readAllByFlowerSpotId(flowerSpotId: Long): List<Blooming> = bloomingRepository.findAllByFlowerSpotId(flowerSpotId)

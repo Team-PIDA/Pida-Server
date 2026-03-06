@@ -9,7 +9,15 @@ class BloomingService(
     private val bloomingFinder: BloomingFinder,
 ) {
     suspend fun add(newBlooming: NewBlooming): Blooming {
-        val blooming = bloomingFinder.readTopByUserIdAndFlowerSpotIdDesc(newBlooming.userId, newBlooming.flowerSpotId)
+        val blooming =
+            when (newBlooming) {
+                is NewBlooming.FlowerSpot -> bloomingFinder.readTopByUserIdAndFlowerSpotIdDesc(newBlooming.userId, newBlooming.flowerSpotId)
+                is NewBlooming.FlowerEvent ->
+                    bloomingFinder.readTopByUserIdAndFlowerEventIdDesc(
+                        newBlooming.userId,
+                        newBlooming.flowerEventId,
+                    )
+            }
         bloomingValidator.addValidate(blooming)
 
         return bloomingAppender.add(newBlooming)

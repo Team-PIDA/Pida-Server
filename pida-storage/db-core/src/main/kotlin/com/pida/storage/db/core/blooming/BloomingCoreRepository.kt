@@ -17,11 +17,22 @@ class BloomingCoreRepository(
     override fun add(newBlooming: NewBlooming): Blooming =
         Tx.writeable {
             val bloomingEntity =
-                BloomingEntity(
-                    userId = newBlooming.userId,
-                    flowerSpotId = newBlooming.flowerSpotId,
-                    status = newBlooming.status,
-                )
+                when (newBlooming) {
+                    is NewBlooming.FlowerSpot ->
+                        BloomingEntity(
+                            userId = newBlooming.userId,
+                            flowerSpotId = newBlooming.flowerSpotId,
+                            flowerEventId = null,
+                            status = newBlooming.status,
+                        )
+                    is NewBlooming.FlowerEvent ->
+                        BloomingEntity(
+                            userId = newBlooming.userId,
+                            flowerSpotId = newBlooming.flowerSpotId,
+                            flowerEventId = newBlooming.flowerEventId,
+                            status = newBlooming.status,
+                        )
+                }
             bloomingJpaRepository.save(bloomingEntity).toBlooming()
         }
 
@@ -31,6 +42,14 @@ class BloomingCoreRepository(
     ): Blooming? =
         Tx.readable {
             bloomingJpaRepository.findTopByUserIdAndFlowerSpotIdOrderByCreatedAtDesc(userId, flowerSpotId)?.toBlooming()
+        }
+
+    override suspend fun findTopByUserIdAndEventIdDesc(
+        userId: Long,
+        flowerEventId: Long,
+    ): Blooming? =
+        Tx.readable {
+            bloomingJpaRepository.findTopByUserIdAndFlowerEventIdOrderByCreatedAtDesc(userId, flowerEventId)?.toBlooming()
         }
 
     override suspend fun findAllByUserId(userId: Long): List<Blooming> =

@@ -13,7 +13,8 @@ import jakarta.persistence.Table
 @Table(name = "t_blooming")
 class BloomingEntity(
     val userId: Long,
-    val flowerSpotId: Long,
+    val flowerSpotId: Long?,
+    val flowerEventId: Long?,
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(50)")
     val status: BloomingStatus,
@@ -23,6 +24,7 @@ class BloomingEntity(
             id = id!!,
             userId = userId,
             flowerSpotId = flowerSpotId,
+            flowerEventId = flowerEventId,
             status = status,
             createdAt = createdAt,
         )

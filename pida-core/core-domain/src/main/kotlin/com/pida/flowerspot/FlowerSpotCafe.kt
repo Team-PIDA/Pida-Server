@@ -4,16 +4,14 @@ import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import java.time.LocalDateTime
 
-data class FlowerSpot(
+data class FlowerSpotCafe(
     val id: Long,
+    val flowerSpotId: Long,
+    val name: String,
     val address: String?,
-    val streetName: String,
-    val district: String?,
     val description: String?,
-    val geom: GeoJson, // LineString GeoJson
-    val pinPoint: GeoJson, // Point GeoJson
+    val pinPoint: GeoJson,
     val region: Region,
-    val kind: FlowerKind,
-    val type: FlowerSpotType,
+    val mapUrl: String?,
     val deletedAt: LocalDateTime?,
 )
