@@ -1,8 +1,8 @@
 package com.pida.notification.weekday
 
+import com.pida.notification.EligibleUser
 import com.pida.notification.NotificationStoredRepository
 import com.pida.notification.NotificationType
-import com.pida.notification.weekend.EligibleUser
 import com.pida.notification.weekend.WeekendNotificationAirQualityChecker
 import com.pida.notification.weekend.WeekendNotificationLocationChecker
 import com.pida.notification.weekend.WeekendNotificationUserReader

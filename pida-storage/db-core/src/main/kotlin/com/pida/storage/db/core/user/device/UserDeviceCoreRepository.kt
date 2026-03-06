@@ -29,9 +29,20 @@ class UserDeviceCoreRepository(
     override fun findLastByUserId(userId: Long): UserDevice.Info? =
         Tx.readable {
             userDeviceJpaRepository
-                .findAllByUserIdAndDeletedAtIsNull(userId)
-                .lastOrNull()
+                .findFirstByUserIdAndDeletedAtIsNullOrderByCreatedAtDescIdDesc(userId)
                 ?.toUserDevice()
+        }
+
+    override fun findLastByUserIds(userIds: List<Long>): Map<Long, UserDevice.Info> =
+        Tx.readable {
+            if (userIds.isEmpty()) {
+                emptyMap()
+            } else {
+                userDeviceJpaRepository
+                    .findLastByUserIds(userIds.distinct())
+                    .map { it.toUserDevice() }
+                    .associateBy { it.userId }
+            }
         }
 
     override fun findAllByUserKey(userKey: String): List<UserDevice.Info> =

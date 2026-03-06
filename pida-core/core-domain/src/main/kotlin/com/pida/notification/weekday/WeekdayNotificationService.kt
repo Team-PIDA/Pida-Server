@@ -1,12 +1,12 @@
 package com.pida.notification.weekday
 
 import com.pida.notification.CreateNotificationStoredCommand
+import com.pida.notification.EligibleUser
 import com.pida.notification.FcmSender
 import com.pida.notification.NewFirebaseCloudMessage
 import com.pida.notification.NotificationService
 import com.pida.notification.NotificationType
 import com.pida.notification.ReadStatus
-import com.pida.notification.weekend.EligibleUser
 import com.pida.support.extension.logger
 import com.pida.user.device.UserDeviceReader
 import org.springframework.scheduling.annotation.Async
@@ -30,7 +30,14 @@ class WeekdayNotificationService(
      * 3. 알림 이력 저장
      */
     @Async
-    fun sendWeekdayNotifications() {
+    fun sendWeekdayNotifications() = sendWeekdayNotificationsSync()
+
+    /**
+     * 평일 알림 동기 실행
+     *
+     * evening 오케스트레이터에서 실행 순서를 보장하기 위해 사용됩니다.
+     */
+    fun sendWeekdayNotificationsSync() {
         try {
             // Step 1: 대상 사용자 조회
             val eligibleUsers = weekdayNotificationEligibilityChecker.findEligibleUsers()
@@ -58,12 +65,14 @@ class WeekdayNotificationService(
     }
 
     private fun buildNotificationMessages(users: List<EligibleUser>): Set<NewFirebaseCloudMessage> =
-        users
-            .mapNotNull { user ->
-                userDeviceReader.readLastByUserId(user.userId)?.let { device ->
-                    weekdayNotificationMessageBuilder.buildMessage(device.fcmToken)
-                }
-            }.toSet()
+        userDeviceReader.readLastByUserIds(users.map { it.userId }).let { latestDevicesByUserId ->
+            users
+                .mapNotNull { user ->
+                    latestDevicesByUserId[user.userId]?.let { device ->
+                        weekdayNotificationMessageBuilder.buildMessage(device.fcmToken)
+                    }
+                }.toSet()
+        }
 
     private fun storeNotificationRecords(users: List<EligibleUser>) {
         val commands =

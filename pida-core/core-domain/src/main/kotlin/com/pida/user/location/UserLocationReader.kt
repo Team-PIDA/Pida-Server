@@ -9,4 +9,10 @@ class UserLocationReader(
     fun readUserLocationByUserId(userId: Long) = userLocationRepository.findByUserId(userId)
 
     fun readUserLocationsByUserIds(userIds: List<Long>) = userLocationRepository.findByUserIds(userIds)
+
+    fun readUserLocationsWithinRadius(
+        latitude: Double,
+        longitude: Double,
+        radiusMeters: Double,
+    ) = userLocationRepository.findWithinRadius(latitude, longitude, radiusMeters)
 }

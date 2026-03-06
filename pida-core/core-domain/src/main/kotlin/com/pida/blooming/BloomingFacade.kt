@@ -6,6 +6,7 @@ import com.pida.support.aws.ImageS3Caller
 import com.pida.user.UserService
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import kotlin.math.roundToInt
@@ -16,6 +17,7 @@ class BloomingFacade(
     private val recentReporterService: RecentReporterService,
     private val userService: UserService,
     private val imageS3Caller: ImageS3Caller,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     suspend fun readBloomingDetailsBySpotId(flowerSpotId: Long): BloomingDetails =
         coroutineScope {
@@ -69,6 +71,7 @@ class BloomingFacade(
 
     suspend fun uploadBloomingStatus(newBlooming: NewBlooming.FlowerSpot): BloomingImageUploadUrl {
         bloomingService.add(newBlooming)
+        eventPublisher.publishEvent(BloomingAddedEvent(newBlooming))
 
         return BloomingImageUploadUrl.from(
             imageS3Caller.createUploadUrl(newBlooming.userId, ImagePrefix.FLOWERSPOT.value, newBlooming.flowerSpotId),

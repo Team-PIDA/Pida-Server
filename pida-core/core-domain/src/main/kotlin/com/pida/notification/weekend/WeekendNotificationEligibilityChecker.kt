@@ -1,5 +1,6 @@
 package com.pida.notification.weekend
 
+import com.pida.notification.EligibleUser
 import com.pida.support.extension.logger
 import org.springframework.stereotype.Component
 

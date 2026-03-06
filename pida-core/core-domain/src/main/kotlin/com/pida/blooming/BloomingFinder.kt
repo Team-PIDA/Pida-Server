@@ -9,7 +9,7 @@ class BloomingFinder(
     suspend fun readTopByUserIdAndFlowerSpotIdDesc(
         userId: Long,
         flowerSpotId: Long,
-    ): Blooming? = bloomingRepository.findTopByUserIdAndSpotIdDecs(userId, flowerSpotId)
+    ): Blooming? = bloomingRepository.findTopByUserIdAndSpotIdDesc(userId, flowerSpotId)
 
     suspend fun readAllByUserId(userId: Long): List<Blooming> = bloomingRepository.findAllByUserId(userId)
 

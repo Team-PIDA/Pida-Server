@@ -5,6 +5,12 @@ interface UserLocationRepository {
 
     fun findByUserIds(userIds: List<Long>): List<UserLocation.Info>
 
+    fun findWithinRadius(
+        latitude: Double,
+        longitude: Double,
+        radiusMeters: Double,
+    ): List<UserLocation.Info>
+
     fun saveOrUpdate(
         userId: Long,
         latitude: Double,
