@@ -10,7 +10,7 @@ management:
 sentry:
   dsn: ${SENTRY_DSN}
   traces-sample-rate: 1.0
-  environment: ${SPRING_PROFILES_ACTIVE:local}
+  environment: ${spring.profiles.active:local}
   exception-resolver-order: -2147483648
   logging:
     minimum-event-level: error

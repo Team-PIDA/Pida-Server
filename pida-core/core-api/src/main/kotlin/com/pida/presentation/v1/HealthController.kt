@@ -21,13 +21,12 @@ class HealthController {
     fun sentryTest(
         @RequestParam(required = false) message: String?,
         @RequestBody(required = false) body: SentryTestRequest?,
-    ): Nothing {
+    ): Nothing =
         throw RuntimeException(
             "Sentry 테스트 에러 발생! " +
                 "param.message=$message, " +
                 "body=$body",
         )
-    }
 
     data class PongResponse(
         val now: LocalDateTime,
