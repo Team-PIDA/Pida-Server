@@ -11,6 +11,8 @@ sentry:
   dsn: ${SENTRY_DSN}
   traces-sample-rate: 1.0
   environment: ${spring.profiles.active:local}
+  send-default-pii: true
+  max-request-body-size: always
   exception-resolver-order: -2147483648
   logging:
     minimum-event-level: error
@@ -23,3 +25,4 @@ spring:
 
 sentry:
   traces-sample-rate: 0.1
+  send-default-pii: false
