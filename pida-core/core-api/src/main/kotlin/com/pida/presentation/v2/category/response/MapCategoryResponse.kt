@@ -1,4 +1,4 @@
-package com.pida.presentation.v1.category.response
+package com.pida.presentation.v2.category.response
 
 import com.pida.category.CategoryLabel
 import com.pida.category.MapCategory
@@ -20,13 +20,13 @@ data class MapCategoryAllResponse(
 
 @Schema(description = "카테고리 응답")
 data class MapCategoryResponse(
-    @Schema(description = "카테고리 ID", example = "1")
+    @param:Schema(description = "카테고리 ID", example = "1")
     val id: Long,
-    @Schema(description = "카테고리 제목", example = "벚꽃 축제")
+    @param:Schema(description = "카테고리 제목", example = "벚꽃 축제")
     val title: String,
-    @Schema(description = "카테고리 라벨", example = "EVENT")
+    @param:Schema(description = "카테고리 라벨", example = "EVENT")
     val categoryLabel: CategoryLabel,
-    @Schema(description = "카테고리 설명", example = "벚꽃 관련 축제 장소")
+    @param:Schema(description = "카테고리 설명", example = "벚꽃 관련 축제 장소")
     val description: String?,
 ) {
     companion object {

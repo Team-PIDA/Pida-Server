@@ -1,15 +1,15 @@
-package com.pida.presentation.v1.category
+package com.pida.presentation.v2.category
 
 import com.pida.category.MapCategoryService
-import com.pida.presentation.v1.annotation.ApiV1Controller
-import com.pida.presentation.v1.category.response.MapCategoryAllResponse
-import com.pida.presentation.v1.category.response.MapCategoryResponse
+import com.pida.presentation.v2.annotation.ApiV2Controller
+import com.pida.presentation.v2.category.response.MapCategoryAllResponse
+import com.pida.presentation.v2.category.response.MapCategoryResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 
 @Tag(name = "🗂️ Category API", description = "카테고리 관련 API")
-@ApiV1Controller
+@ApiV2Controller
 class CategoryController(
     private val mapCategoryService: MapCategoryService,
 ) {
