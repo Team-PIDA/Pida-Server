@@ -19,6 +19,13 @@ class FlowerSpotCafeCoreRepository(
                 .toFlowerSpotCafe()
         }
 
+    override suspend fun findAll(): List<FlowerSpotCafe> =
+        tx.reader.coExecute {
+            flowerSpotCafeJpaRepository
+                .findByDeletedAtIsNullOrderByIdAsc()
+                .map { it.toFlowerSpotCafe() }
+        }
+
     override suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<FlowerSpotCafe> =
         tx.reader.coExecute {
             flowerSpotCafeJpaRepository
