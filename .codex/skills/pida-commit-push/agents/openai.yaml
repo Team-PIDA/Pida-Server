@@ -1,0 +1,4 @@
+interface:
+  display_name: "PIDA Commit Push"
+  short_description: "Plan safe commit and push steps"
+  default_prompt: "Use $pida-commit-push to propose a safe commit and push sequence for the current PIDA changes. Do not mutate git until confirmation."

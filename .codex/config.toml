@@ -1,0 +1,30 @@
+[features]
+multi_agent = true
+
+[agents]
+max_threads = 4
+max_depth = 1
+
+[agents.feature_mapper]
+description = "Maps a PIDA feature request to affected modules, entrypoints, and validation scope before implementation."
+config_file = ".codex/agents/feature_mapper.toml"
+
+[agents.ci_triager]
+description = "Triages PIDA Gradle, Java 21, ktlint, and CI failures with repo-specific validation rules."
+config_file = ".codex/agents/ci_triager.toml"
+
+[agents.api_reviewer]
+description = "Reviews PIDA API changes for response shape, tests, docs, and controller contract regressions."
+config_file = ".codex/agents/api_reviewer.toml"
+
+[agents.db_core_specialist]
+description = "Reviews PIDA db-core and redis layer changes for repository, transaction, cache, and soft-delete consistency."
+config_file = ".codex/agents/db_core_specialist.toml"
+
+[agents.code_reviewer]
+description = "Reviews PIDA diffs for bugs, regressions, missing tests, and architecture drift across modules."
+config_file = ".codex/agents/code_reviewer.toml"
+
+[agents.commit_push_guard]
+description = "Plans safe PIDA commit groups, Java 21 validation, and push readiness before git history changes."
+config_file = ".codex/agents/commit_push_guard.toml"
