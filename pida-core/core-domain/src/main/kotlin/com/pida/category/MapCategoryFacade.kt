@@ -1,53 +1,36 @@
 package com.pida.category
 
-import com.pida.flowerevent.FlowerEventFinder
-import com.pida.flowerspot.FlowerSpotCafeFinder
+import com.pida.flowerspot.FlowerSpotLocation
 import org.springframework.stereotype.Service
 
 @Service
 class MapCategoryFacade(
     private val mapCategoryService: MapCategoryService,
-    private val flowerEventFinder: FlowerEventFinder,
-    private val flowerSpotCafeFinder: FlowerSpotCafeFinder,
+    categoryItemReadStrategies: List<MapCategoryItemReadStrategy>,
 ) {
-    suspend fun readAllByCategoryId(categoryId: Long): MapCategoryItems {
-        val category = mapCategoryService.readBy(categoryId)
-        val items =
-            when (category.categoryLabel) {
-                CategoryLabel.EVENT ->
-                    flowerEventFinder.readAllByCategoryId(category.id).map { event ->
-                        MapCategoryItem(
-                            id = event.id,
-                            name = event.name,
-                            address = event.address,
-                            description = null,
-                            pinPoint = event.pinPoint,
-                            region = event.region,
-                            homepageUrl = event.homepageUrl,
-                            startDate = event.startDate,
-                            endDate = event.endDate,
-                        )
-                    }
+    private val strategiesByCategory =
+        categoryItemReadStrategies.associateBy(MapCategoryItemReadStrategy::categoryLabel)
 
-                CategoryLabel.CAFE ->
-                    flowerSpotCafeFinder.readAll().map { cafe ->
-                        MapCategoryItem(
-                            id = cafe.id,
-                            name = cafe.name,
-                            address = cafe.address,
-                            description = cafe.description,
-                            pinPoint = cafe.pinPoint,
-                            region = cafe.region,
-                            mapUrl = cafe.mapUrl,
-                            flowerSpotId = cafe.flowerSpotId,
-                        )
-                    }
+    init {
+        require(categoryItemReadStrategies.size == strategiesByCategory.size) {
+            "Map category item strategy must be unique by category label."
+        }
+    }
+
+    suspend fun readAllByCategoryId(
+        categoryId: Long,
+        location: FlowerSpotLocation,
+    ): MapCategoryItems {
+        val category = mapCategoryService.readBy(categoryId)
+        val strategy =
+            requireNotNull(strategiesByCategory[category.categoryLabel]) {
+                "No map category item strategy for ${category.categoryLabel}"
             }
 
         return MapCategoryItems(
             categoryId = category.id,
             categoryLabel = category.categoryLabel,
-            list = items,
+            list = strategy.read(category.id, location),
         )
     }
 }

@@ -2,6 +2,7 @@ package com.pida.storage.db.core.flowerspot
 
 import com.pida.flowerspot.FlowerSpotCafe
 import com.pida.flowerspot.FlowerSpotCafeRepository
+import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.storage.db.core.support.findByIdAndDeletedAtIsNullOrElseThrow
 import com.pida.support.tx.TransactionTemplates
 import com.pida.support.tx.coExecute
@@ -24,6 +25,17 @@ class FlowerSpotCafeCoreRepository(
             flowerSpotCafeJpaRepository
                 .findByDeletedAtIsNullOrderByIdAsc()
                 .map { it.toFlowerSpotCafe() }
+        }
+
+    override suspend fun findAllByLocation(location: FlowerSpotLocation): List<FlowerSpotCafe> =
+        tx.reader.coExecute {
+            flowerSpotCafeJpaRepository
+                .findWithinBoundsOrderByIdAsc(
+                    swLat = location.swLat!!,
+                    swLng = location.swLng!!,
+                    neLat = location.neLat!!,
+                    neLng = location.neLng!!,
+                ).map { it.toFlowerSpotCafe() }
         }
 
     override suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<FlowerSpotCafe> =
