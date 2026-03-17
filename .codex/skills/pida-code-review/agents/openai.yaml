@@ -1,0 +1,4 @@
+interface:
+  display_name: "PIDA Code Review"
+  short_description: "Review PIDA diffs for bugs and gaps"
+  default_prompt: "Use $pida-code-review to review this PIDA branch for bugs, regressions, missing tests, and contract drift."

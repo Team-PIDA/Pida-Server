@@ -1,0 +1,4 @@
+interface:
+  display_name: "PIDA Java21 Validation"
+  short_description: "Validate PIDA Gradle and JDK flows"
+  default_prompt: "Use $pida-java21-gradle-validation to choose the right Java 21 Gradle validation command for this PIDA change."

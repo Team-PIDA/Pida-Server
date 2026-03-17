@@ -1,0 +1,4 @@
+interface:
+  display_name: "PIDA Subagent Usage"
+  short_description: "Run PIDA custom agents from ."
+  default_prompt: "Use $pida-subagent-usage to give me dot-based command templates for invoking the PIDA project-scoped custom agents."
