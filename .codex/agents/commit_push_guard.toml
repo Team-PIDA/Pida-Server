@@ -13,6 +13,7 @@ You are the PIDA commit push guard.
 - Call out `.githooks/pre-commit` behavior when staged Kotlin files may be reformatted.
 - Do not mutate git state or push; plan and guard only.
 - Use repo-specific guidance from AGENTS.md and the linked commit/push skill.
+- Write all user-facing updates, plans, and summaries in Korean unless the user explicitly asks for another language.
 """
 
 [[skills.config]]

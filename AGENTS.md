@@ -63,19 +63,19 @@ Run these from the repository root and use `.` as the current project path.
 - Start an interactive Codex session for this repo:
   `codex -C .`
 - Ask `feature_mapper` to map a new feature:
-  `codex exec -C . "Spawn feature_mapper to map the affected modules, files, and validation scope for this feature. Wait for it and return one implementation plan."`
+  `codex exec -C . "Spawn feature_mapper to map the affected modules, files, and validation scope for this feature. Wait for it and return one implementation plan in Korean."`
 - Ask `ci_triager` to analyze a build or CI failure:
-  `codex exec -C . "Spawn ci_triager to explain why :pida-core:core-api:build is failing under Java 21. Return the root cause, the smallest proof command, and the next fix to try."`
+  `codex exec -C . "Spawn ci_triager to explain why :pida-core:core-api:build is failing under Java 21. Return the root cause, the smallest proof command, and the next fix to try in Korean."`
 - Ask `api_reviewer` to review an API change:
-  `codex exec -C . "Spawn api_reviewer to review this branch against main for API contract drift, auth behavior, missing tests, and missing docs. Wait for it and summarize the findings."`
+  `codex exec -C . "Spawn api_reviewer to review this branch against main for API contract drift, auth behavior, missing tests, and missing docs. Wait for it and summarize the findings in Korean."`
 - Ask `db_core_specialist` to review persistence changes:
-  `codex exec -C . "Spawn db_core_specialist to review whether this db-core or redis change matches existing repository, transaction, cache, and soft-delete patterns. Wait for it and summarize the real risks."`
+  `codex exec -C . "Spawn db_core_specialist to review whether this db-core or redis change matches existing repository, transaction, cache, and soft-delete patterns. Wait for it and summarize the real risks in Korean."`
 - Ask `code_reviewer` to review a branch:
-  `codex exec -C . "Spawn code_reviewer to review this branch against main for bugs, regressions, and missing tests. Wait for it and summarize the concrete findings."`
+  `codex exec -C . "Spawn code_reviewer to review this branch against main for bugs, regressions, and missing tests. Wait for it and summarize the concrete findings in Korean."`
 - Ask `commit_push_guard` to plan commit and push steps:
-  `codex exec -C . "Spawn commit_push_guard to inspect the current changes, propose safe commit groups, and list the Java 21 checks to run before pushing. Do not mutate git."`
+  `codex exec -C . "Spawn commit_push_guard to inspect the current changes, propose safe commit groups, and list the Java 21 checks to run before pushing. Do not mutate git. Respond in Korean."`
 - Run a parallel review across multiple agents:
-  `codex exec -C . "Review this branch against main. Spawn api_reviewer, db_core_specialist, and code_reviewer in parallel. Have api_reviewer focus on contract drift, docs, and tests. Have db_core_specialist focus on repository, transaction, cache, and soft-delete consistency. Have code_reviewer focus on bugs and regressions. Wait for all of them and summarize only concrete findings."`
+  `codex exec -C . "Review this branch against main. Spawn api_reviewer, db_core_specialist, and code_reviewer in parallel. Have api_reviewer focus on contract drift, docs, and tests. Have db_core_specialist focus on repository, transaction, cache, and soft-delete consistency. Have code_reviewer focus on bugs and regressions. Wait for all of them and summarize only concrete findings in Korean."`
 - Use the repo-local code review skill directly:
   `codex exec -C . 'Use $pida-code-review to review this branch for bugs, regressions, and missing tests.'`
 - Use the repo-local commit/push skill directly:
