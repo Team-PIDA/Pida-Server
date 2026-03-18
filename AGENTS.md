@@ -28,6 +28,7 @@
 - Codex automatically loads project-scoped skills from `.codex/skills/` and custom agents from `.codex/agents/`.
 - New developers do not need a separate install step for these repo-local skills and agents.
 - Personal global skills can coexist, but repo-local guidance should be the default for PIDA work.
+- The `/agent` view only shows active agent threads in the current session. It does not list every available custom agent.
 
 ## Custom agents
 
@@ -62,17 +63,19 @@ Run these from the repository root and use `.` as the current project path.
 - Start an interactive Codex session for this repo:
   `codex -C .`
 - Ask `feature_mapper` to map a new feature:
-  `codex exec -C . "Use feature_mapper to map the affected modules, files, and validation scope for this new feature."`
+  `codex exec -C . "Spawn feature_mapper to map the affected modules, files, and validation scope for this feature. Wait for it and return one implementation plan."`
 - Ask `ci_triager` to analyze a build or CI failure:
-  `codex exec -C . "Use ci_triager to explain why :pida-core:core-api:build is failing under Java 21."`
+  `codex exec -C . "Spawn ci_triager to explain why :pida-core:core-api:build is failing under Java 21. Return the root cause, the smallest proof command, and the next fix to try."`
 - Ask `api_reviewer` to review an API change:
-  `codex exec -C . "Use api_reviewer to review this branch for API contract drift, missing tests, and missing docs."`
+  `codex exec -C . "Spawn api_reviewer to review this branch against main for API contract drift, auth behavior, missing tests, and missing docs. Wait for it and summarize the findings."`
 - Ask `db_core_specialist` to review persistence changes:
-  `codex exec -C . "Use db_core_specialist to review whether this db-core or redis change matches existing repository, transaction, and cache patterns."`
+  `codex exec -C . "Spawn db_core_specialist to review whether this db-core or redis change matches existing repository, transaction, cache, and soft-delete patterns. Wait for it and summarize the real risks."`
 - Ask `code_reviewer` to review a branch:
-  `codex exec -C . "Use code_reviewer to review this branch for bugs, regressions, and missing tests."`
+  `codex exec -C . "Spawn code_reviewer to review this branch against main for bugs, regressions, and missing tests. Wait for it and summarize the concrete findings."`
 - Ask `commit_push_guard` to plan commit and push steps:
-  `codex exec -C . "Use commit_push_guard to inspect the current changes, propose safe commit groups, and list the Java 21 checks to run before pushing."`
+  `codex exec -C . "Spawn commit_push_guard to inspect the current changes, propose safe commit groups, and list the Java 21 checks to run before pushing. Do not mutate git."`
+- Run a parallel review across multiple agents:
+  `codex exec -C . "Review this branch against main. Spawn api_reviewer, db_core_specialist, and code_reviewer in parallel. Have api_reviewer focus on contract drift, docs, and tests. Have db_core_specialist focus on repository, transaction, cache, and soft-delete consistency. Have code_reviewer focus on bugs and regressions. Wait for all of them and summarize only concrete findings."`
 - Use the repo-local code review skill directly:
   `codex exec -C . 'Use $pida-code-review to review this branch for bugs, regressions, and missing tests.'`
 - Use the repo-local commit/push skill directly:

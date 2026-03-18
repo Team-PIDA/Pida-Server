@@ -112,6 +112,7 @@
 
 - 저장소 루트에서 `codex -C .` 를 실행하면 `.codex/skills/` 와 `.codex/agents/` 의 repo-local 설정이 자동 로드됩니다.
 - 개발자는 별도 skill 설치 없이 이 저장소 안에서 바로 PIDA 전용 skill 과 custom agent 를 사용할 수 있습니다.
+- `/agent` 화면에는 정의된 agent 목록이 아니라 현재 세션에서 실제로 실행 중인 agent thread 만 표시됩니다.
 - 주요 custom agent:
   - `feature_mapper`
   - `ci_triager`
@@ -120,6 +121,7 @@
   - `code_reviewer`
   - `commit_push_guard`
 - 예시 명령:
-  - `codex exec -C . "Use code_reviewer to review this branch for bugs, regressions, and missing tests."`
-  - `codex exec -C . "Use commit_push_guard to inspect the current changes, propose safe commit groups, and list the Java 21 checks to run before pushing."`
+  - `codex exec -C . "Spawn code_reviewer to review this branch against main for bugs, regressions, and missing tests. Wait for it and summarize the concrete findings."`
+  - `codex exec -C . "Spawn commit_push_guard to inspect the current changes, propose safe commit groups, and list the Java 21 checks to run before pushing. Do not mutate git."`
+  - `codex exec -C . "Review this branch against main. Spawn api_reviewer, db_core_specialist, and code_reviewer in parallel. Have api_reviewer focus on contract drift, docs, and tests. Have db_core_specialist focus on repository, transaction, cache, and soft-delete consistency. Have code_reviewer focus on bugs and regressions. Wait for all of them and summarize only concrete findings."`
   - `codex exec -C . 'Use $pida-commit-push to propose a safe commit and push sequence for the current branch. Do not mutate git yet.'`

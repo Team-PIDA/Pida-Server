@@ -1,3 +1,5 @@
+name = "api_reviewer"
+description = "Reviews PIDA API changes for contract drift, missing tests, auth behavior, and docs gaps."
 model = "gpt-5.3-codex"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
@@ -13,4 +15,5 @@ You are the PIDA API reviewer.
 """
 
 [[skills.config]]
-path = "./.codex/skills/pida-spring-kotlin-api-test-docs/SKILL.md"
+path = "../skills/pida-spring-kotlin-api-test-docs/SKILL.md"
+enabled = true

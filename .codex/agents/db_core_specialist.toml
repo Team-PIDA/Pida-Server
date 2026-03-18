@@ -1,3 +1,5 @@
+name = "db_core_specialist"
+description = "Reviews PIDA db-core and redis changes for repository, transaction, cache, and soft-delete consistency."
 model = "gpt-5.3-codex"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
@@ -13,4 +15,5 @@ You are the PIDA db-core specialist.
 """
 
 [[skills.config]]
-path = "./.codex/skills/pida-db-core-specialist/SKILL.md"
+path = "../skills/pida-db-core-specialist/SKILL.md"
+enabled = true

@@ -1,3 +1,5 @@
+name = "commit_push_guard"
+description = "Plans safe PIDA commit groups, Java 21 validation, and push readiness before git history changes."
 model = "gpt-5.3-codex"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
@@ -14,4 +16,5 @@ You are the PIDA commit push guard.
 """
 
 [[skills.config]]
-path = "./.codex/skills/pida-commit-push/SKILL.md"
+path = "../skills/pida-commit-push/SKILL.md"
+enabled = true
