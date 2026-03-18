@@ -1,5 +1,6 @@
 package com.pida.presentation.v2.category.response
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.pida.category.CategoryLabel
 import com.pida.category.MapCategoryItem
 import com.pida.category.MapCategoryItems
@@ -32,6 +33,7 @@ data class MapCategoryItemAllResponse(
 }
 
 @Schema(description = "카테고리별 데이터 응답")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class MapCategoryItemResponse(
     @field:Schema(description = "데이터 ID", example = "1")
     val id: Long,
