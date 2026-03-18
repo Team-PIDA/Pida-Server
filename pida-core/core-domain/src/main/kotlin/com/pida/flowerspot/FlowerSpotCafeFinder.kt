@@ -8,6 +8,10 @@ class FlowerSpotCafeFinder(
 ) {
     suspend fun readBy(cafeId: Long): FlowerSpotCafe = flowerSpotCafeRepository.findBy(cafeId)
 
+    suspend fun readAll(): List<FlowerSpotCafe> = flowerSpotCafeRepository.findAll()
+
+    suspend fun readAllByLocation(location: FlowerSpotLocation): List<FlowerSpotCafe> = flowerSpotCafeRepository.findAllByLocation(location)
+
     suspend fun readAllByFlowerSpotId(flowerSpotId: Long): List<FlowerSpotCafe> =
         flowerSpotCafeRepository.findAllByFlowerSpotId(flowerSpotId)
 }
