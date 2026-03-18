@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class CafeCategoryItemReadStrategy(
+    private val mapCategoryService: MapCategoryService,
     private val flowerSpotCafeFinder: FlowerSpotCafeFinder,
 ) : MapCategoryItemReadStrategy {
     override val categoryLabel: CategoryLabel = CategoryLabel.CAFE
@@ -15,6 +16,8 @@ class CafeCategoryItemReadStrategy(
         categoryId: Long,
         location: FlowerSpotLocation,
     ): List<MapCategoryItem> {
+        validateCategoryId(categoryId)
+
         val cafes =
             if (location.hasBounds()) {
                 flowerSpotCafeFinder.readAllByLocation(location)
@@ -33,6 +36,12 @@ class CafeCategoryItemReadStrategy(
                 mapUrl = cafe.mapUrl,
                 flowerSpotId = cafe.flowerSpotId,
             )
+        }
+    }
+
+    private suspend fun validateCategoryId(categoryId: Long) {
+        check(mapCategoryService.findAllByCategoryLabel(categoryLabel).singleOrNull()?.id == categoryId) {
+            "CAFE category must be uniquely mapped to one active category."
         }
     }
 }

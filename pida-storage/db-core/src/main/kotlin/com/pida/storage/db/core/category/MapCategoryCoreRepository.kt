@@ -1,5 +1,6 @@
 package com.pida.storage.db.core.category
 
+import com.pida.category.CategoryLabel
 import com.pida.category.MapCategory
 import com.pida.category.MapCategoryRepository
 import com.pida.storage.db.core.support.findByIdAndDeletedAtIsNullOrElseThrow
@@ -23,6 +24,13 @@ class MapCategoryCoreRepository(
         tx.reader.coExecute {
             mapCategoryJpaRepository
                 .findByDeletedAtIsNullOrderByIdAsc()
+                .map { it.toMapCategory() }
+        }
+
+    override suspend fun findAllByCategoryLabel(categoryLabel: CategoryLabel): List<MapCategory> =
+        tx.reader.coExecute {
+            mapCategoryJpaRepository
+                .findByCategoryLabelAndDeletedAtIsNull(categoryLabel)
                 .map { it.toMapCategory() }
         }
 }

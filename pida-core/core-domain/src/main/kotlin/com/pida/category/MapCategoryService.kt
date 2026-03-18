@@ -9,4 +9,7 @@ class MapCategoryService(
     suspend fun readBy(categoryId: Long): MapCategory = mapCategoryRepository.findBy(categoryId)
 
     suspend fun findAll(): List<MapCategory> = mapCategoryRepository.findAll()
+
+    suspend fun findAllByCategoryLabel(categoryLabel: CategoryLabel): List<MapCategory> =
+        mapCategoryRepository.findAllByCategoryLabel(categoryLabel)
 }
