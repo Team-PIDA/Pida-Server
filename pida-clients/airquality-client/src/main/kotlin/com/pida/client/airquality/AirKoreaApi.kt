@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestParam
  * API 문서: https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15073861
  */
 @FeignClient(
-    name = "airkorea-api",
-    url = "\${airkorea.api.base-url:http://apis.data.go.kr/B090041/openapi/service/RltmMsrstnInfoInqireSvc}",
+    name = "airkorea-air-quality-api",
+    url = "\${airkorea.api.air-quality-base-url:http://apis.data.go.kr/B552584/ArpltnInforInqireSvc}",
 )
-internal interface AirKoreaApi {
+internal interface AirKoreaAirQualityApi {
     /**
      * 측정소별 실시간 측정정보 조회
      *
@@ -36,7 +36,18 @@ internal interface AirKoreaApi {
         @RequestParam("dataTerm") dataTerm: String = "DAILY",
         @RequestParam("ver") ver: String = "1.0",
     ): AirKoreaResponse
+}
 
+/**
+ * 에어코리아 측정소정보 조회 API
+ *
+ * API 문서: https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15073877
+ */
+@FeignClient(
+    name = "airkorea-station-api",
+    url = "\${airkorea.api.station-base-url:http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc}",
+)
+internal interface AirKoreaStationApi {
     /**
      * TM 기준 근접측정소 목록 조회
      *

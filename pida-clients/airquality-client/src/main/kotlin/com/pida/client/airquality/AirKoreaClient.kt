@@ -13,7 +13,8 @@ import org.springframework.stereotype.Component
 class AirKoreaClient internal constructor(
     @param:Value("\${airkorea.api.service-key:}")
     private val serviceKey: String,
-    private val airKoreaApi: AirKoreaApi,
+    private val airKoreaAirQualityApi: AirKoreaAirQualityApi,
+    private val airKoreaStationApi: AirKoreaStationApi,
 ) {
     private val logger by logger()
 
@@ -26,7 +27,7 @@ class AirKoreaClient internal constructor(
     fun getAirQualityByStation(stationName: String): AirKoreaResponse =
         try {
             val response =
-                airKoreaApi.getMsrstnAcctoRltmMesureDnsty(
+                airKoreaAirQualityApi.getMsrstnAcctoRltmMesureDnsty(
                     serviceKey = serviceKey,
                     stationName = stationName,
                 )
@@ -59,7 +60,7 @@ class AirKoreaClient internal constructor(
 
         return try {
             val response =
-                airKoreaApi.getNearbyMsrstnList(
+                airKoreaStationApi.getNearbyMsrstnList(
                     serviceKey = serviceKey,
                     tmX = tmX,
                     tmY = tmY,

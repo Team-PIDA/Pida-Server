@@ -1,3 +1,5 @@
 airkorea:
   api:
+    air-quality-base-url: ${AIR_KOREA_AIR_QUALITY_API_BASE_URL:http://apis.data.go.kr/B552584/ArpltnInforInqireSvc}
     service-key: ${AIR_KOREA_API_SERVICE_KEY:}
+    station-base-url: ${AIR_KOREA_STATION_API_BASE_URL:http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc}
