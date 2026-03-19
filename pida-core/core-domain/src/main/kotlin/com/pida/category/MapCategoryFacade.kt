@@ -5,6 +5,7 @@ import com.pida.category.item.model.MapCategoryItems
 import com.pida.category.strategy.detail.MapCategoryItemDetailReadStrategy
 import com.pida.category.strategy.read.MapCategoryItemReadStrategy
 import com.pida.flowerspot.FlowerSpotLocation
+import com.pida.support.geo.Region
 import org.springframework.stereotype.Service
 
 @Service
@@ -37,6 +38,7 @@ class MapCategoryFacade(
 
     suspend fun readAllByCategoryId(
         categoryId: Long,
+        region: Region?,
         location: FlowerSpotLocation,
     ): MapCategoryItems {
         val category = mapCategoryService.readBy(categoryId)
@@ -48,7 +50,7 @@ class MapCategoryFacade(
         return MapCategoryItems(
             categoryId = category.id,
             categoryLabel = category.categoryLabel,
-            list = strategy.read(category.id, location),
+            list = strategy.read(category.id, region, location),
         )
     }
 

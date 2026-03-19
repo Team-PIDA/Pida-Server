@@ -8,6 +8,7 @@ import com.pida.presentation.v2.category.response.MapCategoryAllResponse
 import com.pida.presentation.v2.category.response.MapCategoryItemAllResponse
 import com.pida.presentation.v2.category.response.MapCategoryItemDetailResponse
 import com.pida.presentation.v2.category.response.MapCategoryResponse
+import com.pida.support.geo.Region
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -28,10 +29,11 @@ class CategoryController(
         return MapCategoryAllResponse.of(categories.map { MapCategoryResponse.from(it) })
     }
 
-    @Operation(summary = "카테고리별 데이터 조회", description = "카테고리 ID에 해당하는 데이터 목록을 조회합니다. 위경도가 모두 전달되면 해당 범위로 필터링합니다.")
+    @Operation(summary = "카테고리별 데이터 조회", description = "카테고리 ID에 해당하는 데이터 목록을 조회합니다. 위경도와 지역이 전달되면 해당 조건으로 필터링합니다.")
     @GetMapping("/categories/{categoryId}/items")
     suspend fun categoryItemFindAll(
         @PathVariable categoryId: Long,
+        @RequestParam @Parameter(name = "region", description = "지역") region: Region?,
         @RequestParam @Parameter(name = "swLat", description = "남서쪽 위도") swLat: Double?,
         @RequestParam @Parameter(name = "swLng", description = "남서쪽 경도") swLng: Double?,
         @RequestParam @Parameter(name = "neLat", description = "북동쪽 위도") neLat: Double?,
@@ -40,6 +42,7 @@ class CategoryController(
         val categoryItems =
             mapCategoryFacade.readAllByCategoryId(
                 categoryId = categoryId,
+                region = region,
                 location =
                     FlowerSpotLocation(
                         swLat = swLat,

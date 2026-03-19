@@ -83,7 +83,7 @@ class FlowerSpotCategoryItemReadStrategyTest {
                     30L to listOf(MapCategoryBadge(MapCategoryBadgeType.SPACE_TYPE, "10분 코스")),
                 )
 
-            val result = strategy.read(3L, location)
+            val result = strategy.read(3L, null, location)
 
             result shouldHaveSize 1
             result.first().name shouldBe "밤고개1길"
@@ -94,5 +94,35 @@ class FlowerSpotCategoryItemReadStrategyTest {
                 listOf(
                     MapCategoryBadgeType.SPACE_TYPE to "10분 코스",
                 )
+        }
+
+    @Test
+    fun `지역 필터가 있으면 해당 지역으로 산책길 조회를 위임한다`(): Unit =
+        runBlocking {
+            val mapCategoryService = mockk<MapCategoryService>()
+            val flowerSpotService = mockk<FlowerSpotService>()
+            val bloomingService = mockk<BloomingService>()
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = FlowerSpotCategoryItemReadStrategy(mapCategoryService, flowerSpotService, bloomingService, mapCategoryBadgeFinder)
+            val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
+            val category =
+                MapCategory(
+                    id = 3L,
+                    title = "산책길",
+                    categoryLabel = CategoryLabel.FLOWER_SPOT,
+                    description = "산책길 카테고리",
+                    deletedAt = null,
+                )
+
+            coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.FLOWER_SPOT) } returns listOf(category)
+            coEvery { flowerSpotService.readAllFlowerSpot(region = Region.SEOUL, location = location) } returns emptyList()
+            every { bloomingService.recentlyBloomingBySpotIds(emptyList()) } returns emptyList()
+            coEvery {
+                mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT, emptyList())
+            } returns emptyMap()
+
+            val result = strategy.read(3L, Region.SEOUL, location)
+
+            result shouldHaveSize 0
         }
 }

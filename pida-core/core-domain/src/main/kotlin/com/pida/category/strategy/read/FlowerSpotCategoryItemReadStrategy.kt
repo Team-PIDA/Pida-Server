@@ -10,6 +10,7 @@ import com.pida.category.badge.support.MapCategoryBadgeBuilder
 import com.pida.category.item.model.MapCategoryItem
 import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.flowerspot.FlowerSpotService
+import com.pida.support.geo.Region
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,11 +24,12 @@ class FlowerSpotCategoryItemReadStrategy(
 
     override suspend fun read(
         categoryId: Long,
+        region: Region?,
         location: FlowerSpotLocation,
     ): List<MapCategoryItem> {
         validateCategoryId(categoryId)
 
-        val flowerSpots = flowerSpotService.readAllFlowerSpot(region = null, location = location)
+        val flowerSpots = flowerSpotService.readAllFlowerSpot(region = region, location = location)
         val recentBloomingBySpotId =
             bloomingService
                 .recentlyBloomingBySpotIds(flowerSpots.map { it.id })

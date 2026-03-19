@@ -64,9 +64,9 @@ class MapCategoryFacadeTest {
                 )
 
             coEvery { mapCategoryService.readBy(1L) } returns category
-            coEvery { eventStrategy.read(1L, location) } returns listOf(item)
+            coEvery { eventStrategy.read(1L, null, location) } returns listOf(item)
 
-            val result = facade.readAllByCategoryId(1L, location)
+            val result = facade.readAllByCategoryId(1L, null, location)
 
             result.categoryId shouldBe 1L
             result.categoryLabel shouldBe CategoryLabel.EVENT

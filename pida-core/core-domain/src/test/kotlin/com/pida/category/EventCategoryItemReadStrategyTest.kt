@@ -61,7 +61,7 @@ class EventCategoryItemReadStrategyTest {
                 mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_EVENT, listOf(10L))
             } returns emptyMap()
 
-            val result = strategy.read(1L, location)
+            val result = strategy.read(1L, null, location)
 
             result shouldHaveSize 1
             result.first().id shouldBe 10L
@@ -103,7 +103,7 @@ class EventCategoryItemReadStrategyTest {
                 mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_EVENT, listOf(11L))
             } returns emptyMap()
 
-            val result = strategy.read(1L, location)
+            val result = strategy.read(1L, null, location)
 
             result shouldHaveSize 1
             result.first().id shouldBe 11L
@@ -113,5 +113,55 @@ class EventCategoryItemReadStrategyTest {
                 listOf(
                     MapCategoryBadgeType.REGION to "서울",
                 )
+        }
+
+    @Test
+    fun `지역 필터가 있으면 해당 지역 이벤트만 응답한다`(): Unit =
+        runBlocking {
+            val flowerEventFinder = mockk<FlowerEventFinder>()
+            val bloomingService = mockk<BloomingService>()
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = EventCategoryItemReadStrategy(flowerEventFinder, bloomingService, mapCategoryBadgeFinder)
+            val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
+            val seoulEvent =
+                FlowerEvent(
+                    id = 12L,
+                    name = "여의도 봄꽃축제",
+                    address = "서울특별시 영등포구 여의서로 330",
+                    thumbnailUrl = null,
+                    pinPoint = GeoJson.Point(listOf(126.9340, 37.5284)),
+                    region = Region.SEOUL,
+                    homepageUrl = null,
+                    startDate = LocalDate.of(2026, 3, 20),
+                    endDate = LocalDate.of(2026, 3, 30),
+                    categoryId = 1L,
+                    deletedAt = null,
+                )
+            val busanEvent =
+                FlowerEvent(
+                    id = 13L,
+                    name = "부산 봄꽃축제",
+                    address = "부산광역시 수영구 광안동",
+                    thumbnailUrl = null,
+                    pinPoint = GeoJson.Point(listOf(129.1180, 35.1531)),
+                    region = Region.BUSAN,
+                    homepageUrl = null,
+                    startDate = LocalDate.of(2026, 3, 25),
+                    endDate = LocalDate.of(2026, 3, 31),
+                    categoryId = 1L,
+                    deletedAt = null,
+                )
+
+            coEvery { flowerEventFinder.readAllByCategoryId(1L) } returns listOf(seoulEvent, busanEvent)
+            every { bloomingService.recentlyBloomingByEventIds(listOf(12L)) } returns emptyList()
+            coEvery {
+                mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_EVENT, listOf(12L))
+            } returns emptyMap()
+
+            val result = strategy.read(1L, Region.SEOUL, location)
+
+            result shouldHaveSize 1
+            result.first().id shouldBe 12L
+            result.first().region shouldBe Region.SEOUL
         }
 }

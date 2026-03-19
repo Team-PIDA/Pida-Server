@@ -11,6 +11,7 @@ import com.pida.category.item.model.MapCategoryItem
 import com.pida.flowerspot.FlowerSpotCafeFinder
 import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.flowerspot.hasBounds
+import com.pida.support.geo.Region
 import org.springframework.stereotype.Component
 
 @Component
@@ -24,6 +25,7 @@ class CafeCategoryItemReadStrategy(
 
     override suspend fun read(
         categoryId: Long,
+        region: Region?,
         location: FlowerSpotLocation,
     ): List<MapCategoryItem> {
         validateCategoryId(categoryId)
@@ -33,6 +35,8 @@ class CafeCategoryItemReadStrategy(
                 flowerSpotCafeFinder.readAllByLocation(location)
             } else {
                 flowerSpotCafeFinder.readAll()
+            }.let { items ->
+                region?.let { targetRegion -> items.filter { it.region == targetRegion } } ?: items
             }
         val recentBloomingBySpotId =
             bloomingService
