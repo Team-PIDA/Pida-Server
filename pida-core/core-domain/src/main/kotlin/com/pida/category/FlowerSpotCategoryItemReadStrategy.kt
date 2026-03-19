@@ -2,18 +2,17 @@ package com.pida.category
 
 import com.pida.blooming.BloomingService
 import com.pida.blooming.BloomingStatus
-import com.pida.flowerspot.FlowerSpotCafeFinder
 import com.pida.flowerspot.FlowerSpotLocation
-import com.pida.flowerspot.hasBounds
+import com.pida.flowerspot.FlowerSpotService
 import org.springframework.stereotype.Component
 
 @Component
-class CafeCategoryItemReadStrategy(
+class FlowerSpotCategoryItemReadStrategy(
     private val mapCategoryService: MapCategoryService,
-    private val flowerSpotCafeFinder: FlowerSpotCafeFinder,
+    private val flowerSpotService: FlowerSpotService,
     private val bloomingService: BloomingService,
 ) : MapCategoryItemReadStrategy {
-    override val categoryLabel: CategoryLabel = CategoryLabel.CAFE
+    override val categoryLabel: CategoryLabel = CategoryLabel.FLOWER_SPOT
 
     override suspend fun read(
         categoryId: Long,
@@ -21,29 +20,23 @@ class CafeCategoryItemReadStrategy(
     ): List<MapCategoryItem> {
         validateCategoryId(categoryId)
 
-        val cafes =
-            if (location.hasBounds()) {
-                flowerSpotCafeFinder.readAllByLocation(location)
-            } else {
-                flowerSpotCafeFinder.readAll()
-            }
+        val flowerSpots = flowerSpotService.readAllFlowerSpot(region = null, location = location)
         val recentBloomingBySpotId =
             bloomingService
-                .recentlyBloomingBySpotIds(cafes.map { it.flowerSpotId })
+                .recentlyBloomingBySpotIds(flowerSpots.map { it.id })
                 .groupBy { it.flowerSpotId }
 
-        return cafes.map { cafe ->
-            val recentBloomings = recentBloomingBySpotId[cafe.flowerSpotId] ?: emptyList()
+        return flowerSpots.map { flowerSpot ->
+            val recentBloomings = recentBloomingBySpotId[flowerSpot.id] ?: emptyList()
+
             MapCategoryItem(
-                id = cafe.id,
-                name = cafe.name,
-                address = cafe.address,
-                description = cafe.description,
-                thumbnailUrl = cafe.thumbnailUrl,
-                pinPoint = cafe.pinPoint,
-                region = cafe.region,
-                mapUrl = cafe.mapUrl,
-                flowerSpotId = cafe.flowerSpotId,
+                id = flowerSpot.id,
+                name = flowerSpot.streetName,
+                address = flowerSpot.address,
+                description = flowerSpot.description,
+                geom = flowerSpot.geom,
+                pinPoint = flowerSpot.pinPoint,
+                region = flowerSpot.region,
                 recentlyVisitedCount = recentBloomings.size.toLong(),
                 bloomingStatus =
                     recentBloomings
@@ -56,7 +49,7 @@ class CafeCategoryItemReadStrategy(
 
     private suspend fun validateCategoryId(categoryId: Long) {
         check(mapCategoryService.findAllByCategoryLabel(categoryLabel).singleOrNull()?.id == categoryId) {
-            "CAFE category must be uniquely mapped to one active category."
+            "FLOWER_SPOT category must be uniquely mapped to one active category."
         }
     }
 }

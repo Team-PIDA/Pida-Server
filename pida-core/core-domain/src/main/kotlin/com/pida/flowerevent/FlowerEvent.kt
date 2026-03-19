@@ -9,6 +9,7 @@ data class FlowerEvent(
     val id: Long,
     val name: String,
     val address: String?,
+    val thumbnailUrl: String? = null,
     val pinPoint: GeoJson,
     val region: Region,
     val homepageUrl: String?,

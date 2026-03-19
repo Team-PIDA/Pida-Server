@@ -19,11 +19,20 @@ class MapCategoryFacadeTest {
             val mapCategoryService = mockk<MapCategoryService>()
             val eventStrategy = mockk<MapCategoryItemReadStrategy>()
             val cafeStrategy = mockk<MapCategoryItemReadStrategy>()
+            val eventDetailStrategy = mockk<MapCategoryItemDetailReadStrategy>()
+            val cafeDetailStrategy = mockk<MapCategoryItemDetailReadStrategy>()
 
             every { eventStrategy.categoryLabel } returns CategoryLabel.EVENT
             every { cafeStrategy.categoryLabel } returns CategoryLabel.CAFE
+            every { eventDetailStrategy.categoryLabel } returns CategoryLabel.EVENT
+            every { cafeDetailStrategy.categoryLabel } returns CategoryLabel.CAFE
 
-            val facade = MapCategoryFacade(mapCategoryService, listOf(eventStrategy, cafeStrategy))
+            val facade =
+                MapCategoryFacade(
+                    mapCategoryService = mapCategoryService,
+                    categoryItemReadStrategies = listOf(eventStrategy, cafeStrategy),
+                    categoryItemDetailReadStrategies = listOf(eventDetailStrategy, cafeDetailStrategy),
+                )
 
             val category =
                 MapCategory(
@@ -40,6 +49,7 @@ class MapCategoryFacadeTest {
                     name = "여의도 봄꽃축제",
                     address = "서울특별시 영등포구 여의서로 330",
                     description = null,
+                    thumbnailUrl = null,
                     pinPoint = GeoJson.Point(listOf(126.9340, 37.5284)),
                     region = Region.SEOUL,
                     homepageUrl = "https://example.com/festival",
@@ -66,9 +76,11 @@ class MapCategoryFacadeTest {
             val mapCategoryService = mockk<MapCategoryService>()
             val firstEventStrategy = mockk<MapCategoryItemReadStrategy>()
             val secondEventStrategy = mockk<MapCategoryItemReadStrategy>()
+            val eventDetailStrategy = mockk<MapCategoryItemDetailReadStrategy>()
 
             every { firstEventStrategy.categoryLabel } returns CategoryLabel.EVENT
             every { secondEventStrategy.categoryLabel } returns CategoryLabel.EVENT
+            every { eventDetailStrategy.categoryLabel } returns CategoryLabel.EVENT
 
             val exception =
                 kotlin
@@ -76,9 +88,95 @@ class MapCategoryFacadeTest {
                         MapCategoryFacade(
                             mapCategoryService = mapCategoryService,
                             categoryItemReadStrategies = listOf(firstEventStrategy, secondEventStrategy),
+                            categoryItemDetailReadStrategies = listOf(eventDetailStrategy),
                         )
                     }.exceptionOrNull()
 
             exception?.message shouldBe "Map category item strategy must be unique by category label."
+        }
+
+    @Test
+    fun `카테고리 라벨에 맞는 전략으로 상세를 조회한다`(): Unit =
+        runBlocking {
+            val mapCategoryService = mockk<MapCategoryService>()
+            val eventStrategy = mockk<MapCategoryItemReadStrategy>()
+            val cafeStrategy = mockk<MapCategoryItemReadStrategy>()
+            val eventDetailStrategy = mockk<MapCategoryItemDetailReadStrategy>()
+            val cafeDetailStrategy = mockk<MapCategoryItemDetailReadStrategy>()
+
+            every { eventStrategy.categoryLabel } returns CategoryLabel.EVENT
+            every { cafeStrategy.categoryLabel } returns CategoryLabel.CAFE
+            every { eventDetailStrategy.categoryLabel } returns CategoryLabel.EVENT
+            every { cafeDetailStrategy.categoryLabel } returns CategoryLabel.CAFE
+
+            val facade =
+                MapCategoryFacade(
+                    mapCategoryService = mapCategoryService,
+                    categoryItemReadStrategies = listOf(eventStrategy, cafeStrategy),
+                    categoryItemDetailReadStrategies = listOf(eventDetailStrategy, cafeDetailStrategy),
+                )
+
+            val category =
+                MapCategory(
+                    id = 1L,
+                    title = "벚꽃 축제",
+                    categoryLabel = CategoryLabel.EVENT,
+                    description = "벚꽃 축제 카테고리",
+                    deletedAt = null,
+                )
+            val detail =
+                MapCategoryItemDetail(
+                    categoryId = 1L,
+                    categoryLabel = CategoryLabel.EVENT,
+                    item =
+                        MapCategoryItem(
+                            id = 10L,
+                            name = "여의도 봄꽃축제",
+                            address = "서울특별시 영등포구 여의서로 330",
+                            description = null,
+                            pinPoint = GeoJson.Point(listOf(126.9340, 37.5284)),
+                            region = Region.SEOUL,
+                            homepageUrl = "https://example.com/festival",
+                        ),
+                    bloomingDetails =
+                        com.pida.blooming.BloomingDetails(
+                            totalCount = 1L,
+                            nickname = "피다",
+                            updatedAt = null,
+                            details = emptyMap(),
+                        ),
+                )
+
+            coEvery { mapCategoryService.readBy(1L) } returns category
+            coEvery { eventDetailStrategy.read(1L, 10L) } returns detail
+
+            val result = facade.readDetailByCategoryId(1L, 10L)
+
+            result shouldBe detail
+        }
+
+    @Test
+    fun `상세 전략은 카테고리별로 하나만 등록할 수 있다`(): Unit =
+        runBlocking {
+            val mapCategoryService = mockk<MapCategoryService>()
+            val eventStrategy = mockk<MapCategoryItemReadStrategy>()
+            val firstEventDetailStrategy = mockk<MapCategoryItemDetailReadStrategy>()
+            val secondEventDetailStrategy = mockk<MapCategoryItemDetailReadStrategy>()
+
+            every { eventStrategy.categoryLabel } returns CategoryLabel.EVENT
+            every { firstEventDetailStrategy.categoryLabel } returns CategoryLabel.EVENT
+            every { secondEventDetailStrategy.categoryLabel } returns CategoryLabel.EVENT
+
+            val exception =
+                kotlin
+                    .runCatching {
+                        MapCategoryFacade(
+                            mapCategoryService = mapCategoryService,
+                            categoryItemReadStrategies = listOf(eventStrategy),
+                            categoryItemDetailReadStrategies = listOf(firstEventDetailStrategy, secondEventDetailStrategy),
+                        )
+                    }.exceptionOrNull()
+
+            exception?.message shouldBe "Map category item detail strategy must be unique by category label."
         }
 }

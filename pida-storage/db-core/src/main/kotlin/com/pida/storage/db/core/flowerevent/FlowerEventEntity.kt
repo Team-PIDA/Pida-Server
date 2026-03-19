@@ -17,6 +17,7 @@ import java.time.LocalDate
 class FlowerEventEntity(
     val name: String,
     val address: String?,
+    val thumbnailUrl: String? = null,
     @Column(columnDefinition = "geometry(Point, 4326)")
     val pinPoint: Point,
     @Enumerated(value = EnumType.STRING)
@@ -32,6 +33,7 @@ class FlowerEventEntity(
             id = id!!,
             name = name,
             address = address,
+            thumbnailUrl = thumbnailUrl,
             pinPoint = GeoJson.Point(listOf(pinPoint.x, pinPoint.y)),
             region = region,
             homepageUrl = homepageUrl,

@@ -6,6 +6,7 @@ import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.presentation.v2.annotation.ApiV2Controller
 import com.pida.presentation.v2.category.response.MapCategoryAllResponse
 import com.pida.presentation.v2.category.response.MapCategoryItemAllResponse
+import com.pida.presentation.v2.category.response.MapCategoryItemDetailResponse
 import com.pida.presentation.v2.category.response.MapCategoryResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -46,7 +47,20 @@ class CategoryController(
                         neLat = neLat,
                         neLng = neLng,
                     ),
-            )
+        )
         return MapCategoryItemAllResponse.from(categoryItems)
     }
+
+    @Operation(summary = "카테고리별 상세 조회", description = "카테고리 ID와 데이터 ID에 해당하는 상세 정보를 조회합니다.")
+    @GetMapping("/categories/{categoryId}/items/{itemId}")
+    suspend fun categoryItemFindDetail(
+        @PathVariable categoryId: Long,
+        @PathVariable itemId: Long,
+    ): MapCategoryItemDetailResponse =
+        MapCategoryItemDetailResponse.from(
+            mapCategoryFacade.readDetailByCategoryId(
+                categoryId = categoryId,
+                itemId = itemId,
+            ),
+        )
 }

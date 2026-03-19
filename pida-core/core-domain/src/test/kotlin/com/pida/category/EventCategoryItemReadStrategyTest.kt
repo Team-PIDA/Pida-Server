@@ -30,6 +30,7 @@ class EventCategoryItemReadStrategyTest {
                     id = 10L,
                     name = "여의도 봄꽃축제",
                     address = "서울특별시 영등포구 여의서로 330",
+                    thumbnailUrl = "https://cdn.example.com/event-thumbnail.jpg",
                     pinPoint = GeoJson.Point(listOf(126.9340, 37.5284)),
                     region = Region.SEOUL,
                     homepageUrl = "https://example.com/festival",
@@ -57,6 +58,7 @@ class EventCategoryItemReadStrategyTest {
             result shouldHaveSize 1
             result.first().id shouldBe 10L
             result.first().homepageUrl shouldBe "https://example.com/festival"
+            result.first().thumbnailUrl shouldBe "https://cdn.example.com/event-thumbnail.jpg"
             result.first().bloomingStatus shouldBe BloomingStatus.BLOOMED
         }
 
@@ -72,6 +74,7 @@ class EventCategoryItemReadStrategyTest {
                     id = 11L,
                     name = "석촌호수 벚꽃축제",
                     address = "서울특별시 송파구 잠실동",
+                    thumbnailUrl = null,
                     pinPoint = GeoJson.Point(listOf(127.1040, 37.5070)),
                     region = Region.SEOUL,
                     homepageUrl = "https://example.com/lake-festival",
