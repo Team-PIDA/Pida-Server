@@ -134,6 +134,7 @@ class SecurityConfig(
                     "/api/v1/flower-spot/**",
                     "/api/v1/auth/**",
                     "/api/v1/flower-spot",
+                    "/api/v1/regions",
                     "/api/v2/categories/**",
                     "/api/v1/auth",
                     "/api/v1/blooming/details",
