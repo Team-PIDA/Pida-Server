@@ -14,16 +14,21 @@ Use this skill for public API additions or contract changes in `pida-core:core-a
 1. Read `./AGENTS.md` and inspect the nearest existing controller and response DTO in the same API family.
 2. Return the internal response payload shape only. Successful responses are wrapped by `ApiResponseAdvice`.
 3. Check `@Tag`, `@Operation`, `@Schema`, and example values on request and response DTOs.
-4. Decide the smallest missing verification:
+4. Keep Kotlin public DTO files narrow:
+   - prefer one top-level public DTO or model per file
+   - split list wrapper and item DTOs into separate files
+   - do not place multiple sibling public response `data class` declarations in one file unless there is a strong repo-local convention already in that package
+5. Decide the smallest missing verification:
    - controller compile only
    - controller/docs test
    - broader integration test if infrastructure is involved
-5. Flag missing auth/no-auth coverage and missing documentation updates.
+6. Flag missing auth/no-auth coverage and missing documentation updates.
 
 ## What to review
 
 - Controller path and annotation consistency
 - DTO field descriptions and examples
+- DTO file boundaries and whether wrapper/item/detail models are split by concern
 - `ApiResponseAdvice` and `ApiExceptionAdvice` compatibility
 - RestDocs or controller test gaps for new or changed public APIs
 

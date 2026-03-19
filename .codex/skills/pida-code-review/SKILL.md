@@ -20,6 +20,7 @@ Use this skill when the user asks for a review, PR review, regression scan, or p
 ## Focus areas
 
 - `core-api`: endpoint path and verb, auth, request validation, `ApiResponseAdvice`, `ApiExceptionAdvice`, Swagger annotations
+- `core-api`: also flag DTO files that bundle multiple unrelated top-level public classes when they should be split by concern
 - `core-domain`: facade or service boundaries, null handling, transaction assumptions, branching logic
 - `db-core` and `redis`: query filters, soft delete, repository contracts, cache invalidation, lock semantics
 - `clients`: request or response DTO compatibility, configuration properties, retry or error handling

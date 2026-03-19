@@ -88,3 +88,4 @@ Run these from the repository root and use `.` as the current project path.
 - `commit_push_guard` plans only. Actual `git add`, `git commit`, and `git push` still require explicit confirmation on the main thread.
 - Keep vertical slices aligned across `core-api`, `core-domain`, `db-core`, `redis`, and `clients`.
 - For persistence changes, mirror the nearest neighboring package before inventing a new pattern.
+- For Kotlin public DTO and domain model files, prefer one top-level public class per file. Split wrapper, item, detail, and helper models by concern instead of bundling sibling `data class` declarations into one file.
