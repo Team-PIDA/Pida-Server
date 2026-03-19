@@ -22,14 +22,25 @@ interface BloomingRepository {
 
     suspend fun findRecentlyBySpotId(spotId: Long): List<Blooming>
 
+    suspend fun findRecentlyByEventId(eventId: Long): List<Blooming>
+
     fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming>
+
+    fun findRecentByEventIds(eventIds: List<Long>): List<Blooming>
 
     fun findTodayBloomingByUserId(
         userId: Long,
         flowerSpotId: Long,
     ): Blooming?
 
+    fun findTodayEventBloomingByUserId(
+        userId: Long,
+        flowerEventId: Long,
+    ): Blooming?
+
     fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long>
+
+    fun findBloomedEventIdsByFlowerEventIds(eventIds: List<Long>): List<Long>
 
     /**
      * 지역별, 상태별 최근 5일간 투표 수를 집계합니다.

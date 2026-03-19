@@ -1,6 +1,7 @@
 package com.pida.presentation.v2.category.response
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.pida.blooming.BloomingStatus
 import com.pida.category.MapCategoryItem
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
@@ -35,5 +36,27 @@ class MapCategoryItemResponseTest {
         json shouldNotContain "\"homepageUrl\""
         json shouldNotContain "\"startDate\""
         json shouldNotContain "\"endDate\""
+        json shouldNotContain "\"bloomingStatus\""
+    }
+
+    @Test
+    fun `이벤트 개화 상태가 있으면 응답에 포함한다`() {
+        val response =
+            MapCategoryItemResponse.from(
+                MapCategoryItem(
+                    id = 21L,
+                    name = "여의도 봄꽃축제",
+                    address = "서울특별시 영등포구 여의서로 330",
+                    description = null,
+                    pinPoint = GeoJson.Point(listOf(126.9340, 37.5284)),
+                    region = Region.SEOUL,
+                    homepageUrl = "https://example.com/festival",
+                    bloomingStatus = BloomingStatus.BLOOMED,
+                ),
+            )
+
+        val json = jacksonObjectMapper().writeValueAsString(response)
+
+        json shouldContain "\"bloomingStatus\":\"BLOOMED\""
     }
 }

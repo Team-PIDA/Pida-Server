@@ -1,5 +1,8 @@
 package com.pida.category
 
+import com.pida.blooming.Blooming
+import com.pida.blooming.BloomingService
+import com.pida.blooming.BloomingStatus
 import com.pida.flowerevent.FlowerEvent
 import com.pida.flowerevent.FlowerEventFinder
 import com.pida.flowerspot.FlowerSpotLocation
@@ -8,6 +11,7 @@ import com.pida.support.geo.Region
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -18,7 +22,8 @@ class EventCategoryItemReadStrategyTest {
     fun `위치 정보가 없으면 전체 이벤트 조회를 사용한다`(): Unit =
         runBlocking {
             val flowerEventFinder = mockk<FlowerEventFinder>()
-            val strategy = EventCategoryItemReadStrategy(flowerEventFinder)
+            val bloomingService = mockk<BloomingService>()
+            val strategy = EventCategoryItemReadStrategy(flowerEventFinder, bloomingService)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
             val event =
                 FlowerEvent(
@@ -35,19 +40,32 @@ class EventCategoryItemReadStrategyTest {
                 )
 
             coEvery { flowerEventFinder.readAllByCategoryId(1L) } returns listOf(event)
+            every { bloomingService.recentlyBloomingByEventIds(listOf(10L)) } returns
+                listOf(
+                    Blooming(
+                        id = 1L,
+                        status = BloomingStatus.BLOOMED,
+                        userId = 1L,
+                        flowerSpotId = null,
+                        flowerEventId = 10L,
+                        createdAt = LocalDate.of(2026, 3, 19).atStartOfDay(),
+                    ),
+                )
 
             val result = strategy.read(1L, location)
 
             result shouldHaveSize 1
             result.first().id shouldBe 10L
             result.first().homepageUrl shouldBe "https://example.com/festival"
+            result.first().bloomingStatus shouldBe BloomingStatus.BLOOMED
         }
 
     @Test
     fun `위치 정보가 있으면 위치 기반 이벤트 조회를 사용한다`(): Unit =
         runBlocking {
             val flowerEventFinder = mockk<FlowerEventFinder>()
-            val strategy = EventCategoryItemReadStrategy(flowerEventFinder)
+            val bloomingService = mockk<BloomingService>()
+            val strategy = EventCategoryItemReadStrategy(flowerEventFinder, bloomingService)
             val location = FlowerSpotLocation(swLat = 37.4, swLng = 126.8, neLat = 37.6, neLng = 127.1)
             val event =
                 FlowerEvent(
@@ -64,11 +82,13 @@ class EventCategoryItemReadStrategyTest {
                 )
 
             coEvery { flowerEventFinder.readAllByCategoryIdAndLocation(1L, location) } returns listOf(event)
+            every { bloomingService.recentlyBloomingByEventIds(listOf(11L)) } returns emptyList<Blooming>()
 
             val result = strategy.read(1L, location)
 
             result shouldHaveSize 1
             result.first().id shouldBe 11L
             result.first().startDate shouldBe LocalDate.of(2026, 4, 1)
+            result.first().bloomingStatus shouldBe BloomingStatus.NOT_BLOOMED
         }
 }

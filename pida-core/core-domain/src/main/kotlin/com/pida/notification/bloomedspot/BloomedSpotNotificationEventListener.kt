@@ -2,6 +2,7 @@ package com.pida.notification.bloomedspot
 
 import com.pida.blooming.BloomingAddedEvent
 import com.pida.blooming.BloomingStatus
+import com.pida.blooming.NewBlooming
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
@@ -16,10 +17,12 @@ class BloomedSpotNotificationEventListener(
     @Async
     @EventListener
     fun handleBloomingAddedEvent(event: BloomingAddedEvent) {
-        if (event.newBlooming.status != BloomingStatus.BLOOMED) {
+        val newBlooming = event.newBlooming as? NewBlooming.FlowerSpot ?: return
+
+        if (newBlooming.status != BloomingStatus.BLOOMED) {
             return
         }
 
-        bloomedSpotNotificationService.sendBloomedSpotNotification(event.newBlooming.flowerSpotId)
+        bloomedSpotNotificationService.sendBloomedSpotNotification(newBlooming.flowerSpotId)
     }
 }
