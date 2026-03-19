@@ -34,7 +34,7 @@ class WeekdayNotificationEligibilityChecker(
      * 조건:
      * - 최근 30일 내 활성 사용자
      * - 위치 정보가 있는 사용자
-     * - 3km 반경 내 개화 상태(BLOOMED) FlowerSpot 존재
+     * - 3km 반경 내 개화 상태(BLOOMED) FlowerSpot 또는 FlowerEvent 존재
      * - PM10 < 81µg/m³
      * - 이번 주 평일 알림 수신 횟수 2회 미만
      *
@@ -79,10 +79,10 @@ class WeekdayNotificationEligibilityChecker(
         // 4. 필터링: 위치 기반 (3km 반경 내 개화 상태)
         val eligibleByLocation =
             eligibleByNotificationCount.filter { user ->
-                locationChecker.hasNearbyBloomingSpots(user.latitude, user.longitude)
+                locationChecker.hasNearbyBloomingLocations(user.latitude, user.longitude)
             }
 
-        logger.info("${eligibleByLocation.size} users have nearby blooming spots")
+        logger.info("${eligibleByLocation.size} users have nearby blooming locations")
 
         if (eligibleByLocation.isEmpty()) {
             return emptyList()

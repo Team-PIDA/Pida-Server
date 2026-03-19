@@ -28,4 +28,27 @@ interface FlowerEventJpaRepository : JpaRepository<FlowerEventEntity, Long> {
         @Param("neLat") neLat: Double,
         @Param("neLng") neLng: Double,
     ): List<FlowerEventEntity>
+
+    @Query(
+        """
+        SELECT *
+        FROM t_flower_event
+        WHERE ST_DWithin(
+            pin_point::geography,
+            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
+            :radiusMeters
+        )
+        AND deleted_at IS NULL
+        ORDER BY ST_Distance(
+            pin_point::geography,
+            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography
+        )
+        """,
+        nativeQuery = true,
+    )
+    fun findWithinRadius(
+        @Param("lat") lat: Double,
+        @Param("lng") lng: Double,
+        @Param("radiusMeters") radiusMeters: Double,
+    ): List<FlowerEventEntity>
 }
