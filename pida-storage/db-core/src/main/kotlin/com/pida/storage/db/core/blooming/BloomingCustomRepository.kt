@@ -196,7 +196,9 @@ class BloomingCustomRepository(
     fun countBloomedVotesByRegionAndCreatedAtAfter(
         region: Region,
         createdAtAfter: LocalDateTime,
-    ): Long = countBloomedSpotVotesByRegionAndCreatedAtAfter(region, createdAtAfter) + countBloomedEventVotesByRegionAndCreatedAtAfter(region, createdAtAfter)
+    ): Long =
+        countBloomedSpotVotesByRegionAndCreatedAtAfter(region, createdAtAfter) +
+            countBloomedEventVotesByRegionAndCreatedAtAfter(region, createdAtAfter)
 
     private fun countSpotByRegionAndStatus(threshold: LocalDateTime): List<RegionStatusCount> {
         val query =

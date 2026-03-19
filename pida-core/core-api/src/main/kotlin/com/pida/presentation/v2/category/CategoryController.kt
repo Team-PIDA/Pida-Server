@@ -47,7 +47,7 @@ class CategoryController(
                         neLat = neLat,
                         neLng = neLng,
                     ),
-        )
+            )
         return MapCategoryItemAllResponse.from(categoryItems)
     }
 

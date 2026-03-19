@@ -144,9 +144,10 @@ class CafeCategoryItemReadStrategyTest {
                 )
 
             val exception =
-                kotlin.runCatching {
-                    strategy.read(2L, location)
-                }.exceptionOrNull()
+                kotlin
+                    .runCatching {
+                        strategy.read(2L, location)
+                    }.exceptionOrNull()
 
             exception.shouldBeInstanceOf<IllegalStateException>()
             exception.message shouldBe "CAFE category must be uniquely mapped to one active category."
