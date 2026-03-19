@@ -22,6 +22,7 @@ class FlowerSpotCafeEntity(
     val name: String,
     val address: String?,
     val description: String?,
+    val thumbnailUrl: String? = null,
     @Column(columnDefinition = "geometry(Point, 4326)")
     val pinPoint: Point,
     @Enumerated(value = EnumType.STRING)
@@ -36,6 +37,7 @@ class FlowerSpotCafeEntity(
             name = name,
             address = address,
             description = description,
+            thumbnailUrl = thumbnailUrl,
             pinPoint = GeoJson.Point(listOf(pinPoint.x, pinPoint.y)),
             region = region,
             mapUrl = mapUrl,

@@ -19,6 +19,7 @@ class MapCategoryItemResponseTest {
                     name = "벚꽃뷰 카페",
                     address = "서울특별시 송파구 석촌호수로 12",
                     description = "석촌호수 근처 카페",
+                    thumbnailUrl = "https://cdn.example.com/cafe-thumbnail.jpg",
                     pinPoint = GeoJson.Point(listOf(127.1040, 37.5070)),
                     region = Region.SEOUL,
                     homepageUrl = null,
@@ -26,6 +27,7 @@ class MapCategoryItemResponseTest {
                     startDate = null,
                     endDate = null,
                     flowerSpotId = 3L,
+                    recentlyVisitedCount = 7L,
                 ),
             )
 
@@ -33,7 +35,10 @@ class MapCategoryItemResponseTest {
 
         json shouldContain "\"mapUrl\""
         json shouldContain "\"flowerSpotId\""
+        json shouldContain "\"thumbnailUrl\""
+        json shouldContain "\"recentlyVisitedCount\":7"
         json shouldNotContain "\"homepageUrl\""
+        json shouldNotContain "\"geom\""
         json shouldNotContain "\"startDate\""
         json shouldNotContain "\"endDate\""
         json shouldNotContain "\"bloomingStatus\""
@@ -48,6 +53,7 @@ class MapCategoryItemResponseTest {
                     name = "여의도 봄꽃축제",
                     address = "서울특별시 영등포구 여의서로 330",
                     description = null,
+                    thumbnailUrl = "https://cdn.example.com/event-thumbnail.jpg",
                     pinPoint = GeoJson.Point(listOf(126.9340, 37.5284)),
                     region = Region.SEOUL,
                     homepageUrl = "https://example.com/festival",
@@ -58,5 +64,6 @@ class MapCategoryItemResponseTest {
         val json = jacksonObjectMapper().writeValueAsString(response)
 
         json shouldContain "\"bloomingStatus\":\"BLOOMED\""
+        json shouldContain "\"thumbnailUrl\""
     }
 }

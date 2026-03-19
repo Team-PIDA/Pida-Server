@@ -1,5 +1,8 @@
 package com.pida.category
 
+import com.pida.blooming.Blooming
+import com.pida.blooming.BloomingService
+import com.pida.blooming.BloomingStatus
 import com.pida.flowerspot.FlowerSpotCafe
 import com.pida.flowerspot.FlowerSpotCafeFinder
 import com.pida.flowerspot.FlowerSpotLocation
@@ -9,6 +12,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -19,7 +23,8 @@ class CafeCategoryItemReadStrategyTest {
         runBlocking {
             val mapCategoryService = mockk<MapCategoryService>()
             val flowerSpotCafeFinder = mockk<FlowerSpotCafeFinder>()
-            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder)
+            val bloomingService = mockk<BloomingService>()
+            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder, bloomingService)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
             val category =
                 MapCategory(
@@ -36,6 +41,7 @@ class CafeCategoryItemReadStrategyTest {
                     name = "벚꽃뷰 카페",
                     address = "서울특별시 송파구 석촌호수로 12",
                     description = "석촌호수 근처 카페",
+                    thumbnailUrl = "https://cdn.example.com/cafe-thumbnail.jpg",
                     pinPoint = GeoJson.Point(listOf(127.1040, 37.5070)),
                     region = Region.SEOUL,
                     mapUrl = "https://place.map.kakao.com/123456",
@@ -44,12 +50,26 @@ class CafeCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.CAFE) } returns listOf(category)
             coEvery { flowerSpotCafeFinder.readAll() } returns listOf(cafe)
+            every { bloomingService.recentlyBloomingBySpotIds(listOf(3L)) } returns
+                listOf(
+                    Blooming(
+                        id = 1L,
+                        status = BloomingStatus.BLOOMED,
+                        userId = 1L,
+                        flowerSpotId = 3L,
+                        flowerEventId = null,
+                        createdAt = java.time.LocalDateTime.of(2026, 3, 19, 10, 0),
+                    ),
+                )
 
             val result = strategy.read(2L, location)
 
             result shouldHaveSize 1
             result.first().id shouldBe 20L
             result.first().flowerSpotId shouldBe 3L
+            result.first().thumbnailUrl shouldBe "https://cdn.example.com/cafe-thumbnail.jpg"
+            result.first().recentlyVisitedCount shouldBe 1L
+            result.first().bloomingStatus shouldBe BloomingStatus.BLOOMED
         }
 
     @Test
@@ -57,7 +77,8 @@ class CafeCategoryItemReadStrategyTest {
         runBlocking {
             val mapCategoryService = mockk<MapCategoryService>()
             val flowerSpotCafeFinder = mockk<FlowerSpotCafeFinder>()
-            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder)
+            val bloomingService = mockk<BloomingService>()
+            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder, bloomingService)
             val location = FlowerSpotLocation(swLat = 37.4, swLng = 126.8, neLat = 37.6, neLng = 127.1)
             val category =
                 MapCategory(
@@ -74,6 +95,7 @@ class CafeCategoryItemReadStrategyTest {
                     name = "호수뷰 카페",
                     address = "서울특별시 송파구 잠실동",
                     description = "호수 근처 카페",
+                    thumbnailUrl = null,
                     pinPoint = GeoJson.Point(listOf(127.1050, 37.5080)),
                     region = Region.SEOUL,
                     mapUrl = "https://place.map.kakao.com/654321",
@@ -82,12 +104,14 @@ class CafeCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.CAFE) } returns listOf(category)
             coEvery { flowerSpotCafeFinder.readAllByLocation(location) } returns listOf(cafe)
+            every { bloomingService.recentlyBloomingBySpotIds(listOf(4L)) } returns emptyList<Blooming>()
 
             val result = strategy.read(2L, location)
 
             result shouldHaveSize 1
             result.first().id shouldBe 21L
             result.first().mapUrl shouldBe "https://place.map.kakao.com/654321"
+            result.first().bloomingStatus shouldBe BloomingStatus.NOT_BLOOMED
         }
 
     @Test
@@ -95,7 +119,8 @@ class CafeCategoryItemReadStrategyTest {
         runBlocking {
             val mapCategoryService = mockk<MapCategoryService>()
             val flowerSpotCafeFinder = mockk<FlowerSpotCafeFinder>()
-            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder)
+            val bloomingService = mockk<BloomingService>()
+            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder, bloomingService)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
 
             coEvery {
@@ -119,9 +144,10 @@ class CafeCategoryItemReadStrategyTest {
                 )
 
             val exception =
-                kotlin.runCatching {
-                    strategy.read(2L, location)
-                }.exceptionOrNull()
+                kotlin
+                    .runCatching {
+                        strategy.read(2L, location)
+                    }.exceptionOrNull()
 
             exception.shouldBeInstanceOf<IllegalStateException>()
             exception.message shouldBe "CAFE category must be uniquely mapped to one active category."

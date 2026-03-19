@@ -35,6 +35,7 @@ class EventCategoryItemReadStrategy(
                 name = event.name,
                 address = event.address,
                 description = null,
+                thumbnailUrl = event.thumbnailUrl,
                 pinPoint = event.pinPoint,
                 region = event.region,
                 homepageUrl = event.homepageUrl,
