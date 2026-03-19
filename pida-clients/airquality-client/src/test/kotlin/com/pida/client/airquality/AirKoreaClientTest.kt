@@ -13,11 +13,11 @@ class AirKoreaClientTest {
     fun `근접 측정소 조회 성공 시 첫 번째 측정소명을 반환한다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("test-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
 
         every {
             airKoreaStationApi.getNearbyMsrstnList(
-                serviceKey = "test-key",
+                serviceKey = "station-key",
                 tmX = "192968",
                 tmY = "4667503",
             )
@@ -57,11 +57,11 @@ class AirKoreaClientTest {
     fun `근접 측정소 조회 결과 코드가 실패면 AIR_QUALITY_STATION_NOT_FOUND를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("test-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
 
         every {
             airKoreaStationApi.getNearbyMsrstnList(
-                serviceKey = "test-key",
+                serviceKey = "station-key",
                 tmX = "192968",
                 tmY = "4667503",
             )
@@ -86,11 +86,11 @@ class AirKoreaClientTest {
     fun `근접 측정소 조회 결과가 비어 있으면 AIR_QUALITY_STATION_NOT_FOUND를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("test-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
 
         every {
             airKoreaStationApi.getNearbyMsrstnList(
-                serviceKey = "test-key",
+                serviceKey = "station-key",
                 tmX = "192968",
                 tmY = "4667503",
             )
@@ -115,11 +115,11 @@ class AirKoreaClientTest {
     fun `근접 측정소 조회 중 예외가 발생하면 AIR_QUALITY_STATION_NOT_FOUND를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("test-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
 
         every {
             airKoreaStationApi.getNearbyMsrstnList(
-                serviceKey = "test-key",
+                serviceKey = "station-key",
                 tmX = "192968",
                 tmY = "4667503",
             )
@@ -137,11 +137,11 @@ class AirKoreaClientTest {
     fun `대기질 조회 결과 코드가 실패면 AIR_QUALITY_API_CALL_FAILED를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("test-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
 
         every {
             airKoreaAirQualityApi.getMsrstnAcctoRltmMesureDnsty(
-                serviceKey = "test-key",
+                serviceKey = "air-quality-key",
                 stationName = "종로구",
             )
         } returns
@@ -165,11 +165,11 @@ class AirKoreaClientTest {
     fun `대기질 조회 중 예외가 발생하면 AIR_QUALITY_API_CALL_FAILED를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("test-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
 
         every {
             airKoreaAirQualityApi.getMsrstnAcctoRltmMesureDnsty(
-                serviceKey = "test-key",
+                serviceKey = "air-quality-key",
                 stationName = "종로구",
             )
         } throws RuntimeException("boom")
@@ -180,5 +180,75 @@ class AirKoreaClientTest {
             }
 
         exception.errorType shouldBe ErrorType.AIR_QUALITY_API_CALL_FAILED
+    }
+
+    @Test
+    fun `메서드별로 서로 다른 service key를 사용한다`() {
+        val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
+        val airKoreaStationApi = mockk<AirKoreaStationApi>()
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
+
+        every {
+            airKoreaStationApi.getNearbyMsrstnList(
+                serviceKey = "station-key",
+                tmX = "192968",
+                tmY = "4667503",
+            )
+        } returns
+            AirKoreaStationResponse(
+                response =
+                    AirKoreaStationResponse.Response(
+                        header = AirKoreaStationResponse.Header(resultCode = "00", resultMsg = "NORMAL SERVICE"),
+                        body =
+                            AirKoreaStationResponse.Body(
+                                items =
+                                    listOf(
+                                        AirKoreaStationResponse.StationItem(
+                                            stationName = "종로구",
+                                            addr = "서울 종로구",
+                                            tm = 0.1,
+                                        ),
+                                    ),
+                                numOfRows = 1,
+                                pageNo = 1,
+                                totalCount = 1,
+                            ),
+                    ),
+            )
+        every {
+            airKoreaAirQualityApi.getMsrstnAcctoRltmMesureDnsty(
+                serviceKey = "air-quality-key",
+                stationName = "종로구",
+            )
+        } returns
+            AirKoreaResponse(
+                response =
+                    AirKoreaResponse.Response(
+                        header = AirKoreaResponse.Header(resultCode = "00", resultMsg = "NORMAL SERVICE"),
+                        body =
+                            AirKoreaResponse.Body(
+                                items =
+                                    listOf(
+                                        AirKoreaResponse.Item(
+                                            stationName = "종로구",
+                                            dataTime = "2026-03-19 18:00",
+                                            pm10Value = "20",
+                                            pm25Value = "10",
+                                            khaiValue = null,
+                                            so2Value = null,
+                                            coValue = null,
+                                            o3Value = null,
+                                            no2Value = null,
+                                        ),
+                                    ),
+                                numOfRows = 1,
+                                pageNo = 1,
+                                totalCount = 1,
+                            ),
+                    ),
+            )
+
+        client.getNearbyStation("192968", "4667503")
+        client.getAirQualityByStation("종로구")
     }
 }
