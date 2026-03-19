@@ -2,9 +2,12 @@ package com.pida.notification.bloomed
 
 import com.pida.blooming.BloomingAddedEvent
 import com.pida.blooming.BloomingStatus
+import com.pida.blooming.NewBlooming
+import com.pida.flowerevent.FlowerEventRepository
+import com.pida.flowerspot.FlowerSpotRepository
 import com.pida.support.extension.logger
-import com.pida.support.geo.GeoJson
-import com.pida.user.location.UserLocationReader
+import com.pida.support.geo.Region
+import kotlinx.coroutines.runBlocking
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
@@ -14,8 +17,8 @@ import org.springframework.stereotype.Service
  */
 @Service
 class BloomedFirstVoteNotificationEventListener(
-    private val userLocationReader: UserLocationReader,
-    private val regionResolver: BloomedRegionResolver,
+    private val flowerSpotRepository: FlowerSpotRepository,
+    private val flowerEventRepository: FlowerEventRepository,
     private val firstVoteChecker: BloomedFirstVoteChecker,
     private val bloomedNotificationService: BloomedNotificationService,
 ) {
@@ -24,23 +27,30 @@ class BloomedFirstVoteNotificationEventListener(
     @Async
     @EventListener
     fun handleBloomingAddedEvent(event: BloomingAddedEvent) {
-        if (event.newBlooming.status != BloomingStatus.BLOOMED) {
+        val newBlooming = event.newBlooming
+
+        if (newBlooming.status != BloomingStatus.BLOOMED) {
             return
         }
 
-        val userLocation = userLocationReader.readUserLocationByUserId(event.newBlooming.userId) ?: return
-        val point = userLocation.location as? GeoJson.Point ?: return
+        val targetRegion = readTargetRegion(newBlooming) ?: return
 
-        val userRegion =
-            regionResolver.resolveRegion(
-                latitude = point.coordinates[1],
-                longitude = point.coordinates[0],
-            ) ?: return
-
-        if (!firstVoteChecker.isFirstBloomedVoteOfYear(userRegion)) {
+        if (!firstVoteChecker.isFirstBloomedVoteOfYear(targetRegion)) {
             return
         }
 
-        bloomedNotificationService.sendBloomedNotificationForRegion(userRegion)
+        bloomedNotificationService.sendBloomedNotificationForRegion(targetRegion)
     }
+
+    private fun readTargetRegion(newBlooming: NewBlooming): Region? =
+        runCatching {
+            runBlocking {
+                when (newBlooming) {
+                    is NewBlooming.FlowerSpot -> flowerSpotRepository.findBy(newBlooming.flowerSpotId).region
+                    is NewBlooming.FlowerEvent -> flowerEventRepository.findBy(newBlooming.flowerEventId).region
+                }
+            }
+        }.onFailure { error ->
+            logger.error("Failed to resolve blooming target region for notification", error)
+        }.getOrNull()
 }

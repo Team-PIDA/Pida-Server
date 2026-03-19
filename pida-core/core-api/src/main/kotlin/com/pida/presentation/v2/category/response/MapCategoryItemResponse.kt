@@ -1,6 +1,7 @@
 package com.pida.presentation.v2.category.response
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.pida.blooming.BloomingStatus
 import com.pida.category.CategoryLabel
 import com.pida.category.MapCategoryItem
 import com.pida.category.MapCategoryItems
@@ -85,6 +86,12 @@ data class MapCategoryItemResponse(
         requiredMode = Schema.RequiredMode.NOT_REQUIRED,
     )
     val flowerSpotId: Long?,
+    @field:Schema(
+        description = "개화 상태 (EVENT인 경우에만 포함)",
+        example = "BLOOMED",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+    )
+    val bloomingStatus: BloomingStatus?,
 ) {
     companion object {
         fun from(mapCategoryItem: MapCategoryItem) =
@@ -100,6 +107,7 @@ data class MapCategoryItemResponse(
                 startDate = mapCategoryItem.startDate,
                 endDate = mapCategoryItem.endDate,
                 flowerSpotId = mapCategoryItem.flowerSpotId,
+                bloomingStatus = mapCategoryItem.bloomingStatus,
             )
     }
 }

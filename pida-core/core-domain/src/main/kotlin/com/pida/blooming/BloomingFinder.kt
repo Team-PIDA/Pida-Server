@@ -22,10 +22,19 @@ class BloomingFinder(
 
     suspend fun readRecentlyBloomingBySpotId(spotId: Long): List<Blooming> = bloomingRepository.findRecentlyBySpotId(spotId)
 
+    suspend fun readRecentlyBloomingByEventId(eventId: Long): List<Blooming> = bloomingRepository.findRecentlyByEventId(eventId)
+
     fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> = bloomingRepository.findRecentBySpotIds(spotIds)
+
+    fun recentlyBloomingByEventIds(eventIds: List<Long>): List<Blooming> = bloomingRepository.findRecentByEventIds(eventIds)
 
     fun readTodayBloomingByUserId(
         userId: Long,
         flowerSpotId: Long,
     ): Blooming? = bloomingRepository.findTodayBloomingByUserId(userId, flowerSpotId)
+
+    fun readTodayBloomingByUserIdAndFlowerEventId(
+        userId: Long,
+        flowerEventId: Long,
+    ): Blooming? = bloomingRepository.findTodayEventBloomingByUserId(userId, flowerEventId)
 }

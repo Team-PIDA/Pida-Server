@@ -136,6 +136,7 @@ class SecurityConfig(
                     "/api/v1/flower-spot",
                     "/api/v2/categories/**",
                     "/api/v1/auth",
+                    "/api/v1/blooming/details",
                     "/api/v1/blooming/{spotId}/details",
                     "/api/v1/places/search",
                     "/test/**",
@@ -150,6 +151,7 @@ class SecurityConfig(
                     "/api/v1/users/**",
                     "/api/v1/users",
                     "/api/v1/blooming",
+                    "/api/v1/blooming/verify/today",
                     "/api/v1/blooming/{spotId}/verify/today",
                 ).authenticated()
 

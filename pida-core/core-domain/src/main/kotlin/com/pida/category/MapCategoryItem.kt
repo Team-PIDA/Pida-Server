@@ -1,5 +1,6 @@
 package com.pida.category
 
+import com.pida.blooming.BloomingStatus
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import java.time.LocalDate
@@ -22,4 +23,5 @@ data class MapCategoryItem(
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = null,
     val flowerSpotId: Long? = null,
+    val bloomingStatus: BloomingStatus? = null,
 )

@@ -1,4 +1,4 @@
-package com.pida.notification.bloomedspot
+package com.pida.notification.bloomedevent
 
 import com.pida.blooming.BloomingAddedEvent
 import com.pida.blooming.BloomingStatus
@@ -8,21 +8,21 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 /**
- * BLOOMED 투표 이벤트를 수신하여 벚꽃길 반경 알림을 발송합니다.
+ * BLOOMED 투표 이벤트를 수신하여 꽃 이벤트 반경 알림을 발송합니다.
  */
 @Component
-class BloomedSpotNotificationEventListener(
-    private val bloomedSpotNotificationService: BloomedSpotNotificationService,
+class BloomedEventNotificationEventListener(
+    private val bloomedEventNotificationService: BloomedEventNotificationService,
 ) {
     @Async
     @EventListener
     fun handleBloomingAddedEvent(event: BloomingAddedEvent) {
-        val newBlooming = event.newBlooming as? NewBlooming.FlowerSpot ?: return
+        val newBlooming = event.newBlooming as? NewBlooming.FlowerEvent ?: return
 
         if (newBlooming.status != BloomingStatus.BLOOMED) {
             return
         }
 
-        bloomedSpotNotificationService.sendBloomedSpotNotification(newBlooming.flowerSpotId)
+        bloomedEventNotificationService.sendBloomedEventNotification(newBlooming.flowerEventId)
     }
 }

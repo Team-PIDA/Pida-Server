@@ -28,7 +28,7 @@ class BloomingCoreRepository(
                     is NewBlooming.FlowerEvent ->
                         BloomingEntity(
                             userId = newBlooming.userId,
-                            flowerSpotId = newBlooming.flowerSpotId,
+                            flowerSpotId = null,
                             flowerEventId = newBlooming.flowerEventId,
                             status = newBlooming.status,
                         )
@@ -67,9 +67,19 @@ class BloomingCoreRepository(
             bloomingCustomRepository.recentlyBySpotId(spotId).map { it.toBlooming() }
         }
 
+    override suspend fun findRecentlyByEventId(eventId: Long): List<Blooming> =
+        Tx.coReadable {
+            bloomingCustomRepository.recentlyByEventId(eventId).map { it.toBlooming() }
+        }
+
     override fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming> =
         Tx.readable {
             bloomingCustomRepository.recentlyBySpotIds(spotIds).map { it.toBlooming() }
+        }
+
+    override fun findRecentByEventIds(eventIds: List<Long>): List<Blooming> =
+        Tx.readable {
+            bloomingCustomRepository.recentlyByEventIds(eventIds).map { it.toBlooming() }
         }
 
     override fun findTodayBloomingByUserId(
@@ -80,9 +90,22 @@ class BloomingCoreRepository(
             bloomingCustomRepository.findTodayBloomingByUserId(userId, flowerSpotId)?.toBlooming()
         }
 
+    override fun findTodayEventBloomingByUserId(
+        userId: Long,
+        flowerEventId: Long,
+    ): Blooming? =
+        Tx.readable {
+            bloomingCustomRepository.findTodayEventBloomingByUserId(userId, flowerEventId)?.toBlooming()
+        }
+
     override fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long> =
         Tx.readable {
             bloomingCustomRepository.findBloomedSpotIdsByFlowerSpotIds(spotIds)
+        }
+
+    override fun findBloomedEventIdsByFlowerEventIds(eventIds: List<Long>): List<Long> =
+        Tx.readable {
+            bloomingCustomRepository.findBloomedEventIdsByFlowerEventIds(eventIds)
         }
 
     override fun countByRegionAndStatus(): List<RegionStatusCount> =
