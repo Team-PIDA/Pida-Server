@@ -2,7 +2,9 @@ package com.pida.presentation.v2.category.response
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.pida.blooming.BloomingStatus
-import com.pida.category.MapCategoryItem
+import com.pida.category.badge.model.MapCategoryBadge
+import com.pida.category.badge.model.MapCategoryBadgeType
+import com.pida.category.item.model.MapCategoryItem
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import io.kotest.matchers.string.shouldContain
@@ -28,6 +30,10 @@ class MapCategoryItemResponseTest {
                     endDate = null,
                     flowerSpotId = 3L,
                     recentlyVisitedCount = 7L,
+                    badges =
+                        listOf(
+                            MapCategoryBadge(MapCategoryBadgeType.SPACE_TYPE, "카공하기 좋아요"),
+                        ),
                 ),
             )
 
@@ -37,6 +43,9 @@ class MapCategoryItemResponseTest {
         json shouldContain "\"flowerSpotId\""
         json shouldContain "\"thumbnailUrl\""
         json shouldContain "\"recentlyVisitedCount\":7"
+        json shouldContain "\"badges\""
+        json shouldContain "\"type\":\"SPACE_TYPE\""
+        json shouldContain "\"label\":\"카공하기 좋아요\""
         json shouldNotContain "\"homepageUrl\""
         json shouldNotContain "\"geom\""
         json shouldNotContain "\"startDate\""
@@ -58,6 +67,10 @@ class MapCategoryItemResponseTest {
                     region = Region.SEOUL,
                     homepageUrl = "https://example.com/festival",
                     bloomingStatus = BloomingStatus.BLOOMED,
+                    badges =
+                        listOf(
+                            MapCategoryBadge(MapCategoryBadgeType.REGION, "서울"),
+                        ),
                 ),
             )
 
@@ -65,5 +78,7 @@ class MapCategoryItemResponseTest {
 
         json shouldContain "\"bloomingStatus\":\"BLOOMED\""
         json shouldContain "\"thumbnailUrl\""
+        json shouldContain "\"type\":\"REGION\""
+        json shouldContain "\"label\":\"서울\""
     }
 }

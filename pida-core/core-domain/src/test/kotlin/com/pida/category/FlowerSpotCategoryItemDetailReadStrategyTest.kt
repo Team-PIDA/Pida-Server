@@ -4,6 +4,11 @@ import com.pida.blooming.BloomingDetails
 import com.pida.blooming.BloomingFacade
 import com.pida.blooming.BloomingStatus
 import com.pida.blooming.BloomingStatusDetails
+import com.pida.category.badge.MapCategoryBadgeFinder
+import com.pida.category.badge.model.MapCategoryBadge
+import com.pida.category.badge.model.MapCategoryBadgeTargetType
+import com.pida.category.badge.model.MapCategoryBadgeType
+import com.pida.category.strategy.detail.FlowerSpotCategoryItemDetailReadStrategy
 import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpot
 import com.pida.flowerspot.FlowerSpotService
@@ -23,7 +28,8 @@ class FlowerSpotCategoryItemDetailReadStrategyTest {
         runBlocking {
             val flowerSpotService = mockk<FlowerSpotService>()
             val bloomingFacade = mockk<BloomingFacade>()
-            val strategy = FlowerSpotCategoryItemDetailReadStrategy(flowerSpotService, bloomingFacade)
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = FlowerSpotCategoryItemDetailReadStrategy(flowerSpotService, bloomingFacade, mapCategoryBadgeFinder)
             val geom =
                 GeoJson.LineString(
                     listOf(
@@ -59,6 +65,12 @@ class FlowerSpotCategoryItemDetailReadStrategyTest {
                                 ),
                         ),
                 )
+            coEvery {
+                mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT, listOf(30L))
+            } returns
+                mapOf(
+                    30L to listOf(MapCategoryBadge(MapCategoryBadgeType.SPACE_TYPE, "10분 코스")),
+                )
 
             val result = strategy.read(categoryId = 3L, itemId = 30L)
 
@@ -68,5 +80,9 @@ class FlowerSpotCategoryItemDetailReadStrategyTest {
             result.item.geom shouldBe geom
             result.item.recentlyVisitedCount shouldBe 2L
             result.item.bloomingStatus shouldBe BloomingStatus.BLOOMED
+            result.item.badges.map { it.type to it.label } shouldBe
+                listOf(
+                    MapCategoryBadgeType.SPACE_TYPE to "10분 코스",
+                )
         }
 }

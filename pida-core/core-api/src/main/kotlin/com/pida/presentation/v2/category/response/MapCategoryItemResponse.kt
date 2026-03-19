@@ -3,9 +3,11 @@ package com.pida.presentation.v2.category.response
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.pida.blooming.BloomingStatus
 import com.pida.category.CategoryLabel
-import com.pida.category.MapCategoryItem
-import com.pida.category.MapCategoryItemDetail
-import com.pida.category.MapCategoryItems
+import com.pida.category.badge.model.MapCategoryBadge
+import com.pida.category.badge.model.MapCategoryBadgeType
+import com.pida.category.item.detail.MapCategoryItemDetail
+import com.pida.category.item.model.MapCategoryItem
+import com.pida.category.item.model.MapCategoryItems
 import com.pida.presentation.v1.blooming.response.BloomingDetailsResponse
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
@@ -121,6 +123,11 @@ data class MapCategoryItemResponse(
         requiredMode = Schema.RequiredMode.NOT_REQUIRED,
     )
     val bloomingStatus: BloomingStatus?,
+    @field:ArraySchema(
+        schema = Schema(implementation = MapCategoryBadgeResponse::class),
+        arraySchema = Schema(description = "카드에 노출할 배지 목록"),
+    )
+    val badges: List<MapCategoryBadgeResponse>,
 ) {
     companion object {
         fun from(mapCategoryItem: MapCategoryItem) =
@@ -140,6 +147,7 @@ data class MapCategoryItemResponse(
                 flowerSpotId = mapCategoryItem.flowerSpotId,
                 recentlyVisitedCount = mapCategoryItem.recentlyVisitedCount,
                 bloomingStatus = mapCategoryItem.bloomingStatus,
+                badges = mapCategoryItem.badges.map(MapCategoryBadgeResponse::from),
             )
     }
 }
@@ -172,6 +180,7 @@ data class MapCategoryItemDetailResponse(
                         pinPoint = item.pinPoint,
                         region = item.region,
                         bloomingStatus = item.bloomingStatus,
+                        badges = item.badges.map(MapCategoryBadgeResponse::from),
                         bloomingDetails = BloomingDetailsResponse.from(mapCategoryItemDetail.bloomingDetails),
                     ),
                 detail =
@@ -240,9 +249,30 @@ data class MapCategoryItemCommonDetailResponse(
         requiredMode = Schema.RequiredMode.NOT_REQUIRED,
     )
     val bloomingStatus: BloomingStatus?,
+    @field:ArraySchema(
+        schema = Schema(implementation = MapCategoryBadgeResponse::class),
+        arraySchema = Schema(description = "카드에 노출할 배지 목록"),
+    )
+    val badges: List<MapCategoryBadgeResponse>,
     @field:Schema(description = "개화 상태 상세 정보")
     val bloomingDetails: BloomingDetailsResponse,
 )
+
+@Schema(description = "카테고리 배지 응답")
+data class MapCategoryBadgeResponse(
+    @field:Schema(description = "배지 타입", example = "BLOOMING_STATUS")
+    val type: MapCategoryBadgeType,
+    @field:Schema(description = "배지 문구", example = "만개예요!")
+    val label: String,
+) {
+    companion object {
+        fun from(badge: MapCategoryBadge): MapCategoryBadgeResponse =
+            MapCategoryBadgeResponse(
+                type = badge.type,
+                label = badge.label,
+            )
+    }
+}
 
 @Schema(description = "카테고리별 상세 payload")
 @JsonInclude(JsonInclude.Include.NON_NULL)

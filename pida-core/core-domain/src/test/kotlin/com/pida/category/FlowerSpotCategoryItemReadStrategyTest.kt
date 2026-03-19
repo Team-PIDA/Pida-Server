@@ -3,6 +3,11 @@ package com.pida.category
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingService
 import com.pida.blooming.BloomingStatus
+import com.pida.category.badge.MapCategoryBadgeFinder
+import com.pida.category.badge.model.MapCategoryBadge
+import com.pida.category.badge.model.MapCategoryBadgeTargetType
+import com.pida.category.badge.model.MapCategoryBadgeType
+import com.pida.category.strategy.read.FlowerSpotCategoryItemReadStrategy
 import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpot
 import com.pida.flowerspot.FlowerSpotLocation
@@ -26,7 +31,8 @@ class FlowerSpotCategoryItemReadStrategyTest {
             val mapCategoryService = mockk<MapCategoryService>()
             val flowerSpotService = mockk<FlowerSpotService>()
             val bloomingService = mockk<BloomingService>()
-            val strategy = FlowerSpotCategoryItemReadStrategy(mapCategoryService, flowerSpotService, bloomingService)
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = FlowerSpotCategoryItemReadStrategy(mapCategoryService, flowerSpotService, bloomingService, mapCategoryBadgeFinder)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
             val category =
                 MapCategory(
@@ -70,6 +76,12 @@ class FlowerSpotCategoryItemReadStrategyTest {
                         createdAt = LocalDateTime.of(2026, 3, 19, 10, 0),
                     ),
                 )
+            coEvery {
+                mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT, listOf(30L))
+            } returns
+                mapOf(
+                    30L to listOf(MapCategoryBadge(MapCategoryBadgeType.SPACE_TYPE, "10분 코스")),
+                )
 
             val result = strategy.read(3L, location)
 
@@ -78,5 +90,9 @@ class FlowerSpotCategoryItemReadStrategyTest {
             result.first().geom shouldBe flowerSpot.geom
             result.first().recentlyVisitedCount shouldBe 1L
             result.first().bloomingStatus shouldBe BloomingStatus.BLOOMED
+            result.first().badges.map { it.type to it.label } shouldBe
+                listOf(
+                    MapCategoryBadgeType.SPACE_TYPE to "10분 코스",
+                )
         }
 }

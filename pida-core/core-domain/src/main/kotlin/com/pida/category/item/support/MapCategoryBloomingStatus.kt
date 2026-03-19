@@ -1,4 +1,4 @@
-package com.pida.category
+package com.pida.category.item.support
 
 import com.pida.blooming.BloomingDetails
 import com.pida.blooming.BloomingStatus

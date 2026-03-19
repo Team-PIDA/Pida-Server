@@ -1,5 +1,9 @@
 package com.pida.category
 
+import com.pida.category.item.detail.MapCategoryItemDetail
+import com.pida.category.item.model.MapCategoryItems
+import com.pida.category.strategy.detail.MapCategoryItemDetailReadStrategy
+import com.pida.category.strategy.read.MapCategoryItemReadStrategy
 import com.pida.flowerspot.FlowerSpotLocation
 import org.springframework.stereotype.Service
 

@@ -3,6 +3,11 @@ package com.pida.category
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingService
 import com.pida.blooming.BloomingStatus
+import com.pida.category.badge.MapCategoryBadgeFinder
+import com.pida.category.badge.model.MapCategoryBadge
+import com.pida.category.badge.model.MapCategoryBadgeTargetType
+import com.pida.category.badge.model.MapCategoryBadgeType
+import com.pida.category.strategy.read.CafeCategoryItemReadStrategy
 import com.pida.flowerspot.FlowerSpotCafe
 import com.pida.flowerspot.FlowerSpotCafeFinder
 import com.pida.flowerspot.FlowerSpotLocation
@@ -24,7 +29,8 @@ class CafeCategoryItemReadStrategyTest {
             val mapCategoryService = mockk<MapCategoryService>()
             val flowerSpotCafeFinder = mockk<FlowerSpotCafeFinder>()
             val bloomingService = mockk<BloomingService>()
-            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder, bloomingService)
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder, bloomingService, mapCategoryBadgeFinder)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
             val category =
                 MapCategory(
@@ -61,6 +67,12 @@ class CafeCategoryItemReadStrategyTest {
                         createdAt = java.time.LocalDateTime.of(2026, 3, 19, 10, 0),
                     ),
                 )
+            coEvery {
+                mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT_CAFE, listOf(20L))
+            } returns
+                mapOf(
+                    20L to listOf(MapCategoryBadge(MapCategoryBadgeType.SPACE_TYPE, "카공하기 좋아요")),
+                )
 
             val result = strategy.read(2L, location)
 
@@ -70,6 +82,10 @@ class CafeCategoryItemReadStrategyTest {
             result.first().thumbnailUrl shouldBe "https://cdn.example.com/cafe-thumbnail.jpg"
             result.first().recentlyVisitedCount shouldBe 1L
             result.first().bloomingStatus shouldBe BloomingStatus.BLOOMED
+            result.first().badges.map { it.type to it.label } shouldBe
+                listOf(
+                    MapCategoryBadgeType.SPACE_TYPE to "카공하기 좋아요",
+                )
         }
 
     @Test
@@ -78,7 +94,8 @@ class CafeCategoryItemReadStrategyTest {
             val mapCategoryService = mockk<MapCategoryService>()
             val flowerSpotCafeFinder = mockk<FlowerSpotCafeFinder>()
             val bloomingService = mockk<BloomingService>()
-            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder, bloomingService)
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder, bloomingService, mapCategoryBadgeFinder)
             val location = FlowerSpotLocation(swLat = 37.4, swLng = 126.8, neLat = 37.6, neLng = 127.1)
             val category =
                 MapCategory(
@@ -105,6 +122,9 @@ class CafeCategoryItemReadStrategyTest {
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.CAFE) } returns listOf(category)
             coEvery { flowerSpotCafeFinder.readAllByLocation(location) } returns listOf(cafe)
             every { bloomingService.recentlyBloomingBySpotIds(listOf(4L)) } returns emptyList<Blooming>()
+            coEvery {
+                mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT_CAFE, listOf(21L))
+            } returns emptyMap()
 
             val result = strategy.read(2L, location)
 
@@ -112,6 +132,10 @@ class CafeCategoryItemReadStrategyTest {
             result.first().id shouldBe 21L
             result.first().mapUrl shouldBe "https://place.map.kakao.com/654321"
             result.first().bloomingStatus shouldBe BloomingStatus.NOT_BLOOMED
+            result.first().badges.map { it.type to it.label } shouldBe
+                listOf(
+                    MapCategoryBadgeType.SPACE_TYPE to "카페",
+                )
         }
 
     @Test
@@ -120,7 +144,8 @@ class CafeCategoryItemReadStrategyTest {
             val mapCategoryService = mockk<MapCategoryService>()
             val flowerSpotCafeFinder = mockk<FlowerSpotCafeFinder>()
             val bloomingService = mockk<BloomingService>()
-            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder, bloomingService)
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = CafeCategoryItemReadStrategy(mapCategoryService, flowerSpotCafeFinder, bloomingService, mapCategoryBadgeFinder)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
 
             coEvery {

@@ -1,7 +1,13 @@
-package com.pida.category
+package com.pida.category.strategy.read
 
 import com.pida.blooming.BloomingService
 import com.pida.blooming.BloomingStatus
+import com.pida.category.CategoryLabel
+import com.pida.category.MapCategoryService
+import com.pida.category.badge.MapCategoryBadgeFinder
+import com.pida.category.badge.model.MapCategoryBadgeTargetType
+import com.pida.category.badge.support.MapCategoryBadgeBuilder
+import com.pida.category.item.model.MapCategoryItem
 import com.pida.flowerspot.FlowerSpotCafeFinder
 import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.flowerspot.hasBounds
@@ -12,6 +18,7 @@ class CafeCategoryItemReadStrategy(
     private val mapCategoryService: MapCategoryService,
     private val flowerSpotCafeFinder: FlowerSpotCafeFinder,
     private val bloomingService: BloomingService,
+    private val mapCategoryBadgeFinder: MapCategoryBadgeFinder,
 ) : MapCategoryItemReadStrategy {
     override val categoryLabel: CategoryLabel = CategoryLabel.CAFE
 
@@ -31,9 +38,20 @@ class CafeCategoryItemReadStrategy(
             bloomingService
                 .recentlyBloomingBySpotIds(cafes.map { it.flowerSpotId })
                 .groupBy { it.flowerSpotId }
+        val badgesByCafeId =
+            mapCategoryBadgeFinder.findAllGroupedByTarget(
+                targetType = MapCategoryBadgeTargetType.FLOWER_SPOT_CAFE,
+                targetIds = cafes.map { it.id },
+            )
 
         return cafes.map { cafe ->
             val recentBloomings = recentBloomingBySpotId[cafe.flowerSpotId] ?: emptyList()
+            val representativeBloomingStatus =
+                recentBloomings
+                    .groupBy { it.status }
+                    .maxByOrNull { it.value.size }
+                    ?.key ?: BloomingStatus.NOT_BLOOMED
+
             MapCategoryItem(
                 id = cafe.id,
                 name = cafe.name,
@@ -45,11 +63,13 @@ class CafeCategoryItemReadStrategy(
                 mapUrl = cafe.mapUrl,
                 flowerSpotId = cafe.flowerSpotId,
                 recentlyVisitedCount = recentBloomings.size.toLong(),
-                bloomingStatus =
-                    recentBloomings
-                        .groupBy { it.status }
-                        .maxByOrNull { it.value.size }
-                        ?.key ?: BloomingStatus.NOT_BLOOMED,
+                bloomingStatus = representativeBloomingStatus,
+                badges =
+                    MapCategoryBadgeBuilder.build(
+                        categoryLabel = categoryLabel,
+                        region = cafe.region,
+                        badges = badgesByCafeId[cafe.id] ?: emptyList(),
+                    ),
             )
         }
     }

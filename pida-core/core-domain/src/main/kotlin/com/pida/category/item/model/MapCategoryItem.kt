@@ -1,16 +1,10 @@
-package com.pida.category
+package com.pida.category.item.model
 
-import com.pida.blooming.BloomingDetails
 import com.pida.blooming.BloomingStatus
+import com.pida.category.badge.model.MapCategoryBadge
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import java.time.LocalDate
-
-data class MapCategoryItems(
-    val categoryId: Long,
-    val categoryLabel: CategoryLabel,
-    val list: List<MapCategoryItem>,
-)
 
 data class MapCategoryItem(
     val id: Long,
@@ -28,11 +22,5 @@ data class MapCategoryItem(
     val flowerSpotId: Long? = null,
     val recentlyVisitedCount: Long? = null,
     val bloomingStatus: BloomingStatus? = null,
-)
-
-data class MapCategoryItemDetail(
-    val categoryId: Long,
-    val categoryLabel: CategoryLabel,
-    val item: MapCategoryItem,
-    val bloomingDetails: BloomingDetails,
+    val badges: List<MapCategoryBadge> = emptyList(),
 )

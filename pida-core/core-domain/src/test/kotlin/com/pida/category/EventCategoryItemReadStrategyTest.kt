@@ -3,6 +3,10 @@ package com.pida.category
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingService
 import com.pida.blooming.BloomingStatus
+import com.pida.category.badge.MapCategoryBadgeFinder
+import com.pida.category.badge.model.MapCategoryBadgeTargetType
+import com.pida.category.badge.model.MapCategoryBadgeType
+import com.pida.category.strategy.read.EventCategoryItemReadStrategy
 import com.pida.flowerevent.FlowerEvent
 import com.pida.flowerevent.FlowerEventFinder
 import com.pida.flowerspot.FlowerSpotLocation
@@ -23,7 +27,8 @@ class EventCategoryItemReadStrategyTest {
         runBlocking {
             val flowerEventFinder = mockk<FlowerEventFinder>()
             val bloomingService = mockk<BloomingService>()
-            val strategy = EventCategoryItemReadStrategy(flowerEventFinder, bloomingService)
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = EventCategoryItemReadStrategy(flowerEventFinder, bloomingService, mapCategoryBadgeFinder)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
             val event =
                 FlowerEvent(
@@ -52,6 +57,9 @@ class EventCategoryItemReadStrategyTest {
                         createdAt = LocalDate.of(2026, 3, 19).atStartOfDay(),
                     ),
                 )
+            coEvery {
+                mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_EVENT, listOf(10L))
+            } returns emptyMap()
 
             val result = strategy.read(1L, location)
 
@@ -60,6 +68,10 @@ class EventCategoryItemReadStrategyTest {
             result.first().homepageUrl shouldBe "https://example.com/festival"
             result.first().thumbnailUrl shouldBe "https://cdn.example.com/event-thumbnail.jpg"
             result.first().bloomingStatus shouldBe BloomingStatus.BLOOMED
+            result.first().badges.map { it.type to it.label } shouldBe
+                listOf(
+                    MapCategoryBadgeType.REGION to "서울",
+                )
         }
 
     @Test
@@ -67,7 +79,8 @@ class EventCategoryItemReadStrategyTest {
         runBlocking {
             val flowerEventFinder = mockk<FlowerEventFinder>()
             val bloomingService = mockk<BloomingService>()
-            val strategy = EventCategoryItemReadStrategy(flowerEventFinder, bloomingService)
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = EventCategoryItemReadStrategy(flowerEventFinder, bloomingService, mapCategoryBadgeFinder)
             val location = FlowerSpotLocation(swLat = 37.4, swLng = 126.8, neLat = 37.6, neLng = 127.1)
             val event =
                 FlowerEvent(
@@ -86,6 +99,9 @@ class EventCategoryItemReadStrategyTest {
 
             coEvery { flowerEventFinder.readAllByCategoryIdAndLocation(1L, location) } returns listOf(event)
             every { bloomingService.recentlyBloomingByEventIds(listOf(11L)) } returns emptyList<Blooming>()
+            coEvery {
+                mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_EVENT, listOf(11L))
+            } returns emptyMap()
 
             val result = strategy.read(1L, location)
 
@@ -93,5 +109,9 @@ class EventCategoryItemReadStrategyTest {
             result.first().id shouldBe 11L
             result.first().startDate shouldBe LocalDate.of(2026, 4, 1)
             result.first().bloomingStatus shouldBe BloomingStatus.NOT_BLOOMED
+            result.first().badges.map { it.type to it.label } shouldBe
+                listOf(
+                    MapCategoryBadgeType.REGION to "서울",
+                )
         }
 }

@@ -5,8 +5,10 @@ import com.pida.blooming.BloomingDetails
 import com.pida.blooming.BloomingStatus
 import com.pida.blooming.BloomingStatusDetails
 import com.pida.category.CategoryLabel
-import com.pida.category.MapCategoryItem
-import com.pida.category.MapCategoryItemDetail
+import com.pida.category.badge.model.MapCategoryBadge
+import com.pida.category.badge.model.MapCategoryBadgeType
+import com.pida.category.item.detail.MapCategoryItemDetail
+import com.pida.category.item.model.MapCategoryItem
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import io.kotest.matchers.string.shouldContain
@@ -37,6 +39,10 @@ class MapCategoryItemDetailResponseTest {
                             region = Region.SEOUL,
                             recentlyVisitedCount = 2L,
                             bloomingStatus = BloomingStatus.BLOOMED,
+                            badges =
+                                listOf(
+                                    MapCategoryBadge(MapCategoryBadgeType.SPACE_TYPE, "10분 코스"),
+                                ),
                         ),
                     bloomingDetails =
                         BloomingDetails(
@@ -63,5 +69,7 @@ class MapCategoryItemDetailResponseTest {
         json shouldContain "\"geom\""
         json shouldContain "\"bloomingDetails\""
         json shouldContain "\"bloomingStatus\":\"BLOOMED\""
+        json shouldContain "\"badges\""
+        json shouldContain "\"label\":\"10분 코스\""
     }
 }

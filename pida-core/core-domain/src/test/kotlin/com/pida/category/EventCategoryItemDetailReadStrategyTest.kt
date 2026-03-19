@@ -2,7 +2,12 @@ package com.pida.category
 
 import com.pida.blooming.BloomingDetails
 import com.pida.blooming.BloomingFacade
+import com.pida.blooming.BloomingStatus
 import com.pida.blooming.BloomingStatusDetails
+import com.pida.category.badge.MapCategoryBadgeFinder
+import com.pida.category.badge.model.MapCategoryBadgeTargetType
+import com.pida.category.badge.model.MapCategoryBadgeType
+import com.pida.category.strategy.detail.EventCategoryItemDetailReadStrategy
 import com.pida.flowerevent.FlowerEvent
 import com.pida.flowerevent.FlowerEventFinder
 import com.pida.support.geo.GeoJson
@@ -21,7 +26,8 @@ class EventCategoryItemDetailReadStrategyTest {
         runBlocking {
             val flowerEventFinder = mockk<FlowerEventFinder>()
             val bloomingFacade = mockk<BloomingFacade>()
-            val strategy = EventCategoryItemDetailReadStrategy(flowerEventFinder, bloomingFacade)
+            val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
+            val strategy = EventCategoryItemDetailReadStrategy(flowerEventFinder, bloomingFacade, mapCategoryBadgeFinder)
 
             coEvery { flowerEventFinder.readBy(10L) } returns
                 FlowerEvent(
@@ -54,13 +60,20 @@ class EventCategoryItemDetailReadStrategyTest {
                                 ),
                         ),
                 )
+            coEvery {
+                mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_EVENT, listOf(10L))
+            } returns emptyMap()
 
             val result = strategy.read(categoryId = 1L, itemId = 10L)
 
             result.categoryId shouldBe 1L
             result.categoryLabel shouldBe CategoryLabel.EVENT
             result.item.thumbnailUrl shouldBe "https://cdn.example.com/event-thumbnail.jpg"
-            result.item.bloomingStatus shouldBe com.pida.blooming.BloomingStatus.BLOOMED
+            result.item.bloomingStatus shouldBe BloomingStatus.BLOOMED
+            result.item.badges.map { it.type to it.label } shouldBe
+                listOf(
+                    MapCategoryBadgeType.REGION to "서울",
+                )
             result.bloomingDetails.totalCount shouldBe 3L
         }
 }

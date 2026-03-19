@@ -1,6 +1,13 @@
-package com.pida.category
+package com.pida.category.strategy.detail
 
 import com.pida.blooming.BloomingFacade
+import com.pida.category.CategoryLabel
+import com.pida.category.badge.MapCategoryBadgeFinder
+import com.pida.category.badge.model.MapCategoryBadgeTargetType
+import com.pida.category.badge.support.MapCategoryBadgeBuilder
+import com.pida.category.item.detail.MapCategoryItemDetail
+import com.pida.category.item.model.MapCategoryItem
+import com.pida.category.item.support.representativeBloomingStatus
 import com.pida.flowerspot.FlowerSpotService
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -10,6 +17,7 @@ import org.springframework.stereotype.Component
 class FlowerSpotCategoryItemDetailReadStrategy(
     private val flowerSpotService: FlowerSpotService,
     private val bloomingFacade: BloomingFacade,
+    private val mapCategoryBadgeFinder: MapCategoryBadgeFinder,
 ) : MapCategoryItemDetailReadStrategy {
     override val categoryLabel: CategoryLabel = CategoryLabel.FLOWER_SPOT
 
@@ -23,6 +31,12 @@ class FlowerSpotCategoryItemDetailReadStrategy(
 
             val flowerSpot = flowerSpotDeferred.await()
             val bloomingDetails = bloomingDetailsDeferred.await()
+            val representativeBloomingStatus = bloomingDetails.representativeBloomingStatus()
+            val badges =
+                mapCategoryBadgeFinder.findAllGroupedByTarget(
+                    targetType = MapCategoryBadgeTargetType.FLOWER_SPOT,
+                    targetIds = listOf(flowerSpot.id),
+                )[flowerSpot.id] ?: emptyList()
 
             MapCategoryItemDetail(
                 categoryId = categoryId,
@@ -37,7 +51,13 @@ class FlowerSpotCategoryItemDetailReadStrategy(
                         pinPoint = flowerSpot.pinPoint,
                         region = flowerSpot.region,
                         recentlyVisitedCount = bloomingDetails.totalCount,
-                        bloomingStatus = bloomingDetails.representativeBloomingStatus(),
+                        bloomingStatus = representativeBloomingStatus,
+                        badges =
+                            MapCategoryBadgeBuilder.build(
+                                categoryLabel = categoryLabel,
+                                region = flowerSpot.region,
+                                badges = badges,
+                            ),
                     ),
                 bloomingDetails = bloomingDetails,
             )
