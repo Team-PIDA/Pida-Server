@@ -48,7 +48,8 @@ class AirQualityServiceImpl(
                 pm10 = item.pm10Value?.toIntOrNull() ?: 0,
                 pm25 = item.pm25Value?.toIntOrNull() ?: 0,
                 measurementTime = parseDataTime(item.dataTime),
-                stationName = item.stationName,
+                // The station name is already resolved by the previous lookup step.
+                stationName = stationName,
             )
         } catch (e: ErrorException) {
             throw e
