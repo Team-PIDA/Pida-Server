@@ -1,0 +1,4 @@
+interface:
+  display_name: "PIDA DB Core Specialist"
+  short_description: "Review PIDA db-core patterns"
+  default_prompt: "Use $pida-db-core-specialist to review whether this PIDA persistence-layer change matches the existing db-core and redis patterns."

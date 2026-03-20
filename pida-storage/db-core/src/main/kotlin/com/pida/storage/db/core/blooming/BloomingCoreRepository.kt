@@ -3,8 +3,11 @@ package com.pida.storage.db.core.blooming
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingRepository
 import com.pida.blooming.NewBlooming
+import com.pida.blooming.RegionStatusCount
+import com.pida.support.geo.Region
 import com.pida.support.tx.Tx
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class BloomingCoreRepository(
@@ -14,20 +17,39 @@ class BloomingCoreRepository(
     override fun add(newBlooming: NewBlooming): Blooming =
         Tx.writeable {
             val bloomingEntity =
-                BloomingEntity(
-                    userId = newBlooming.userId,
-                    flowerSpotId = newBlooming.flowerSpotId,
-                    status = newBlooming.status,
-                )
+                when (newBlooming) {
+                    is NewBlooming.FlowerSpot ->
+                        BloomingEntity(
+                            userId = newBlooming.userId,
+                            flowerSpotId = newBlooming.flowerSpotId,
+                            flowerEventId = null,
+                            status = newBlooming.status,
+                        )
+                    is NewBlooming.FlowerEvent ->
+                        BloomingEntity(
+                            userId = newBlooming.userId,
+                            flowerSpotId = null,
+                            flowerEventId = newBlooming.flowerEventId,
+                            status = newBlooming.status,
+                        )
+                }
             bloomingJpaRepository.save(bloomingEntity).toBlooming()
         }
 
-    override suspend fun findTopByUserIdAndSpotIdDecs(
+    override suspend fun findTopByUserIdAndSpotIdDesc(
         userId: Long,
         flowerSpotId: Long,
     ): Blooming? =
         Tx.readable {
             bloomingJpaRepository.findTopByUserIdAndFlowerSpotIdOrderByCreatedAtDesc(userId, flowerSpotId)?.toBlooming()
+        }
+
+    override suspend fun findTopByUserIdAndEventIdDesc(
+        userId: Long,
+        flowerEventId: Long,
+    ): Blooming? =
+        Tx.readable {
+            bloomingJpaRepository.findTopByUserIdAndFlowerEventIdOrderByCreatedAtDesc(userId, flowerEventId)?.toBlooming()
         }
 
     override suspend fun findAllByUserId(userId: Long): List<Blooming> =
@@ -45,9 +67,19 @@ class BloomingCoreRepository(
             bloomingCustomRepository.recentlyBySpotId(spotId).map { it.toBlooming() }
         }
 
+    override suspend fun findRecentlyByEventId(eventId: Long): List<Blooming> =
+        Tx.coReadable {
+            bloomingCustomRepository.recentlyByEventId(eventId).map { it.toBlooming() }
+        }
+
     override fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming> =
         Tx.readable {
             bloomingCustomRepository.recentlyBySpotIds(spotIds).map { it.toBlooming() }
+        }
+
+    override fun findRecentByEventIds(eventIds: List<Long>): List<Blooming> =
+        Tx.readable {
+            bloomingCustomRepository.recentlyByEventIds(eventIds).map { it.toBlooming() }
         }
 
     override fun findTodayBloomingByUserId(
@@ -58,8 +90,37 @@ class BloomingCoreRepository(
             bloomingCustomRepository.findTodayBloomingByUserId(userId, flowerSpotId)?.toBlooming()
         }
 
+    override fun findTodayEventBloomingByUserId(
+        userId: Long,
+        flowerEventId: Long,
+    ): Blooming? =
+        Tx.readable {
+            bloomingCustomRepository.findTodayEventBloomingByUserId(userId, flowerEventId)?.toBlooming()
+        }
+
     override fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long> =
         Tx.readable {
             bloomingCustomRepository.findBloomedSpotIdsByFlowerSpotIds(spotIds)
+        }
+
+    override fun findBloomedEventIdsByFlowerEventIds(eventIds: List<Long>): List<Long> =
+        Tx.readable {
+            bloomingCustomRepository.findBloomedEventIdsByFlowerEventIds(eventIds)
+        }
+
+    override fun countByRegionAndStatus(): List<RegionStatusCount> =
+        Tx.readable {
+            bloomingCustomRepository.countByRegionAndStatus()
+        }
+
+    override fun countBloomedVotesByRegionAndCreatedAtAfter(
+        region: Region,
+        createdAtAfter: LocalDateTime,
+    ): Long =
+        Tx.readable {
+            bloomingCustomRepository.countBloomedVotesByRegionAndCreatedAtAfter(
+                region = region,
+                createdAtAfter = createdAtAfter,
+            )
         }
 }

@@ -1,0 +1,47 @@
+package com.pida.storage.db.core.flowerspot
+
+import com.pida.flowerspot.FlowerSpotCafe
+import com.pida.flowerspot.FlowerSpotCafeRepository
+import com.pida.flowerspot.FlowerSpotLocation
+import com.pida.storage.db.core.support.findByIdAndDeletedAtIsNullOrElseThrow
+import com.pida.support.tx.TransactionTemplates
+import com.pida.support.tx.coExecute
+import org.springframework.stereotype.Repository
+
+@Repository
+class FlowerSpotCafeCoreRepository(
+    private val flowerSpotCafeJpaRepository: FlowerSpotCafeJpaRepository,
+    private val tx: TransactionTemplates,
+) : FlowerSpotCafeRepository {
+    override suspend fun findBy(cafeId: Long): FlowerSpotCafe =
+        tx.reader.coExecute {
+            flowerSpotCafeJpaRepository
+                .findByIdAndDeletedAtIsNullOrElseThrow(cafeId)
+                .toFlowerSpotCafe()
+        }
+
+    override suspend fun findAll(): List<FlowerSpotCafe> =
+        tx.reader.coExecute {
+            flowerSpotCafeJpaRepository
+                .findByDeletedAtIsNullOrderByIdAsc()
+                .map { it.toFlowerSpotCafe() }
+        }
+
+    override suspend fun findAllByLocation(location: FlowerSpotLocation): List<FlowerSpotCafe> =
+        tx.reader.coExecute {
+            flowerSpotCafeJpaRepository
+                .findWithinBoundsOrderByIdAsc(
+                    swLat = location.swLat!!,
+                    swLng = location.swLng!!,
+                    neLat = location.neLat!!,
+                    neLng = location.neLng!!,
+                ).map { it.toFlowerSpotCafe() }
+        }
+
+    override suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<FlowerSpotCafe> =
+        tx.reader.coExecute {
+            flowerSpotCafeJpaRepository
+                .findByFlowerSpotIdAndDeletedAtIsNull(flowerSpotId)
+                .map { it.toFlowerSpotCafe() }
+        }
+}

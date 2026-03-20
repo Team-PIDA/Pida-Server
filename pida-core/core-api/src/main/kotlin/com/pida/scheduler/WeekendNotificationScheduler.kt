@@ -6,12 +6,11 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.temporal.ChronoField
 
 /**
  * 주말 힐링 푸시 알림 스케줄러
  *
- * 매주 토요일 또는 일요일 중 랜덤으로 1회 오전 10시에 실행
+ * 매주 토요일 또는 일요일 중 1회, 오전 10시에 실행
  */
 @Component
 class WeekendNotificationScheduler(
@@ -20,48 +19,51 @@ class WeekendNotificationScheduler(
     private val logger by logger()
 
     // 마지막 실행 주차 (중복 실행 방지)
-    private var lastExecutedWeek: Int? = null
+    private var lastExecutedWeekKey: Int? = null
 
     /**
-     * 토요일 오전 10시 실행
+     * 토요일/일요일 오전 10시 실행
      */
-    @Scheduled(cron = "0 0 10 ? * SAT")
-    fun saturdayCheck() {
-        executeIfNotThisWeek(DayOfWeek.SATURDAY)
-    }
+    @Scheduled(cron = "0 0 10 ? * SAT,SUN")
+    fun executeWeekendNotification() = executeIfNotThisWeek(LocalDate.now())
 
     /**
-     * 일요일 오전 10시 실행
-     */
-    @Scheduled(cron = "0 0 10 ? * SUN")
-    fun sundayCheck() {
-        executeIfNotThisWeek(DayOfWeek.SUNDAY)
-    }
-
-    /**
-     * 이번 주에 아직 실행되지 않았다면 50% 확률로 실행
+     * 이번 주에 아직 실행되지 않았다면 주차 키를 기준으로 실행 요일을 결정해 1회 실행
      *
-     * @param day 실행 요일
+     * @param today 실행 날짜
      */
-    private fun executeIfNotThisWeek(day: DayOfWeek) {
-        val today = LocalDate.now()
-        val currentWeek = today.get(ChronoField.ALIGNED_WEEK_OF_YEAR)
-        val currentYear = today.year
-        val weekKey = currentYear * 100 + currentWeek
+    private fun executeIfNotThisWeek(today: LocalDate) {
+        val currentWeekKey = today.toWeekKey()
 
         // 이번 주에 이미 실행되었는지 확인
-        if (lastExecutedWeek == weekKey) {
+        if (lastExecutedWeekKey == currentWeekKey) {
             return
         }
 
-        // Deterministically choose Saturday or Sunday based on week
-        val chosenDay = if (weekKey % 2 == 0) DayOfWeek.SATURDAY else DayOfWeek.SUNDAY
+        val day = today.dayOfWeek
+        val chosenDay = chooseExecutionDay(currentWeekKey)
 
         if (day == chosenDay) {
-            weekendNotificationService.sendWeekendNotifications()
-            lastExecutedWeek = weekKey
+            val executed =
+                runSchedulerSafely(
+                    logger = logger,
+                    failureMessage = "Failed to execute weekend notification scheduler",
+                ) {
+                    weekendNotificationService.sendWeekendNotifications()
+                }
+
+            if (executed) {
+                lastExecutedWeekKey = currentWeekKey
+            }
         } else {
-            logger.info("Skipped weekend notification on $day (random selection, week: $currentWeek)")
+            logger.info("Skipped weekend notification on $day (chosen day: $chosenDay)")
         }
     }
+
+    private fun chooseExecutionDay(weekKey: Int): DayOfWeek =
+        if (weekKey % 2 == 0) {
+            DayOfWeek.SATURDAY
+        } else {
+            DayOfWeek.SUNDAY
+        }
 }

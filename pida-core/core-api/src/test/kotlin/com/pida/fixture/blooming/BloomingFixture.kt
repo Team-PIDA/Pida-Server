@@ -15,6 +15,7 @@ object BloomingFixture {
             setExp(Blooming::status, BloomingStatus.BLOOMED)
             setExp(Blooming::userId, 1L)
             setExp(Blooming::flowerSpotId, 1L)
+            setExp(Blooming::flowerEventId, null)
             setExp(Blooming::createdAt, LocalDateTime.of(2025, 4, 2, 14, 0))
         }
 

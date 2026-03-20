@@ -34,6 +34,20 @@ class UserLocationCoreRepository(
             }
         }
 
+    override fun findWithinRadius(
+        latitude: Double,
+        longitude: Double,
+        radiusMeters: Double,
+    ): List<UserLocation.Info> =
+        Tx.readable {
+            userLocationJpaRepository
+                .findWithinRadius(
+                    latitude = latitude,
+                    longitude = longitude,
+                    radiusMeters = radiusMeters,
+                ).map { it.toUserLocation() }
+        }
+
     override fun saveOrUpdate(
         userId: Long,
         latitude: Double,

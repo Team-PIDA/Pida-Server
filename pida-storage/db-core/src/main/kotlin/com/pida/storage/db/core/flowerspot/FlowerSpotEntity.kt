@@ -2,6 +2,7 @@ package com.pida.storage.db.core.flowerspot
 
 import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpot
+import com.pida.flowerspot.FlowerSpotType
 import com.pida.storage.db.core.support.BaseEntity
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
@@ -30,6 +31,9 @@ class FlowerSpotEntity(
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(30)")
     val kind: FlowerKind,
+    @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "varchar(30)")
+    val type: FlowerSpotType,
 ) : BaseEntity() {
     fun toFlowerSpot(): FlowerSpot =
         FlowerSpot(
@@ -42,6 +46,7 @@ class FlowerSpotEntity(
             pinPoint = GeoJson.Point(listOf(pinPoint.x, pinPoint.y)),
             region = region,
             kind = kind,
+            type = type,
             deletedAt = deletedAt,
         )
 }

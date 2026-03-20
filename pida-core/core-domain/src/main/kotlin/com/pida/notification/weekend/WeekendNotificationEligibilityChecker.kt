@@ -1,5 +1,6 @@
 package com.pida.notification.weekend
 
+import com.pida.notification.EligibleUser
 import com.pida.support.extension.logger
 import org.springframework.stereotype.Component
 
@@ -22,7 +23,7 @@ class WeekendNotificationEligibilityChecker(
      * 필터링 조건:
      * 1. 최근 30일 내 활성 사용자
      * 2. 사용자 위치 정보가 있는 사용자
-     * 3. 사용자 위치 3km 반경 내 개화 상태인 FlowerSpot이 있는 사용자
+     * 3. 사용자 위치 3km 반경 내 개화 상태인 FlowerSpot 또는 FlowerEvent가 있는 사용자
      * 4. 사용자 위치의 미세먼지(PM10)가 나쁨(81µg/m³) 미만인 사용자
      *
      * @return 대상 사용자 목록
@@ -36,21 +37,21 @@ class WeekendNotificationEligibilityChecker(
         }
 
         // Step 2: 근처에 개화 상태인 FlowerSpot이 있는 사용자 필터링
-        val usersWithBloomingSpots =
+        val usersWithBloomingLocations =
             activeUsers.filter { user ->
-                weekendNotificationLocationChecker.hasNearbyBloomingSpots(
+                weekendNotificationLocationChecker.hasNearbyBloomingLocations(
                     user.latitude,
                     user.longitude,
                 )
             }
 
-        if (usersWithBloomingSpots.isEmpty()) {
+        if (usersWithBloomingLocations.isEmpty()) {
             return emptyList()
         }
 
         // Step 3: 대기질이 좋은 사용자 필터링
         val eligibleUsers =
-            usersWithBloomingSpots.filter { user ->
+            usersWithBloomingLocations.filter { user ->
                 weekendNotificationAirQualityChecker.hasGoodAirQuality(
                     user.latitude,
                     user.longitude,

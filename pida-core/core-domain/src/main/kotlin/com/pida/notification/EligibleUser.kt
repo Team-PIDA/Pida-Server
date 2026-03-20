@@ -1,4 +1,4 @@
-package com.pida.notification.weekend
+package com.pida.notification
 
 data class EligibleUser(
     val userId: Long,

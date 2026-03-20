@@ -1,3 +1,18 @@
+plugins {
+    id("io.sentry.jvm.gradle")
+}
+
+val hasSentryToken = System.getenv("SENTRY_AUTH_TOKEN") != null
+
+sentry {
+    includeSourceContext.set(hasSentryToken)
+    org.set("pida-za")
+    projectName.set("pida")
+    authToken.set(System.getenv("SENTRY_AUTH_TOKEN"))
+}
+
+val sentryAgent: Configuration by configurations.creating
+
 tasks.getByName("bootJar") {
     enabled = true
 }
@@ -6,10 +21,22 @@ tasks.getByName("jar") {
     enabled = false
 }
 
+tasks.register<Copy>("copySentryAgent") {
+    from(sentryAgent)
+    into(layout.buildDirectory.dir("agent"))
+    rename { "sentry-opentelemetry-agent.jar" }
+}
+
+tasks.named("build") {
+    dependsOn("copySentryAgent")
+}
+
 dependencies {
+    sentryAgent(libs.sentry.opentelemetry.agent)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.aop)
     implementation(libs.spring.boot.starter.validation)
+    compileOnly(libs.redisson)
 
     // Security
     implementation(libs.spring.boot.starter.security)

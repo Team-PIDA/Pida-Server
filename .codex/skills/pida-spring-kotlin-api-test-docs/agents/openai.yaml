@@ -1,0 +1,4 @@
+interface:
+  display_name: "PIDA API Test Docs"
+  short_description: "Review PIDA API tests and docs"
+  default_prompt: "Use $pida-spring-kotlin-api-test-docs to review the test and documentation impact of this PIDA API change."
