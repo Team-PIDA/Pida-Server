@@ -5,6 +5,7 @@ import com.pida.blooming.BloomingStatus
 import com.pida.category.badge.model.MapCategoryBadge
 import com.pida.category.badge.model.MapCategoryBadgeType
 import com.pida.category.item.model.MapCategoryItem
+import com.pida.presentation.v2.category.response.item.MapCategoryItemResponse
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import io.kotest.matchers.string.shouldContain

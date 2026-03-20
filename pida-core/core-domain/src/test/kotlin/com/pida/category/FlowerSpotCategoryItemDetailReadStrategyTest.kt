@@ -9,10 +9,10 @@ import com.pida.category.badge.model.MapCategoryBadge
 import com.pida.category.badge.model.MapCategoryBadgeTargetType
 import com.pida.category.badge.model.MapCategoryBadgeType
 import com.pida.category.strategy.detail.FlowerSpotCategoryItemDetailReadStrategy
+import com.pida.flowerspot.FlowerSpotDetails
+import com.pida.flowerspot.FlowerSpotFacade
 import com.pida.flowerspot.FlowerKind
-import com.pida.flowerspot.FlowerSpot
-import com.pida.flowerspot.FlowerSpotService
-import com.pida.flowerspot.FlowerSpotType
+import com.pida.flowerspot.FlowerSpotImage
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import io.kotest.matchers.shouldBe
@@ -26,10 +26,10 @@ class FlowerSpotCategoryItemDetailReadStrategyTest {
     @Test
     fun `산책길 상세는 LineString과 blooming details를 응답한다`(): Unit =
         runBlocking {
-            val flowerSpotService = mockk<FlowerSpotService>()
+            val flowerSpotFacade = mockk<FlowerSpotFacade>()
             val bloomingFacade = mockk<BloomingFacade>()
             val mapCategoryBadgeFinder = mockk<MapCategoryBadgeFinder>()
-            val strategy = FlowerSpotCategoryItemDetailReadStrategy(flowerSpotService, bloomingFacade, mapCategoryBadgeFinder)
+            val strategy = FlowerSpotCategoryItemDetailReadStrategy(flowerSpotFacade, bloomingFacade, mapCategoryBadgeFinder)
             val geom =
                 GeoJson.LineString(
                     listOf(
@@ -38,10 +38,12 @@ class FlowerSpotCategoryItemDetailReadStrategyTest {
                     ),
                 )
 
-            coEvery { flowerSpotService.readOneFlowerSpot(30L) } returns
-                FlowerSpot(
+            coEvery { flowerSpotFacade.readFlowerSpotDetails(30L) } returns
+                FlowerSpotDetails(
                     id = 30L,
                     address = "서울특별시 강남구 수서동",
+                    recentlyVisitedCount = 2L,
+                    bloomingStatus = BloomingStatus.BLOOMED,
                     streetName = "밤고개1길",
                     district = "수서동",
                     description = "벚꽃이 예쁜 길",
@@ -49,7 +51,13 @@ class FlowerSpotCategoryItemDetailReadStrategyTest {
                     pinPoint = GeoJson.Point(listOf(127.10317, 37.48881)),
                     region = Region.SEOUL,
                     kind = FlowerKind.BLOSSOM,
-                    type = FlowerSpotType.WALKING_TRAIL,
+                    images =
+                        listOf(
+                            FlowerSpotImage(
+                                url = "https://cdn.example.com/flower-spot-1.jpg",
+                                createdAt = LocalDateTime.of(2026, 3, 19, 9, 0),
+                            ),
+                        ),
                     deletedAt = null,
                 )
             coEvery { bloomingFacade.readBloomingDetails(flowerSpotId = 30L) } returns
@@ -80,6 +88,7 @@ class FlowerSpotCategoryItemDetailReadStrategyTest {
             result.item.geom shouldBe geom
             result.item.recentlyVisitedCount shouldBe 2L
             result.item.bloomingStatus shouldBe BloomingStatus.BLOOMED
+            result.item.imageUrls.map { it.url } shouldBe listOf("https://cdn.example.com/flower-spot-1.jpg")
             result.item.badges.map { it.type to it.label } shouldBe
                 listOf(
                     MapCategoryBadgeType.SPACE_TYPE to "10분 코스",

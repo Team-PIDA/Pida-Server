@@ -8,14 +8,14 @@ import com.pida.category.badge.support.MapCategoryBadgeBuilder
 import com.pida.category.item.detail.MapCategoryItemDetail
 import com.pida.category.item.model.MapCategoryItem
 import com.pida.category.item.support.representativeBloomingStatus
-import com.pida.flowerspot.FlowerSpotService
+import com.pida.flowerspot.FlowerSpotFacade
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
 class FlowerSpotCategoryItemDetailReadStrategy(
-    private val flowerSpotService: FlowerSpotService,
+    private val flowerSpotFacade: FlowerSpotFacade,
     private val bloomingFacade: BloomingFacade,
     private val mapCategoryBadgeFinder: MapCategoryBadgeFinder,
 ) : MapCategoryItemDetailReadStrategy {
@@ -26,7 +26,7 @@ class FlowerSpotCategoryItemDetailReadStrategy(
         itemId: Long,
     ): MapCategoryItemDetail =
         coroutineScope {
-            val flowerSpotDeferred = async { flowerSpotService.readOneFlowerSpot(itemId) }
+            val flowerSpotDeferred = async { flowerSpotFacade.readFlowerSpotDetails(itemId) }
             val bloomingDetailsDeferred = async { bloomingFacade.readBloomingDetails(flowerSpotId = itemId) }
 
             val flowerSpot = flowerSpotDeferred.await()
@@ -50,6 +50,7 @@ class FlowerSpotCategoryItemDetailReadStrategy(
                         geom = flowerSpot.geom,
                         pinPoint = flowerSpot.pinPoint,
                         region = flowerSpot.region,
+                        imageUrls = flowerSpot.images,
                         recentlyVisitedCount = bloomingDetails.totalCount,
                         bloomingStatus = representativeBloomingStatus,
                         badges =

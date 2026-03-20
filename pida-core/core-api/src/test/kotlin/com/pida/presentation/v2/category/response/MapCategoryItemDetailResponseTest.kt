@@ -9,10 +9,13 @@ import com.pida.category.badge.model.MapCategoryBadge
 import com.pida.category.badge.model.MapCategoryBadgeType
 import com.pida.category.item.detail.MapCategoryItemDetail
 import com.pida.category.item.model.MapCategoryItem
+import com.pida.flowerspot.FlowerSpotImage
+import com.pida.presentation.v2.category.response.detail.MapCategoryItemDetailResponse
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import io.kotest.matchers.string.shouldContain
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 class MapCategoryItemDetailResponseTest {
     @Test
@@ -37,6 +40,13 @@ class MapCategoryItemDetailResponseTest {
                                 ),
                             pinPoint = GeoJson.Point(listOf(127.10317, 37.48881)),
                             region = Region.SEOUL,
+                            imageUrls =
+                                listOf(
+                                    FlowerSpotImage(
+                                        url = "https://cdn.example.com/flower-spot-1.jpg",
+                                        createdAt = LocalDateTime.of(2026, 3, 19, 10, 0),
+                                    ),
+                                ),
                             recentlyVisitedCount = 2L,
                             bloomingStatus = BloomingStatus.BLOOMED,
                             badges =
@@ -60,7 +70,7 @@ class MapCategoryItemDetailResponseTest {
                 ),
             )
 
-        val json = jacksonObjectMapper().writeValueAsString(response)
+        val json = jacksonObjectMapper().findAndRegisterModules().writeValueAsString(response)
 
         json shouldContain "\"categoryLabel\":\"FLOWER_SPOT\""
         json shouldContain "\"common\""
@@ -70,6 +80,8 @@ class MapCategoryItemDetailResponseTest {
         json shouldContain "\"bloomingDetails\""
         json shouldContain "\"bloomingStatus\":\"BLOOMED\""
         json shouldContain "\"badges\""
+        json shouldContain "\"imageUrls\""
+        json shouldContain "\"url\":\"https://cdn.example.com/flower-spot-1.jpg\""
         json shouldContain "\"label\":\"10분 코스\""
     }
 }

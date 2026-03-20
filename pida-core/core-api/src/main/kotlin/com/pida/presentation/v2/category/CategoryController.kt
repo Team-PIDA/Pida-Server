@@ -4,10 +4,10 @@ import com.pida.category.MapCategoryFacade
 import com.pida.category.MapCategoryService
 import com.pida.flowerspot.FlowerSpotLocation
 import com.pida.presentation.v2.annotation.ApiV2Controller
-import com.pida.presentation.v2.category.response.MapCategoryAllResponse
-import com.pida.presentation.v2.category.response.MapCategoryItemAllResponse
-import com.pida.presentation.v2.category.response.MapCategoryItemDetailResponse
-import com.pida.presentation.v2.category.response.MapCategoryResponse
+import com.pida.presentation.v2.category.response.category.MapCategoryAllResponse
+import com.pida.presentation.v2.category.response.category.MapCategoryResponse
+import com.pida.presentation.v2.category.response.detail.MapCategoryItemDetailResponse
+import com.pida.presentation.v2.category.response.item.MapCategoryItemAllResponse
 import com.pida.support.geo.Region
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
