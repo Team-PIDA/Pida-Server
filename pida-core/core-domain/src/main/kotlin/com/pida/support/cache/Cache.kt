@@ -21,6 +21,13 @@ class Cache(
             typeReference: TypeReference<T>,
             function: () -> T,
         ): T = cacheAdvice.invoke(ttl, key, typeReference, function)
+
+        fun <T> cacheBlocking(
+            ttl: Long,
+            key: String,
+            typeReference: TypeReference<T>,
+            function: () -> T,
+        ): T = cacheAdvice.invokeBlocking(ttl, key, typeReference, function)
     }
 }
 
@@ -34,6 +41,26 @@ class CacheAdvice(
         key: String,
         typeReference: TypeReference<T>,
         function: suspend () -> T,
+    ): T {
+        val cached = cacheRepository.get(key)
+        if (cached != null) {
+            return objectMapper.readValue(cached, typeReference)
+        }
+
+        val result = function()
+
+        if (result != null) {
+            val serialized = objectMapper.writeValueAsString(result)
+            cacheRepository.put(key, serialized, ttl)
+        }
+        return result
+    }
+
+    fun <T> invokeBlocking(
+        ttl: Long,
+        key: String,
+        typeReference: TypeReference<T>,
+        function: () -> T,
     ): T {
         val cached = cacheRepository.get(key)
         if (cached != null) {
