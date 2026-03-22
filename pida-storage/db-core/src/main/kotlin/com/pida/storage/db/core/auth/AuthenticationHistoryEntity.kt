@@ -1,4 +1,5 @@
 package com.pida.storage.db.core.auth
+
 import com.pida.auth.AuthenticationHistory
 import com.pida.auth.NewAuthenticationHistory
 import com.pida.token.Token
@@ -31,6 +32,7 @@ class AuthenticationHistoryEntity(
     fun toAuthenticationHistory(): AuthenticationHistory =
         AuthenticationHistory(
             authenticationId = id!!,
+            userId = userId,
             userKey = userKey,
             deviceId = deviceId,
             token =
@@ -47,6 +49,7 @@ class AuthenticationHistoryEntity(
         this.refreshToken = token.refreshToken
         return AuthenticationHistory(
             authenticationId = id!!,
+            userId = userId,
             userKey = userKey,
             deviceId = deviceId,
             token =
