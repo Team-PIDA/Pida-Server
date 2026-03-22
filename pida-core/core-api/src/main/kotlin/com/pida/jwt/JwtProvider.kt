@@ -378,8 +378,7 @@ class JwtProvider(
         }
     }
 
-    private fun refreshRenewLockKey(refreshToken: String): String =
-        "$REFRESH_RENEW_LOCK_KEY_PREFIX:${refreshToken.sha256()}"
+    private fun refreshRenewLockKey(refreshToken: String): String = "$REFRESH_RENEW_LOCK_KEY_PREFIX:${refreshToken.sha256()}"
 
     private fun String.sha256(): String =
         MessageDigest

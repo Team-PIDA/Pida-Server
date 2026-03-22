@@ -49,9 +49,8 @@ class RedisTokenCoreRepository(
         return tokenWithAuthentication
     }
 
-    override fun findByToken(token: String): TokenWithAuthentication {
-        return findByTokenOrNull(token) ?: throw AuthenticationErrorException(AuthenticationErrorType.INVALID_TOKEN)
-    }
+    override fun findByToken(token: String): TokenWithAuthentication =
+        findByTokenOrNull(token) ?: throw AuthenticationErrorException(AuthenticationErrorType.INVALID_TOKEN)
 
     override fun findByTokenOrNull(token: String): TokenWithAuthentication? =
         redisTemplate.opsForValue().get(token)?.let {

@@ -38,9 +38,11 @@ class AuthenticationHistoryCoreRepository(
         userKey: String,
         refreshToken: String,
     ): AuthenticationHistory? =
-        repository.findAllByUserKeyAndEntityStatus(userKey, AuthenticationEntityStatus.ACTIVE)?.find {
-            it.refreshToken == refreshToken
-        }?.toAuthenticationHistory()
+        repository
+            .findAllByUserKeyAndEntityStatus(userKey, AuthenticationEntityStatus.ACTIVE)
+            ?.find {
+                it.refreshToken == refreshToken
+            }?.toAuthenticationHistory()
 
     @Transactional
     override fun update(updateAuthenticationHistory: UpdateAuthenticationHistory): AuthenticationHistory? {
