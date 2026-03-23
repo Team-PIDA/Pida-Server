@@ -2,6 +2,7 @@ package com.pida.flowerspot
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.pida.support.cache.CacheAdvice
+import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import org.springframework.stereotype.Component
 
@@ -24,14 +25,7 @@ class FlowerSpotFinder(
             flowerSpotRepository.findAll()
         }
 
-    suspend fun readAllByRegion(region: Region): List<FlowerSpot> =
-        cacheAdvice.invoke(
-            ttl = 180L,
-            key = ALL_SPOT + ":${region.name}",
-            typeReference = object : TypeReference<List<FlowerSpot>>() {},
-        ) {
-            flowerSpotRepository.findAllByRegion(region)
-        }
+    suspend fun readAllByRegion(region: Region): List<FlowerSpot> = readAll().filterBy(region = region)
 
     suspend fun readBy(spotId: Long): FlowerSpot = flowerSpotRepository.findBy(spotId)
 
@@ -43,12 +37,12 @@ class FlowerSpotFinder(
             is FindFlowerSpotPolicyCondition.ByRegionAndLocation -> readAllByLocationAndRegion(condition.region, condition.location)
         }
 
-    suspend fun readAllByLocation(location: FlowerSpotLocation): List<FlowerSpot> = flowerSpotRepository.findAllByLocation(location)
+    suspend fun readAllByLocation(location: FlowerSpotLocation): List<FlowerSpot> = readAll().filterBy(location = location)
 
     suspend fun readAllByLocationAndRegion(
         region: Region,
         location: FlowerSpotLocation,
-    ): List<FlowerSpot> = flowerSpotRepository.findAllByLocationAndRegion(region, location)
+    ): List<FlowerSpot> = readAll().filterBy(region = region, location = location)
 
     suspend fun searchByStreetName(streetName: String): List<FlowerSpot> =
         cacheAdvice.invoke(
@@ -58,4 +52,28 @@ class FlowerSpotFinder(
         ) {
             flowerSpotRepository.findByStreetNameContaining(streetName)
         }
+
+    private fun List<FlowerSpot>.filterBy(
+        region: Region? = null,
+        location: FlowerSpotLocation? = null,
+    ): List<FlowerSpot> =
+        asSequence()
+            .filter { region == null || it.region == region }
+            .filter { location == null || it.isWithin(location) }
+            .toList()
+
+    private fun FlowerSpot.isWithin(location: FlowerSpotLocation): Boolean {
+        if (!location.hasBounds()) return true
+
+        val point = pinPoint as? GeoJson.Point ?: return false
+        if (point.coordinates.size < 2) return false
+
+        val longitude = point.coordinates[0]
+        val latitude = point.coordinates[1]
+
+        return longitude > location.swLng!! &&
+            longitude < location.neLng!! &&
+            latitude > location.swLat!! &&
+            latitude < location.neLat!!
+    }
 }

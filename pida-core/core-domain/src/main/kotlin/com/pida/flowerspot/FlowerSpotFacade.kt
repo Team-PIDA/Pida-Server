@@ -39,17 +39,21 @@ class FlowerSpotFacade(
         location: FlowerSpotLocation,
     ): List<FlowerSpotDetails> {
         val flowerSpots = flowerSpotService.readAllFlowerSpot(region, location)
+        if (flowerSpots.isEmpty()) return emptyList()
+
         val recentlyBlooming = bloomingService.recentlyBloomingBySpotIds(flowerSpots.map { it.id })
+        val bloomingBySpotId = recentlyBlooming.groupBy { it.flowerSpotId }
 
         return flowerSpots.map { flowerSpot ->
             FlowerSpotDetails.of(
                 flowerSpot = flowerSpot,
-                bloomings = recentlyBlooming.groupBy { it.flowerSpotId }[flowerSpot.id] ?: emptyList(),
+                bloomings = bloomingBySpotId[flowerSpot.id] ?: emptyList(),
                 images =
-                    imageS3Caller.getImageUrl(
-                        prefix = ImagePrefix.FLOWERSPOT.value,
-                        prefixId = flowerSpot.id,
-                        fileName = null,
+                    listOfNotNull(
+                        imageS3Caller.getPreviewImage(
+                            prefix = ImagePrefix.FLOWERSPOT.value,
+                            prefixId = flowerSpot.id,
+                        ),
                     ),
             )
         }
