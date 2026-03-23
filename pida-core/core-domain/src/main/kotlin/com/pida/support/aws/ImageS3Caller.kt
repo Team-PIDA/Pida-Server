@@ -22,4 +22,14 @@ interface ImageS3Caller {
         prefixId: Long,
         fileName: String?,
     ): List<S3ImageInfo>
+
+    /**
+     * @param prefix [String] 도메인
+     * @param prefixId [Long] 도메인 ID
+     * @return 최신 미리보기 이미지 (없으면 null)
+     */
+    suspend fun getPreviewImage(
+        prefix: String,
+        prefixId: Long,
+    ): S3ImageInfo?
 }
