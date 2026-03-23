@@ -9,9 +9,9 @@ import com.pida.category.badge.model.MapCategoryBadge
 import com.pida.category.badge.model.MapCategoryBadgeTargetType
 import com.pida.category.badge.model.MapCategoryBadgeType
 import com.pida.category.strategy.detail.FlowerSpotCategoryItemDetailReadStrategy
+import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpotDetails
 import com.pida.flowerspot.FlowerSpotFacade
-import com.pida.flowerspot.FlowerKind
 import com.pida.flowerspot.FlowerSpotImage
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region

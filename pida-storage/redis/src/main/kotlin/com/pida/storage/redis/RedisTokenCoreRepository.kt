@@ -49,10 +49,24 @@ class RedisTokenCoreRepository(
         return tokenWithAuthentication
     }
 
-    override fun findByToken(token: String): TokenWithAuthentication {
+    override fun findByToken(token: String): TokenWithAuthentication =
+        findByTokenOrNull(token) ?: throw AuthenticationErrorException(AuthenticationErrorType.INVALID_TOKEN)
+
+    override fun findByTokenOrNull(token: String): TokenWithAuthentication? =
         redisTemplate.opsForValue().get(token)?.let {
-            return objectMapper.readValue(it, TokenWithAuthentication::class.java)
-        } ?: throw AuthenticationErrorException(AuthenticationErrorType.INVALID_TOKEN)
+            objectMapper.readValue(it, TokenWithAuthentication::class.java)
+        }
+
+    override fun createRefreshAlias(
+        refreshToken: String,
+        tokenWithAuthentication: TokenWithAuthentication,
+        expirationSeconds: Long,
+    ) {
+        redisTemplate.opsForValue().set(
+            refreshToken,
+            objectMapper.writeValueAsString(tokenWithAuthentication),
+            Duration.ofSeconds(expirationSeconds),
+        )
     }
 
     override fun findBy(accessToken: String): Provider? =

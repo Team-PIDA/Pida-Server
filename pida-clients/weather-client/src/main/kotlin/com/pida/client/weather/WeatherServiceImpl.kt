@@ -8,6 +8,7 @@ import com.pida.weather.SkyCondition
 import com.pida.weather.Weather
 import com.pida.weather.WeatherLocation
 import com.pida.weather.WeatherService
+import feign.FeignException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -19,7 +20,8 @@ import kotlin.math.abs
  */
 @Service
 class WeatherServiceImpl(
-    private val kmaWeatherClient: KmaWeatherClient,
+    private val kmaForecastClient: KmaForecastClient,
+    private val kmaForecastCache: KmaForecastCache,
 ) : WeatherService {
     private val logger by logger()
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
@@ -107,21 +109,37 @@ class WeatherServiceImpl(
     }
 
     private fun fetchForecastItems(location: WeatherLocation): List<KmaWeatherResponse.Item> {
-        val (baseDate, baseTime) = kmaWeatherClient.getLatestBaseTime()
-
-        logger.info(
-            "Fetching weather for location: lat=${location.latitude}, lon=${location.longitude}, nx=${location.nx}, ny=${location.ny}",
-        )
-
-        val response =
-            try {
-                kmaWeatherClient.getVilageForecast(baseDate, baseTime, location.nx, location.ny)
-            } catch (error: Exception) {
-                logger.error("Failed to fetch weather forecast", error)
-                throw ErrorException(ErrorType.WEATHER_API_CALL_FAILED)
+        val (baseDate, baseTime) = kmaForecastClient.getLatestBaseTime()
+        return try {
+            kmaForecastCache.getOrLoad(
+                baseDate = baseDate,
+                baseTime = baseTime,
+                nx = location.nx,
+                ny = location.ny,
+            ) {
+                logger.info(
+                    "Fetching weather for location: lat=${location.latitude}, lon=${location.longitude}, nx=${location.nx}, ny=${location.ny}",
+                )
+                kmaForecastClient
+                    .getVilageForecast(baseDate, baseTime, location.nx, location.ny)
+                    .response.body.items.item
             }
-
-        return response.response.body.items.item
+        } catch (error: FeignException.TooManyRequests) {
+            logger.warn(
+                "KMA forecast API rate limit exceeded for nx=${location.nx}, ny=${location.ny}, baseDate=$baseDate, baseTime=$baseTime",
+                error,
+            )
+            kmaForecastCache.getLatestByGrid(location.nx, location.ny)?.let { staleItems ->
+                logger.warn(
+                    "Using stale KMA forecast cache due to rate limit for nx=${location.nx}, ny=${location.ny}",
+                )
+                return staleItems
+            }
+            throw ErrorException(ErrorType.EXCEED_RATE_LIMIT)
+        } catch (error: Exception) {
+            logger.error("Failed to fetch weather forecast", error)
+            throw ErrorException(ErrorType.WEATHER_API_CALL_FAILED)
+        }
     }
 
     /**

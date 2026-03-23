@@ -11,6 +11,11 @@ interface AuthenticationHistoryRepository {
         refreshToken: String,
     ): AuthenticationHistory?
 
+    fun findUserKeyWithRefreshToken(
+        userKey: String,
+        refreshToken: String,
+    ): AuthenticationHistory?
+
     fun update(updateAuthenticationHistory: UpdateAuthenticationHistory): AuthenticationHistory?
 
     fun findUserKey(userKey: String): AuthenticationHistory?

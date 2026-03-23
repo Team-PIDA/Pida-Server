@@ -70,6 +70,8 @@ class MapCategoryFacadeTest {
 
             result.categoryId shouldBe 1L
             result.categoryLabel shouldBe CategoryLabel.EVENT
+            result.title shouldBe "2026 벚꽃 축제 1곳"
+            result.count shouldBe 1
             result.list shouldHaveSize 1
             result.list.first() shouldBe item
         }

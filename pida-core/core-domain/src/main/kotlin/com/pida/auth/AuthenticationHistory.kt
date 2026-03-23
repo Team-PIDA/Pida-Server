@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 data class AuthenticationHistory(
     val authenticationId: Long,
+    val userId: Long,
     val userKey: String,
     val deviceId: String?,
     val token: Token,

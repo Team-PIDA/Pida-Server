@@ -8,6 +8,7 @@ import com.pida.auth.GrantedAuthority
 import com.pida.auth.Provider
 import com.pida.auth.ProviderDetail
 import com.pida.auth.RedisTokenRepository
+import com.pida.auth.TokenWithAuthentication
 import com.pida.auth.UpdateAuthenticationHistory
 import com.pida.config.AuthenticationProperties
 import com.pida.support.error.AuthenticationErrorException
@@ -18,6 +19,8 @@ import com.pida.token.TokenStatus
 import com.pida.token.repository.TokenRepository
 import com.pida.user.SocialUser
 import com.pida.user.User
+import org.redisson.api.RedissonClient
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.oauth2.jwt.BadJwtException
 import org.springframework.security.oauth2.jwt.Jwt
@@ -28,7 +31,10 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters
 import org.springframework.security.oauth2.jwt.JwtException
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException
 import org.springframework.stereotype.Component
+import java.security.MessageDigest
 import java.time.Instant
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 import javax.naming.AuthenticationException
 
 @Component
@@ -39,9 +45,15 @@ class JwtProvider(
     private val redisTokenRepository: RedisTokenRepository,
     private val authenticationHistoryReader: AuthenticationHistoryReader,
     private val authenticationHistoryUpdater: AuthenticationHistoryUpdater,
+    @param:Qualifier("authRedissonClient")
+    private val redissonClient: RedissonClient,
 ) : TokenRepository {
     companion object {
         val grantedAuthorities = listOf(GrantedAuthority(AuthorityType.USER))
+        private const val REFRESH_RENEW_LOCK_KEY_PREFIX = "auth:refresh:renew"
+        private const val REFRESH_RENEW_LOCK_WAIT_SECONDS = 3L
+        private const val REFRESH_RENEW_LOCK_LEASE_SECONDS = 10L
+        private const val REFRESH_TOKEN_ROTATION_GRACE_SECONDS = 10L
     }
 
     override fun create(
@@ -112,57 +124,80 @@ class JwtProvider(
 
     override fun renew(refreshToken: String): Token {
         val jwt = validateToken(refreshToken)
-        val tokenWithAuthentication = redisTokenRepository.findByToken(jwt.tokenValue)
-        val authenticationHistory =
-            verifyTokenHistory(
-                userKey = tokenWithAuthentication.provider.userKey,
-                deviceId = tokenWithAuthentication.deviceId,
-                refreshToken = tokenWithAuthentication.refreshToken,
-            )
+        return runWithRefreshRenewLock(jwt.tokenValue) {
+            val tokenWithAuthentication = findRenewableToken(jwt)
+            val authenticationHistory =
+                verifyTokenHistory(
+                    userKey = tokenWithAuthentication.provider.userKey,
+                    deviceId = tokenWithAuthentication.deviceId,
+                    refreshToken = tokenWithAuthentication.refreshToken,
+                )
 
-        removeRotationToken(tokenWithAuthentication.accessToken, tokenWithAuthentication.refreshToken)
+            if (tokenWithAuthentication.refreshToken != jwt.tokenValue) {
+                return@runWithRefreshRenewLock Token(
+                    accessToken = tokenWithAuthentication.accessToken,
+                    refreshToken = tokenWithAuthentication.refreshToken,
+                )
+            }
 
-        val newAccessToken =
-            issueAccessToken(
-                jwtId = tokenWithAuthentication.provider.userKey,
-                grantedAuthorities =
-                    tokenWithAuthentication.provider.grantedAuthorities.map {
-                        GrantedAuthority(AuthorityType.valueOf(it))
-                    },
-            )
-        val newRefreshToken =
-            issueRefreshToken(
-                jwtId = tokenWithAuthentication.provider.userKey,
-            )
+            val renewedToken =
+                Token(
+                    accessToken =
+                        issueAccessToken(
+                            jwtId = tokenWithAuthentication.provider.userKey,
+                            grantedAuthorities =
+                                tokenWithAuthentication.provider.grantedAuthorities.map {
+                                    GrantedAuthority(AuthorityType.valueOf(it))
+                                },
+                        ),
+                    refreshToken =
+                        issueRefreshToken(
+                            jwtId = tokenWithAuthentication.provider.userKey,
+                        ),
+                )
 
-        return Token(
-            accessToken = newAccessToken,
-            refreshToken = newRefreshToken,
-        ).apply {
+            val renewedTokenWithAuthentication =
+                TokenWithAuthentication(
+                    accessToken = renewedToken.accessToken,
+                    refreshToken = renewedToken.refreshToken,
+                    deviceId = tokenWithAuthentication.deviceId,
+                    provider = tokenWithAuthentication.provider,
+                )
+
             redisTokenRepository.create(
-                accessToken = this.accessToken,
-                refreshToken = this.refreshToken,
+                accessToken = renewedToken.accessToken,
+                refreshToken = renewedToken.refreshToken,
                 deviceId = tokenWithAuthentication.deviceId,
                 providerDetail = tokenWithAuthentication.provider,
                 accessTokenExpiration = authenticationProperties.accessTokenExpirationSeconds,
                 refreshTokenExpiration = authenticationProperties.refreshTokenExpirationSeconds,
             )
 
-            authenticationHistoryUpdater.update(
-                UpdateAuthenticationHistory(
-                    userKey = authenticationHistory.userKey,
-                    deviceId = authenticationHistory.deviceId,
-                    refreshToken = refreshToken,
-                    newToken =
-                        NewToken(
-                            token =
-                                Token(
-                                    accessToken = this.accessToken,
-                                    refreshToken = this.refreshToken,
-                                ),
-                        ),
-                ),
-            )
+            try {
+                authenticationHistoryUpdater.update(
+                    UpdateAuthenticationHistory(
+                        userKey = authenticationHistory.userKey,
+                        deviceId = authenticationHistory.deviceId,
+                        refreshToken = authenticationHistory.token.refreshToken,
+                        newToken = NewToken(token = renewedToken),
+                    ),
+                )
+            } catch (exception: RuntimeException) {
+                rollbackRenewedToken(renewedTokenWithAuthentication)
+                throw exception
+            }
+
+            if (jwt.tokenValue != renewedToken.refreshToken) {
+                runCatching {
+                    redisTokenRepository.createRefreshAlias(
+                        refreshToken = jwt.tokenValue,
+                        tokenWithAuthentication = renewedTokenWithAuthentication,
+                        expirationSeconds = REFRESH_TOKEN_ROTATION_GRACE_SECONDS,
+                    )
+                }
+            }
+            runCatching { redisTokenRepository.deleteToken(tokenWithAuthentication.accessToken) }
+            renewedToken
         }
     }
 
@@ -247,6 +282,7 @@ class JwtProvider(
                 .issuedAt(issuedAt)
                 .issuer("pida")
                 .claims {
+                    it["tokenId"] = UUID.randomUUID().toString()
                     if (claims != null) {
                         it.putAll(claims)
                     }
@@ -276,11 +312,77 @@ class JwtProvider(
         return authenticationHistory
     }
 
-    private fun removeRotationToken(
-        accessToken: String,
-        refreshToken: String,
-    ) {
-        redisTokenRepository.deleteToken(accessToken)
-        redisTokenRepository.deleteToken(refreshToken)
+    private fun findRenewableToken(jwt: Jwt): TokenWithAuthentication =
+        redisTokenRepository.findByTokenOrNull(jwt.tokenValue) ?: restoreRenewableToken(jwt)
+
+    private fun restoreRenewableToken(jwt: Jwt): TokenWithAuthentication {
+        val authenticationHistory =
+            authenticationHistoryReader.readByUserKeyWithRefreshTokenOrNull(
+                userKey = jwt.id,
+                refreshToken = jwt.tokenValue,
+            ) ?: throw AuthenticationErrorException(AuthenticationErrorType.INVALID_TOKEN)
+
+        return TokenWithAuthentication(
+            accessToken = authenticationHistory.token.accessToken,
+            refreshToken = authenticationHistory.token.refreshToken,
+            deviceId = authenticationHistory.deviceId,
+            provider =
+                ProviderDetail(
+                    userId = authenticationHistory.userId,
+                    userKey = authenticationHistory.userKey,
+                    grantedAuthorities = grantedAuthorities.map { it.authorityType.name },
+                ),
+        )
     }
+
+    private fun rollbackRenewedToken(tokenWithAuthentication: TokenWithAuthentication) {
+        runCatching {
+            redisTokenRepository.deleteToken(tokenWithAuthentication.accessToken)
+            redisTokenRepository.deleteToken(tokenWithAuthentication.refreshToken)
+        }
+    }
+
+    private fun runWithRefreshRenewLock(
+        refreshToken: String,
+        action: () -> Token,
+    ): Token {
+        val lock =
+            runCatching {
+                redissonClient.getLock(refreshRenewLockKey(refreshToken))
+            }.getOrElse {
+                return action()
+            }
+
+        val acquired =
+            try {
+                lock.tryLock(REFRESH_RENEW_LOCK_WAIT_SECONDS, REFRESH_RENEW_LOCK_LEASE_SECONDS, TimeUnit.SECONDS)
+            } catch (exception: InterruptedException) {
+                Thread.currentThread().interrupt()
+                return action()
+            } catch (exception: RuntimeException) {
+                return action()
+            }
+
+        if (!acquired) {
+            return action()
+        }
+
+        return try {
+            action()
+        } finally {
+            runCatching {
+                if (lock.isHeldByCurrentThread) {
+                    lock.unlock()
+                }
+            }
+        }
+    }
+
+    private fun refreshRenewLockKey(refreshToken: String): String = "$REFRESH_RENEW_LOCK_KEY_PREFIX:${refreshToken.sha256()}"
+
+    private fun String.sha256(): String =
+        MessageDigest
+            .getInstance("SHA-256")
+            .digest(this.toByteArray())
+            .joinToString("") { "%02x".format(it) }
 }

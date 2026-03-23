@@ -31,7 +31,7 @@ data class AirKoreaResponse(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Item(
-        val stationName: String, // 측정소 이름
+        val stationName: String?, // 측정소 이름
         val dataTime: String, // 측정 일시 (yyyy-MM-dd HH:mm)
         val pm10Value: String?, // PM10 농도 (µg/m³)
         val pm25Value: String?, // PM2.5 농도 (µg/m³)

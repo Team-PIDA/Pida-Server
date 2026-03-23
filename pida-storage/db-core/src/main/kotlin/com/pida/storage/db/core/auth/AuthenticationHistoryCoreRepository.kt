@@ -34,6 +34,16 @@ class AuthenticationHistoryCoreRepository(
         return histories.find { it.refreshToken == refreshToken }?.toAuthenticationHistory()
     }
 
+    override fun findUserKeyWithRefreshToken(
+        userKey: String,
+        refreshToken: String,
+    ): AuthenticationHistory? =
+        repository
+            .findAllByUserKeyAndEntityStatus(userKey, AuthenticationEntityStatus.ACTIVE)
+            ?.find {
+                it.refreshToken == refreshToken
+            }?.toAuthenticationHistory()
+
     @Transactional
     override fun update(updateAuthenticationHistory: UpdateAuthenticationHistory): AuthenticationHistory? {
         val histories =

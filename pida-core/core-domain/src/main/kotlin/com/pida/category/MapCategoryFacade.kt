@@ -2,6 +2,7 @@ package com.pida.category
 
 import com.pida.category.item.detail.MapCategoryItemDetail
 import com.pida.category.item.model.MapCategoryItems
+import com.pida.category.item.support.MapCategoryItemsTitleBuilder
 import com.pida.category.strategy.detail.MapCategoryItemDetailReadStrategy
 import com.pida.category.strategy.read.MapCategoryItemReadStrategy
 import com.pida.flowerspot.FlowerSpotLocation
@@ -46,11 +47,18 @@ class MapCategoryFacade(
             requireNotNull(strategiesByCategory[category.categoryLabel]) {
                 "No map category item strategy for ${category.categoryLabel}"
             }
+        val items = strategy.read(category.id, region, location)
 
         return MapCategoryItems(
             categoryId = category.id,
             categoryLabel = category.categoryLabel,
-            list = strategy.read(category.id, region, location),
+            title =
+                MapCategoryItemsTitleBuilder.build(
+                    categoryLabel = category.categoryLabel,
+                    count = items.size,
+                ),
+            count = items.size,
+            list = items,
         )
     }
 
