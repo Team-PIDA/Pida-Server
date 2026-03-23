@@ -56,6 +56,8 @@ class BloomingCustomRepository(
     }
 
     fun recentlyBySpotIds(spotIds: List<Long>): List<BloomingEntity> {
+        if (spotIds.isEmpty()) return emptyList()
+
         val threshold = LocalDateTime.now().minusDays(DATE_THRESHOLD)
 
         val query =
