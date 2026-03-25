@@ -32,4 +32,22 @@ interface ImageS3Caller {
         prefix: String,
         prefixId: Long,
     ): S3ImageInfo?
+
+    /**
+     * 서버 사이드 이미지 업로드
+     *
+     * @param prefix [String] 도메인
+     * @param prefixId [Long] 도메인 ID
+     * @param subPath [String] 추가 하위 경로 (e.g. "thumbnail")
+     * @param contentType [String] 이미지 Content-Type
+     * @param bytes [ByteArray] 이미지 데이터
+     * @return 업로드된 이미지의 공개 URL
+     */
+    fun uploadImage(
+        prefix: String,
+        prefixId: Long,
+        subPath: String,
+        contentType: String,
+        bytes: ByteArray,
+    ): S3UploadResult
 }

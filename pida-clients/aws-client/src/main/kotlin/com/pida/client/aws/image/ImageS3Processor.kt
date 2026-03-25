@@ -6,6 +6,7 @@ import com.pida.support.aws.ImageS3Caller
 import com.pida.support.aws.PresignedUrlRateLimiter
 import com.pida.support.aws.S3ImageInfo
 import com.pida.support.aws.S3ImageUrl
+import com.pida.support.aws.S3UploadResult
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.s3.model.S3Object
 import java.time.Duration
@@ -58,6 +59,30 @@ class ImageS3Processor(
             ?.let {
                 listOf(presignedGet(imageFilePath, it)) // fileName이 있으면 특정 이미지 조회
             } ?: listPresignedGets(imageFilePath) // 아니면 해당 경로 아래 모든 이미지 탐색
+    }
+
+    override fun uploadImage(
+        prefix: String,
+        prefixId: Long,
+        subPath: String,
+        contentType: String,
+        bytes: ByteArray,
+    ): S3UploadResult {
+        val filePath = imageFileConstructor.imageFilePath(prefix, prefixId)
+        val fileName = imageFileConstructor.imageFileName()
+        val s3Key = "$filePath/$subPath/$fileName"
+
+        awsS3Client.putObject(
+            bucketName = awsProperties.s3.bucket,
+            key = s3Key,
+            contentType = contentType,
+            bytes = bytes,
+        )
+
+        return S3UploadResult(
+            s3Key = s3Key,
+            publicUrl = "${awsProperties.s3.imageOriginUrl}/$s3Key",
+        )
     }
 
     override suspend fun getPreviewImage(
