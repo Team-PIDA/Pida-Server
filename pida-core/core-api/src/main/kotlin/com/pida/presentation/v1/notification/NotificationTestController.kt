@@ -1,5 +1,6 @@
 package com.pida.presentation.v1.notification
 
+import com.pida.notification.bloomed.BloomedAlertType
 import com.pida.notification.bloomed.BloomedNotificationService
 import com.pida.notification.bloomedevent.BloomedEventNotificationService
 import com.pida.notification.bloomedspot.BloomedSpotNotificationService
@@ -83,17 +84,19 @@ class NotificationTestController(
         summary = "만개했어요 알림 수동 트리거",
         description =
             "BLOOMED 상태 푸시 알림을 수동으로 발송합니다. (테스트용)\n\n" +
-                "입력한 지역의 사용자들에게 BLOOMED 알림을 수동 발송합니다.",
+                "입력한 지역의 사용자들에게 BLOOMED 알림을 수동 발송합니다.\n\n" +
+                "alertType: FIRST_VOTE(개화 초기), THRESHOLD_REACHED(만개 절정)",
     )
     fun triggerBloomedNotification(
         @RequestParam region: Region,
+        @RequestParam(defaultValue = "FIRST_VOTE") alertType: BloomedAlertType,
     ): NotificationTriggerResponse {
         val startTime = LocalDateTime.now()
 
-        bloomedNotificationService.sendBloomedNotificationForRegion(region)
+        bloomedNotificationService.sendBloomedNotificationForRegion(region, alertType)
 
         return NotificationTriggerResponse(
-            message = "Bloomed notification triggered successfully",
+            message = "Bloomed notification triggered successfully (alertType=$alertType)",
             triggeredAt = startTime,
         )
     }

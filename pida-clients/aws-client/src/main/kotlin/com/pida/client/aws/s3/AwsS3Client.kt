@@ -1,6 +1,7 @@
 package com.pida.client.aws.s3
 
 import org.springframework.stereotype.Component
+import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest
@@ -124,6 +125,22 @@ class AwsS3Client(
                 .key(key)
                 .build()
         return s3Client.headObject(request).lastModified()
+    }
+
+    fun putObject(
+        bucketName: String,
+        key: String,
+        contentType: String,
+        bytes: ByteArray,
+    ) {
+        val request =
+            PutObjectRequest
+                .builder()
+                .bucket(bucketName)
+                .key(key)
+                .contentType(contentType)
+                .build()
+        s3Client.putObject(request, RequestBody.fromBytes(bytes))
     }
 
     fun getObjectAsBytes(
