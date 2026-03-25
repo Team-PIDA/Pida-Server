@@ -4,7 +4,7 @@ import com.pida.support.aws.ImageS3Caller
 import org.springframework.stereotype.Service
 
 @Service
-class FlowerEventAdminFacade(
+class FlowerEventFacade(
     private val flowerEventFinder: FlowerEventFinder,
     private val flowerEventAppender: FlowerEventAppender,
     private val imageS3Caller: ImageS3Caller,

@@ -4,7 +4,7 @@ import com.pida.support.aws.ImageS3Caller
 import org.springframework.stereotype.Service
 
 @Service
-class FlowerSpotCafeAdminFacade(
+class FlowerSpotCafeFacade(
     private val flowerSpotCafeFinder: FlowerSpotCafeFinder,
     private val flowerSpotCafeAppender: FlowerSpotCafeAppender,
     private val imageS3Caller: ImageS3Caller,

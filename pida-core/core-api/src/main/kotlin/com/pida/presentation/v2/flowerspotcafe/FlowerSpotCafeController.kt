@@ -1,6 +1,6 @@
 package com.pida.presentation.v2.flowerspotcafe
 
-import com.pida.flowerspot.FlowerSpotCafeAdminFacade
+import com.pida.flowerspot.FlowerSpotCafeFacade
 import com.pida.presentation.v2.flowerspotcafe.request.FlowerSpotCafeCreateRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @RequestMapping("/test")
 class FlowerSpotCafeController(
-    private val flowerSpotCafeAdminFacade: FlowerSpotCafeAdminFacade,
+    private val flowerSpotCafeFacade: FlowerSpotCafeFacade,
 ) {
     @PostMapping("/flower-spot-cafe")
     @ResponseStatus(HttpStatus.CREATED)
@@ -30,7 +30,7 @@ class FlowerSpotCafeController(
     suspend fun addFlowerSpotCafes(
         @RequestBody data: List<FlowerSpotCafeCreateRequest>,
     ) {
-        flowerSpotCafeAdminFacade.processBatch(data.map { it.toNewFlowerSpotCafe() })
+        flowerSpotCafeFacade.processBatch(data.map { it.toNewFlowerSpotCafe() })
     }
 
     @PostMapping("/flower-spot-cafe/{cafeId}/thumbnail", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -43,6 +43,6 @@ class FlowerSpotCafeController(
         @PathVariable cafeId: Long,
         @RequestPart("thumbnail") thumbnail: MultipartFile,
     ) {
-        flowerSpotCafeAdminFacade.uploadThumbnail(cafeId, thumbnail.bytes)
+        flowerSpotCafeFacade.uploadThumbnail(cafeId, thumbnail.bytes)
     }
 }

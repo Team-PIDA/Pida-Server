@@ -1,6 +1,6 @@
 package com.pida.presentation.v2.flowerevent
 
-import com.pida.flowerevent.FlowerEventAdminFacade
+import com.pida.flowerevent.FlowerEventFacade
 import com.pida.presentation.v2.flowerevent.request.FlowerEventCreateRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @RequestMapping("/test")
 class FlowerEventController(
-    private val flowerEventAdminFacade: FlowerEventAdminFacade,
+    private val flowerEventFacade: FlowerEventFacade,
 ) {
     @PostMapping("/flower-event")
     @ResponseStatus(HttpStatus.CREATED)
@@ -30,7 +30,7 @@ class FlowerEventController(
     suspend fun addFlowerEvents(
         @RequestBody data: List<FlowerEventCreateRequest>,
     ) {
-        flowerEventAdminFacade.processBatch(data.map { it.toNewFlowerEvent() })
+        flowerEventFacade.processBatch(data.map { it.toNewFlowerEvent() })
     }
 
     @PostMapping("/flower-event/{eventId}/thumbnail", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -43,6 +43,6 @@ class FlowerEventController(
         @PathVariable eventId: Long,
         @RequestPart("thumbnail") thumbnail: MultipartFile,
     ) {
-        flowerEventAdminFacade.uploadThumbnail(eventId, thumbnail.bytes)
+        flowerEventFacade.uploadThumbnail(eventId, thumbnail.bytes)
     }
 }
