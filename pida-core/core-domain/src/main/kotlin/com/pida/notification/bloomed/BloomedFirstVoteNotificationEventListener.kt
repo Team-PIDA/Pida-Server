@@ -39,7 +39,7 @@ class BloomedFirstVoteNotificationEventListener(
             return
         }
 
-        bloomedNotificationService.sendBloomedNotificationForRegion(targetRegion)
+        bloomedNotificationService.sendBloomedNotificationForRegion(targetRegion, BloomedAlertType.FIRST_VOTE)
     }
 
     private fun readTargetRegion(newBlooming: NewBlooming): Region? =

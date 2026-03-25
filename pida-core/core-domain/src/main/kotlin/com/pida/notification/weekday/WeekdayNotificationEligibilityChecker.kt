@@ -3,7 +3,6 @@ package com.pida.notification.weekday
 import com.pida.notification.EligibleUser
 import com.pida.notification.NotificationStoredRepository
 import com.pida.notification.NotificationType
-import com.pida.notification.weekend.WeekendNotificationAirQualityChecker
 import com.pida.notification.weekend.WeekendNotificationLocationChecker
 import com.pida.notification.weekend.WeekendNotificationUserReader
 import com.pida.support.extension.logger
@@ -19,7 +18,6 @@ import java.time.temporal.TemporalAdjusters
 class WeekdayNotificationEligibilityChecker(
     private val userReader: WeekendNotificationUserReader,
     private val locationChecker: WeekendNotificationLocationChecker,
-    private val airQualityChecker: WeekendNotificationAirQualityChecker,
     private val notificationStoredRepository: NotificationStoredRepository,
 ) {
     private val logger by logger()
@@ -35,7 +33,6 @@ class WeekdayNotificationEligibilityChecker(
      * - 최근 30일 내 활성 사용자
      * - 위치 정보가 있는 사용자
      * - 3km 반경 내 개화 상태(BLOOMED) FlowerSpot 또는 FlowerEvent 존재
-     * - PM10 < 81µg/m³
      * - 이번 주 평일 알림 수신 횟수 2회 미만
      *
      * @return 적격 사용자 목록
@@ -77,24 +74,12 @@ class WeekdayNotificationEligibilityChecker(
         }
 
         // 4. 필터링: 위치 기반 (3km 반경 내 개화 상태)
-        val eligibleByLocation =
+        val eligibleUsers =
             eligibleByNotificationCount.filter { user ->
                 locationChecker.hasNearbyBloomingLocations(user.latitude, user.longitude)
             }
 
-        logger.info("${eligibleByLocation.size} users have nearby blooming locations")
-
-        if (eligibleByLocation.isEmpty()) {
-            return emptyList()
-        }
-
-        // 5. 필터링: 대기질 (PM10 < 81µg/m³)
-        val eligibleUsers =
-            eligibleByLocation.filter { user ->
-                airQualityChecker.hasGoodAirQuality(user.latitude, user.longitude)
-            }
-
-        logger.info("${eligibleUsers.size} users have good air quality")
+        logger.info("${eligibleUsers.size} users have nearby blooming locations")
 
         return eligibleUsers
     }

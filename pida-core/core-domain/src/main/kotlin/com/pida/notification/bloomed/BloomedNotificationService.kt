@@ -41,7 +41,7 @@ class BloomedNotificationService(
 
             var totalSentCount = 0
             regionsExceedingThreshold.forEach { bloomedRegion ->
-                val sentCount = sendBloomedNotificationForRegion(bloomedRegion.region)
+                val sentCount = sendBloomedNotificationForRegion(bloomedRegion.region, BloomedAlertType.THRESHOLD_REACHED)
                 totalSentCount += sentCount
             }
 
@@ -53,10 +53,16 @@ class BloomedNotificationService(
 
     /**
      * 특정 지역에 대해 BLOOMED 알림을 발송합니다.
+     *
+     * @param region 대상 지역
+     * @param alertType 알림 유형 (개화 초기 / 만개 절정)
      */
-    fun sendBloomedNotificationForRegion(region: Region): Int {
+    fun sendBloomedNotificationForRegion(
+        region: Region,
+        alertType: BloomedAlertType = BloomedAlertType.FIRST_VOTE,
+    ): Int {
         try {
-            logger.info("Processing region: $region")
+            logger.info("Processing region: $region, alertType: $alertType")
 
             // 1. 지역별 적격 사용자 조회
             val eligibleUsers = bloomedNotificationEligibilityChecker.findEligibleUsersForRegion(region)
@@ -67,7 +73,7 @@ class BloomedNotificationService(
             }
 
             // 2. FCM 메시지 생성
-            val messages = buildNotificationMessages(eligibleUsers, region)
+            val messages = buildNotificationMessages(eligibleUsers, region, alertType)
 
             if (messages.isEmpty()) {
                 return 0
@@ -76,7 +82,7 @@ class BloomedNotificationService(
             fcmSender.sendAllAsync(messages)
 
             // 4. 알림 이력 저장
-            storeNotificationRecords(eligibleUsers, region)
+            storeNotificationRecords(eligibleUsers, region, alertType)
 
             return messages.size
         } catch (e: Exception) {
@@ -90,17 +96,19 @@ class BloomedNotificationService(
      *
      * @param users 대상 사용자 목록
      * @param region 대상 지역
+     * @param alertType 알림 유형
      * @return FCM 메시지 집합
      */
     private fun buildNotificationMessages(
         users: List<EligibleUserWithRegion>,
         region: Region,
+        alertType: BloomedAlertType,
     ): Set<NewFirebaseCloudMessage> =
         userDeviceReader.readLastByUserIds(users.map { it.userId }).let { latestDevicesByUserId ->
             users
                 .mapNotNull { user ->
                     latestDevicesByUserId[user.userId]?.let { device ->
-                        bloomedNotificationMessageBuilder.buildMessage(device.fcmToken, region)
+                        bloomedNotificationMessageBuilder.buildMessage(device.fcmToken, region, alertType)
                     }
                 }.toSet()
         }
@@ -110,10 +118,12 @@ class BloomedNotificationService(
      *
      * @param users 대상 사용자 목록
      * @param region 대상 지역
+     * @param alertType 알림 유형
      */
     private fun storeNotificationRecords(
         users: List<EligibleUserWithRegion>,
         region: Region,
+        alertType: BloomedAlertType,
     ) {
         val commands =
             users.map { user ->
@@ -123,7 +133,7 @@ class BloomedNotificationService(
                     type = NotificationType.BLOOMED_ALERT,
                     parameterValue = region.name,
                     topic = "피다",
-                    contents = bloomedNotificationMessageBuilder.getMessageContent(region),
+                    contents = bloomedNotificationMessageBuilder.getMessageContent(region, alertType),
                     readStatus = ReadStatus.UNREAD,
                 )
             }
