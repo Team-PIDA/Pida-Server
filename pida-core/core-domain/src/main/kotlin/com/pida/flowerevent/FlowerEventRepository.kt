@@ -17,4 +17,11 @@ interface FlowerEventRepository {
         longitude: Double,
         radiusMeters: Double,
     ): List<FlowerEvent>
+
+    suspend fun save(event: FlowerEvent): FlowerEvent
+
+    suspend fun updateThumbnailUrl(
+        eventId: Long,
+        thumbnailUrl: String,
+    )
 }
