@@ -9,7 +9,7 @@ class FlowerSpotCafeFacade(
     private val flowerSpotCafeAppender: FlowerSpotCafeAppender,
     private val imageS3Caller: ImageS3Caller,
 ) {
-    suspend fun processBatch(requests: List<NewFlowerSpotCafe>) = requests.forEach { flowerSpotCafeAppender.add(it.toDomain()) }
+    suspend fun addAll(requests: List<NewFlowerSpotCafe>) = requests.forEach { flowerSpotCafeAppender.add(it.toDomain()) }
 
     suspend fun uploadThumbnail(
         cafeId: Long,

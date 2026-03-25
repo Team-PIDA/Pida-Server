@@ -30,7 +30,7 @@ class FlowerSpotCafeController(
     suspend fun addFlowerSpotCafes(
         @RequestBody data: List<FlowerSpotCafeCreateRequest>,
     ) {
-        flowerSpotCafeFacade.processBatch(data.map { it.toNewFlowerSpotCafe() })
+        flowerSpotCafeFacade.addAll(data.map { it.toNewFlowerSpotCafe() })
     }
 
     @PostMapping("/flower-spot-cafe/{cafeId}/thumbnail", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])

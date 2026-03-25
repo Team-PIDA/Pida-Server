@@ -30,7 +30,7 @@ class FlowerEventController(
     suspend fun addFlowerEvents(
         @RequestBody data: List<FlowerEventCreateRequest>,
     ) {
-        flowerEventFacade.processBatch(data.map { it.toNewFlowerEvent() })
+        flowerEventFacade.addAll(data.map { it.toNewFlowerEvent() })
     }
 
     @PostMapping("/flower-event/{eventId}/thumbnail", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])

@@ -9,7 +9,7 @@ class FlowerEventFacade(
     private val flowerEventAppender: FlowerEventAppender,
     private val imageS3Caller: ImageS3Caller,
 ) {
-    suspend fun processBatch(requests: List<NewFlowerEvent>) = requests.forEach { flowerEventAppender.add(it.toDomain()) }
+    suspend fun addAll(requests: List<NewFlowerEvent>) = requests.forEach { flowerEventAppender.add(it.toDomain()) }
 
     suspend fun uploadThumbnail(
         eventId: Long,
