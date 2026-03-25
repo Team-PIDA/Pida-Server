@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "🌸 Flower Spot Admin API", description = "관리자용 벚꽃 연관 데이터 관리 API")
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/admin")
 class FlowerSpotCafeController(
     private val flowerSpotCafeFacade: FlowerSpotCafeFacade,
 ) {
