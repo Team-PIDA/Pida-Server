@@ -24,10 +24,8 @@ class FlowerEventController(
     @PostMapping("/flower-event")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
-        summary = "꽃 이벤트 일괄 등록",
-        description =
-            "꽃 이벤트 데이터를 일괄 등록합니다.\n\n" +
-                "- 썸네일 이미지는 등록 후 개별 업로드 API를 사용해주세요.",
+        summary = "벚꽃 축제 일괄 등록",
+        description = "벚꽃 축제 데이터를 일괄 등록합니다. 썸네일 이미지는 등록 후 개별 업로드 API를 사용해주세요.",
     )
     suspend fun addFlowerEvents(
         @RequestBody data: List<FlowerEventCreateRequest>,
@@ -38,8 +36,8 @@ class FlowerEventController(
     @PostMapping("/flower-event/{eventId}/thumbnail", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
-        summary = "꽃 이벤트 썸네일 업로드",
-        description = "특정 꽃 이벤트의 썸네일 이미지를 업로드합니다.",
+        summary = "벚꽃 축제 썸네일 업로드",
+        description = "벚꽃 축제 썸네일 이미지를 업로드합니다.",
     )
     suspend fun uploadThumbnail(
         @PathVariable eventId: Long,
