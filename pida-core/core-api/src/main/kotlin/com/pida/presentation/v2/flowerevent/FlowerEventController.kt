@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
-@Tag(name = "🌸 Flower Event Admin API", description = "관리자용 이벤트 관리 API")
+@Tag(name = "🌸 Flower Spot Admin API", description = "관리자용 벚꽃 연관 데이터 관리 API")
 @RestController
 @RequestMapping("/test")
 class FlowerEventController(
