@@ -2,6 +2,7 @@ package com.pida.flowerspot
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.pida.support.cache.CacheAdvice
+import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import org.springframework.stereotype.Component
 
@@ -36,12 +37,26 @@ class FlowerSpotFinder(
             is FindFlowerSpotPolicyCondition.ByRegionAndLocation -> readAllByLocationAndRegion(condition.region, condition.location)
         }
 
-    suspend fun readAllByLocation(location: FlowerSpotLocation): List<FlowerSpot> = flowerSpotRepository.findAllByLocation(location)
+    suspend fun readAllByLocation(location: FlowerSpotLocation): List<FlowerSpot> = readAll().filterByBounds(location)
 
     suspend fun readAllByLocationAndRegion(
         region: Region,
         location: FlowerSpotLocation,
-    ): List<FlowerSpot> = flowerSpotRepository.findAllByLocationAndRegion(region, location)
+    ): List<FlowerSpot> = readAll().filter { it.region == region }.filterByBounds(location)
+
+    private fun List<FlowerSpot>.filterByBounds(location: FlowerSpotLocation): List<FlowerSpot> {
+        val swLat = location.swLat ?: return this
+        val swLng = location.swLng ?: return this
+        val neLat = location.neLat ?: return this
+        val neLng = location.neLng ?: return this
+
+        return filter { spot ->
+            val point = spot.pinPoint as? GeoJson.Point ?: return@filter false
+            val lng = point.coordinates[0]
+            val lat = point.coordinates[1]
+            lat in swLat..neLat && lng in swLng..neLng
+        }
+    }
 
     suspend fun searchByStreetName(streetName: String): List<FlowerSpot> =
         cacheAdvice.invoke(

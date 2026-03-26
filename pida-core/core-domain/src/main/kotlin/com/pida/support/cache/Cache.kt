@@ -19,7 +19,7 @@ class Cache(
             ttl: Long,
             key: String,
             typeReference: TypeReference<T>,
-            function: () -> T,
+            function: suspend () -> T,
         ): T = cacheAdvice.invoke(ttl, key, typeReference, function)
 
         fun <T> cacheBlocking(
