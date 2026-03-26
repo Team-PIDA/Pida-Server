@@ -124,6 +124,7 @@ class FlowerSpotFacadeTest {
         type = FlowerSpotType.WALKING_TRAIL,
         deletedAt = null,
     )
+
     private fun inMemoryCacheRepository(): CacheRepository =
         object : CacheRepository {
             private val storage = mutableMapOf<String, String>()
