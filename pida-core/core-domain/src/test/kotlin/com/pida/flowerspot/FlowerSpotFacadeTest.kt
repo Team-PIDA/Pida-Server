@@ -1,11 +1,17 @@
 package com.pida.flowerspot
 
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingService
 import com.pida.blooming.BloomingStatus
 import com.pida.support.aws.ImagePrefix
 import com.pida.support.aws.ImageS3Caller
 import com.pida.support.aws.S3ImageInfo
+import com.pida.support.cache.Cache
+import com.pida.support.cache.CacheAdvice
+import com.pida.support.cache.CacheRepository
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 import io.kotest.matchers.collections.shouldContainExactly
@@ -26,6 +32,7 @@ class FlowerSpotFacadeTest {
             val flowerSpotService = mockk<FlowerSpotService>()
             val bloomingService = mockk<BloomingService>()
             val imageS3Caller = mockk<ImageS3Caller>()
+            Cache(CacheAdvice(inMemoryCacheRepository(), cacheObjectMapper()))
             val facade = FlowerSpotFacade(flowerSpotService, bloomingService, imageS3Caller)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
             val firstSpot = flowerSpot(id = 10L, streetName = "첫 번째 거리")
@@ -87,6 +94,7 @@ class FlowerSpotFacadeTest {
             val flowerSpotService = mockk<FlowerSpotService>()
             val bloomingService = mockk<BloomingService>()
             val imageS3Caller = mockk<ImageS3Caller>()
+            Cache(CacheAdvice(inMemoryCacheRepository(), cacheObjectMapper()))
             val facade = FlowerSpotFacade(flowerSpotService, bloomingService, imageS3Caller)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
 
@@ -116,4 +124,28 @@ class FlowerSpotFacadeTest {
         type = FlowerSpotType.WALKING_TRAIL,
         deletedAt = null,
     )
+
+    private fun inMemoryCacheRepository(): CacheRepository =
+        object : CacheRepository {
+            private val storage = mutableMapOf<String, String>()
+
+            override fun get(key: String): String? = storage[key]
+
+            override fun put(
+                key: String,
+                value: String,
+                ttl: Long,
+            ) {
+                storage[key] = value
+            }
+
+            override fun delete(key: String) {
+                storage.remove(key)
+            }
+        }
+
+    private fun cacheObjectMapper() =
+        jacksonObjectMapper().registerModule(
+            SimpleModule().addSerializer(LocalDateTime::class.java, ToStringSerializer.instance),
+        )
 }

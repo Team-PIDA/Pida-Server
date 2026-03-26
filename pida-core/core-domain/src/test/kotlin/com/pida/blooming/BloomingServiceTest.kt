@@ -1,5 +1,6 @@
 package com.pida.blooming
 
+import com.pida.support.cache.CacheRepository
 import com.pida.support.error.ErrorException
 import com.pida.support.error.ErrorType
 import io.kotest.matchers.shouldBe
@@ -16,7 +17,8 @@ class BloomingServiceTest {
         val bloomingAppender = mockk<BloomingAppender>()
         val bloomingValidator = mockk<BloomingValidator>()
         val bloomingFinder = mockk<BloomingFinder>()
-        val service = BloomingService(bloomingAppender, bloomingValidator, bloomingFinder)
+        val cacheRepository = mockk<CacheRepository>(relaxed = true)
+        val service = BloomingService(bloomingAppender, bloomingValidator, bloomingFinder, cacheRepository)
         val blooming =
             Blooming(
                 id = 1L,
@@ -46,7 +48,8 @@ class BloomingServiceTest {
         val bloomingAppender = mockk<BloomingAppender>()
         val bloomingValidator = mockk<BloomingValidator>()
         val bloomingFinder = mockk<BloomingFinder>()
-        val service = BloomingService(bloomingAppender, bloomingValidator, bloomingFinder)
+        val cacheRepository = mockk<CacheRepository>(relaxed = true)
+        val service = BloomingService(bloomingAppender, bloomingValidator, bloomingFinder, cacheRepository)
 
         val exception =
             assertThrows<ErrorException> {
@@ -63,7 +66,8 @@ class BloomingServiceTest {
         val bloomingAppender = mockk<BloomingAppender>()
         val bloomingValidator = mockk<BloomingValidator>()
         val bloomingFinder = mockk<BloomingFinder>()
-        val service = BloomingService(bloomingAppender, bloomingValidator, bloomingFinder)
+        val cacheRepository = mockk<CacheRepository>(relaxed = true)
+        val service = BloomingService(bloomingAppender, bloomingValidator, bloomingFinder, cacheRepository)
 
         val exception =
             assertThrows<ErrorException> {
