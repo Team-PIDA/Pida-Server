@@ -16,5 +16,9 @@ EXPOSE 8080
 CMD java \
     -javaagent:/opt/sentry/agent.jar \
     -Dsentry.auto.init=false \
+    -Dotel.service.name=pida-api \
+    -Dotel.traces.exporter=sentry \
+    -Dotel.metrics.exporter=none \
+    -Dotel.logs.exporter=none \
     -Dspring.profiles.active=${PROFILE} \
     -jar /service/pida/core-api-0.0.1.jar
