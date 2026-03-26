@@ -37,25 +37,32 @@ class FlowerSpotFacade(
     suspend fun findAllFlowerSpot(
         region: Region?,
         location: FlowerSpotLocation,
-    ): List<FlowerSpotDetails> {
-        val flowerSpots = flowerSpotService.readAllFlowerSpot(region, location)
-        if (flowerSpots.isEmpty()) return emptyList()
+    ): List<FlowerSpotDetails> =
+        coroutineScope {
+            val flowerSpots = flowerSpotService.readAllFlowerSpot(region, location)
+            if (flowerSpots.isEmpty()) return@coroutineScope emptyList()
 
-        val recentlyBlooming = bloomingService.recentlyBloomingBySpotIds(flowerSpots.map { it.id })
-        val bloomingBySpotId = recentlyBlooming.groupBy { it.flowerSpotId }
+            val bloomingDeferred = async { bloomingService.recentlyBloomingBySpotIds(flowerSpots.map { it.id }) }
+            val previewDeferred =
+                flowerSpots.map { spot ->
+                    async {
+                        spot.id to
+                            imageS3Caller.getPreviewImage(
+                                prefix = ImagePrefix.FLOWERSPOT.value,
+                                prefixId = spot.id,
+                            )
+                    }
+                }
 
-        return flowerSpots.map { flowerSpot ->
-            FlowerSpotDetails.of(
-                flowerSpot = flowerSpot,
-                bloomings = bloomingBySpotId[flowerSpot.id] ?: emptyList(),
-                images =
-                    listOfNotNull(
-                        imageS3Caller.getPreviewImage(
-                            prefix = ImagePrefix.FLOWERSPOT.value,
-                            prefixId = flowerSpot.id,
-                        ),
-                    ),
-            )
+            val bloomingBySpotId = bloomingDeferred.await().groupBy { it.flowerSpotId }
+            val previewBySpotId = previewDeferred.associate { it.await() }
+
+            flowerSpots.map { flowerSpot ->
+                FlowerSpotDetails.of(
+                    flowerSpot = flowerSpot,
+                    bloomings = bloomingBySpotId[flowerSpot.id] ?: emptyList(),
+                    images = listOfNotNull(previewBySpotId[flowerSpot.id]),
+                )
+            }
         }
-    }
 }
