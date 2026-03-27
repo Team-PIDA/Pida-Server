@@ -38,7 +38,7 @@ data class MapCategoryItemDetailResponse(
                         imageUrls = item.imageUrls.map(FlowerSpotImageResponse::from),
                         bloomingStatus = item.bloomingStatus,
                         badges = item.badges.map(MapCategoryBadgeResponse::from),
-                        bloomingDetails = mapCategoryItemDetail.bloomingDetails?.let { BloomingDetailsResponse.from(it) },
+                        bloomingDetails = BloomingDetailsResponse.from(mapCategoryItemDetail.bloomingDetails),
                     ),
                 detail =
                     when (mapCategoryItemDetail.categoryLabel) {

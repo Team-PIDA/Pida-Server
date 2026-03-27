@@ -47,6 +47,6 @@ data class MapCategoryItemCommonDetailResponse(
         arraySchema = Schema(description = "카드에 노출할 배지 목록"),
     )
     val badges: List<MapCategoryBadgeResponse>,
-    @field:Schema(description = "개화 상태 상세 정보", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    val bloomingDetails: BloomingDetailsResponse? = null,
+    @field:Schema(description = "개화 상태 상세 정보")
+    val bloomingDetails: BloomingDetailsResponse,
 )

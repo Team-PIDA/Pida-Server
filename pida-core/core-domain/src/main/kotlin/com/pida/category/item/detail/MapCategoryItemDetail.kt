@@ -8,5 +8,5 @@ data class MapCategoryItemDetail(
     val categoryId: Long,
     val categoryLabel: CategoryLabel,
     val item: MapCategoryItem,
-    val bloomingDetails: BloomingDetails? = null,
+    val bloomingDetails: BloomingDetails,
 )
