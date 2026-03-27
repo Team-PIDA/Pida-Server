@@ -20,6 +20,10 @@ spring:
       - weather.yml
       - map.yml
       - airkorea.yml
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   web.resources.add-mappings: false
 
 server:
