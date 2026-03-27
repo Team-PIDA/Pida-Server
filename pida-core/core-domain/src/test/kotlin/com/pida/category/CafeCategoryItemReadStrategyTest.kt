@@ -43,7 +43,6 @@ class CafeCategoryItemReadStrategyTest {
             val cafe =
                 FlowerSpotCafe(
                     id = 20L,
-                    flowerSpotId = 3L,
                     name = "벚꽃뷰 카페",
                     address = "서울특별시 송파구 석촌호수로 12",
                     description = "석촌호수 근처 카페",
@@ -56,14 +55,15 @@ class CafeCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.CAFE) } returns listOf(category)
             coEvery { flowerSpotCafeFinder.readAll() } returns listOf(cafe)
-            every { bloomingService.recentlyBloomingBySpotIds(listOf(3L)) } returns
+            every { bloomingService.recentlyBloomingByCafeIds(listOf(20L)) } returns
                 listOf(
                     Blooming(
                         id = 1L,
                         status = BloomingStatus.BLOOMED,
                         userId = 1L,
-                        flowerSpotId = 3L,
+                        flowerSpotId = null,
                         flowerEventId = null,
+                        flowerSpotCafeId = 20L,
                         createdAt = java.time.LocalDateTime.of(2026, 3, 19, 10, 0),
                     ),
                 )
@@ -78,7 +78,6 @@ class CafeCategoryItemReadStrategyTest {
 
             result shouldHaveSize 1
             result.first().id shouldBe 20L
-            result.first().flowerSpotId shouldBe 3L
             result.first().thumbnailUrl shouldBe "https://cdn.example.com/cafe-thumbnail.jpg"
             result.first().recentlyVisitedCount shouldBe 1L
             result.first().bloomingStatus shouldBe BloomingStatus.BLOOMED
@@ -108,7 +107,6 @@ class CafeCategoryItemReadStrategyTest {
             val cafe =
                 FlowerSpotCafe(
                     id = 21L,
-                    flowerSpotId = 4L,
                     name = "호수뷰 카페",
                     address = "서울특별시 송파구 잠실동",
                     description = "호수 근처 카페",
@@ -121,7 +119,7 @@ class CafeCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.CAFE) } returns listOf(category)
             coEvery { flowerSpotCafeFinder.readAllByLocation(location) } returns listOf(cafe)
-            every { bloomingService.recentlyBloomingBySpotIds(listOf(4L)) } returns emptyList<Blooming>()
+            every { bloomingService.recentlyBloomingByCafeIds(listOf(21L)) } returns emptyList()
             coEvery {
                 mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT_CAFE, listOf(21L))
             } returns emptyMap()
@@ -198,7 +196,6 @@ class CafeCategoryItemReadStrategyTest {
             val seoulCafe =
                 FlowerSpotCafe(
                     id = 22L,
-                    flowerSpotId = 5L,
                     name = "서울 카페",
                     address = "서울특별시 송파구 잠실동",
                     description = null,
@@ -211,7 +208,6 @@ class CafeCategoryItemReadStrategyTest {
             val busanCafe =
                 FlowerSpotCafe(
                     id = 23L,
-                    flowerSpotId = 6L,
                     name = "부산 카페",
                     address = "부산광역시 수영구 광안동",
                     description = null,
@@ -224,7 +220,7 @@ class CafeCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.CAFE) } returns listOf(category)
             coEvery { flowerSpotCafeFinder.readAll() } returns listOf(seoulCafe, busanCafe)
-            every { bloomingService.recentlyBloomingBySpotIds(listOf(5L)) } returns emptyList()
+            every { bloomingService.recentlyBloomingByCafeIds(listOf(22L)) } returns emptyList()
             coEvery {
                 mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT_CAFE, listOf(22L))
             } returns emptyMap()

@@ -74,6 +74,6 @@ class EventCategoryItemDetailReadStrategyTest {
                 listOf(
                     MapCategoryBadgeType.REGION to "서울",
                 )
-            result.bloomingDetails.totalCount shouldBe 3L
+            result.bloomingDetails?.totalCount shouldBe 3L
         }
 }

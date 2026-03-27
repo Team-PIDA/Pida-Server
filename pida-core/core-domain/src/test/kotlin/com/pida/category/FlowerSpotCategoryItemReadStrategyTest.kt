@@ -73,6 +73,7 @@ class FlowerSpotCategoryItemReadStrategyTest {
                         userId = 1L,
                         flowerSpotId = 30L,
                         flowerEventId = null,
+                        flowerSpotCafeId = null,
                         createdAt = LocalDateTime.of(2026, 3, 19, 10, 0),
                     ),
                 )
