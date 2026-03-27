@@ -93,24 +93,13 @@ class ImageS3Processor(
     ): S3ImageInfo? {
         val imageFilePath = imageFileConstructor.imageFilePath(prefix, prefixId)
 
-        return awsS3Client
-            .getBucketListObjects(
+        return awsS3AsyncClient
+            .listObjects(
                 bucketName = awsProperties.s3.bucket,
                 filePath = imageFilePath,
-            ).contents()
-            .orEmpty()
-            .asSequence()
-            .filterNot { it.key().endsWith("/") }
+            ).filterNot { it.key().endsWith("/") }
             .maxByOrNull(S3Object::lastModified)
             ?.toImageInfo(imageFilePath, Duration.ofSeconds(30))
-
-//        return awsS3AsyncClient
-//            .listObjects(
-//                bucketName = awsProperties.s3.bucket,
-//                filePath = imageFilePath,
-//            ).filterNot { it.key().endsWith("/") }
-//            .maxByOrNull(S3Object::lastModified)
-//            ?.toImageInfo(imageFilePath, Duration.ofSeconds(30))
     }
 
     private fun generateGetUrl(
