@@ -39,6 +39,22 @@ class BloomingCustomRepository(
         return entityManager.createQuery(query, jdslRenderContext).resultList
     }
 
+    fun recentlyByCafeId(cafeId: Long): List<BloomingEntity> {
+        val threshold = LocalDateTime.now().minusDays(DATE_THRESHOLD)
+
+        val query =
+            jpql {
+                select(entity(BloomingEntity::class))
+                    .from(entity(BloomingEntity::class))
+                    .whereAnd(
+                        path(BloomingEntity::flowerSpotCafeId).eq(cafeId),
+                        path(BloomingEntity::createdAt).gt(threshold),
+                    )
+            }
+
+        return entityManager.createQuery(query, jdslRenderContext).resultList
+    }
+
     fun recentlyByEventId(eventId: Long): List<BloomingEntity> {
         val threshold = LocalDateTime.now().minusDays(DATE_THRESHOLD)
 
@@ -66,6 +82,24 @@ class BloomingCustomRepository(
                     .from(entity(BloomingEntity::class))
                     .whereAnd(
                         path(BloomingEntity::flowerSpotId).`in`(spotIds),
+                        path(BloomingEntity::createdAt).gt(threshold),
+                    )
+            }
+
+        return entityManager.createQuery(query, jdslRenderContext).resultList
+    }
+
+    fun recentlyByCafeIds(cafeIds: List<Long>): List<BloomingEntity> {
+        if (cafeIds.isEmpty()) return emptyList()
+
+        val threshold = LocalDateTime.now().minusDays(DATE_THRESHOLD)
+
+        val query =
+            jpql {
+                select(entity(BloomingEntity::class))
+                    .from(entity(BloomingEntity::class))
+                    .whereAnd(
+                        path(BloomingEntity::flowerSpotCafeId).`in`(cafeIds),
                         path(BloomingEntity::createdAt).gt(threshold),
                     )
             }
@@ -127,6 +161,28 @@ class BloomingCustomRepository(
                     .whereAnd(
                         path(BloomingEntity::userId).eq(userId),
                         path(BloomingEntity::flowerEventId).eq(flowerEventId),
+                        path(BloomingEntity::createdAt).greaterThanOrEqualTo(startOfDay),
+                        path(BloomingEntity::createdAt).lessThan(endOfDay),
+                    )
+            }
+
+        return entityManager.createQuery(query, jdslRenderContext).resultList.firstOrNull()
+    }
+
+    fun findTodayCafeBloomingByUserId(
+        userId: Long,
+        flowerSpotCafeId: Long,
+    ): BloomingEntity? {
+        val startOfDay = LocalDate.now().atStartOfDay()
+        val endOfDay = startOfDay.plusDays(1)
+
+        val query =
+            jpql {
+                select(entity(BloomingEntity::class))
+                    .from(entity(BloomingEntity::class))
+                    .whereAnd(
+                        path(BloomingEntity::userId).eq(userId),
+                        path(BloomingEntity::flowerSpotCafeId).eq(flowerSpotCafeId),
                         path(BloomingEntity::createdAt).greaterThanOrEqualTo(startOfDay),
                         path(BloomingEntity::createdAt).lessThan(endOfDay),
                     )

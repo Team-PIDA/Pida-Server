@@ -22,6 +22,7 @@ class BloomingEntity(
     val userId: Long,
     val flowerSpotId: Long?,
     val flowerEventId: Long?,
+    val flowerSpotCafeId: Long?,
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(50)")
     val status: BloomingStatus,
@@ -32,6 +33,7 @@ class BloomingEntity(
             userId = userId,
             flowerSpotId = flowerSpotId,
             flowerEventId = flowerEventId,
+            flowerSpotCafeId = flowerSpotCafeId,
             status = status,
             createdAt = createdAt,
         )

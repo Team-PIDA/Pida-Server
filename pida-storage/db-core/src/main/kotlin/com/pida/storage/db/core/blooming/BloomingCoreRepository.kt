@@ -23,6 +23,7 @@ class BloomingCoreRepository(
                             userId = newBlooming.userId,
                             flowerSpotId = newBlooming.flowerSpotId,
                             flowerEventId = null,
+                            flowerSpotCafeId = null,
                             status = newBlooming.status,
                         )
                     is NewBlooming.FlowerEvent ->
@@ -30,6 +31,15 @@ class BloomingCoreRepository(
                             userId = newBlooming.userId,
                             flowerSpotId = null,
                             flowerEventId = newBlooming.flowerEventId,
+                            flowerSpotCafeId = null,
+                            status = newBlooming.status,
+                        )
+                    is NewBlooming.FlowerSpotCafe ->
+                        BloomingEntity(
+                            userId = newBlooming.userId,
+                            flowerSpotId = null,
+                            flowerEventId = null,
+                            flowerSpotCafeId = newBlooming.flowerSpotCafeId,
                             status = newBlooming.status,
                         )
                 }
@@ -52,6 +62,14 @@ class BloomingCoreRepository(
             bloomingJpaRepository.findTopByUserIdAndFlowerEventIdOrderByCreatedAtDesc(userId, flowerEventId)?.toBlooming()
         }
 
+    override suspend fun findTopByUserIdAndCafeIdDesc(
+        userId: Long,
+        flowerSpotCafeId: Long,
+    ): Blooming? =
+        Tx.readable {
+            bloomingJpaRepository.findTopByUserIdAndFlowerSpotCafeIdOrderByCreatedAtDesc(userId, flowerSpotCafeId)?.toBlooming()
+        }
+
     override suspend fun findAllByUserId(userId: Long): List<Blooming> =
         Tx.readable {
             bloomingJpaRepository.findAllByUserId(userId).map { it.toBlooming() }
@@ -72,6 +90,11 @@ class BloomingCoreRepository(
             bloomingCustomRepository.recentlyByEventId(eventId).map { it.toBlooming() }
         }
 
+    override suspend fun findRecentlyByCafeId(cafeId: Long): List<Blooming> =
+        Tx.coReadable {
+            bloomingCustomRepository.recentlyByCafeId(cafeId).map { it.toBlooming() }
+        }
+
     override fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming> =
         Tx.readable {
             bloomingCustomRepository.recentlyBySpotIds(spotIds).map { it.toBlooming() }
@@ -80,6 +103,11 @@ class BloomingCoreRepository(
     override fun findRecentByEventIds(eventIds: List<Long>): List<Blooming> =
         Tx.readable {
             bloomingCustomRepository.recentlyByEventIds(eventIds).map { it.toBlooming() }
+        }
+
+    override fun findRecentByCafeIds(cafeIds: List<Long>): List<Blooming> =
+        Tx.readable {
+            bloomingCustomRepository.recentlyByCafeIds(cafeIds).map { it.toBlooming() }
         }
 
     override fun findTodayBloomingByUserId(
@@ -96,6 +124,14 @@ class BloomingCoreRepository(
     ): Blooming? =
         Tx.readable {
             bloomingCustomRepository.findTodayEventBloomingByUserId(userId, flowerEventId)?.toBlooming()
+        }
+
+    override fun findTodayCafeBloomingByUserId(
+        userId: Long,
+        flowerSpotCafeId: Long,
+    ): Blooming? =
+        Tx.readable {
+            bloomingCustomRepository.findTodayCafeBloomingByUserId(userId, flowerSpotCafeId)?.toBlooming()
         }
 
     override fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long> =

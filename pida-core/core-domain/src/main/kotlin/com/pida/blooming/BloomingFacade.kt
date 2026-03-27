@@ -74,11 +74,29 @@ class BloomingFacade(
     suspend fun readBloomingDetails(
         flowerSpotId: Long? = null,
         flowerEventId: Long? = null,
+        flowerSpotCafeId: Long? = null,
     ): BloomingDetails =
         when {
-            flowerSpotId != null && flowerEventId == null -> readBloomingDetailsBySpotId(flowerSpotId)
-            flowerSpotId == null && flowerEventId != null -> readBloomingDetailsByEventId(flowerEventId)
+            flowerSpotId != null && flowerEventId == null && flowerSpotCafeId == null -> readBloomingDetailsBySpotId(flowerSpotId)
+            flowerSpotId == null && flowerEventId != null && flowerSpotCafeId == null -> readBloomingDetailsByEventId(flowerEventId)
+            flowerSpotId == null && flowerEventId == null && flowerSpotCafeId != null -> readBloomingDetailsByCafeId(flowerSpotCafeId)
             else -> throw ErrorException(ErrorType.INVALID_REQUEST)
+        }
+
+    private suspend fun readBloomingDetailsByCafeId(flowerSpotCafeId: Long): BloomingDetails =
+        coroutineScope {
+            val bloomings = bloomingService.recentlyBloomingByCafeId(flowerSpotCafeId)
+            val latestBlooming = bloomings.maxByOrNull { it.createdAt }
+            val userProfileDeferred =
+                async {
+                    latestBlooming?.userId?.let { userService.getProfile(it) }
+                }
+
+            return@coroutineScope buildBloomingDetails(
+                bloomings = bloomings,
+                nickname = userProfileDeferred.await()?.nickname,
+                updatedAt = latestBlooming?.createdAt,
+            )
         }
 
     private suspend fun readBloomingDetailsByEventId(flowerEventId: Long): BloomingDetails =
@@ -105,6 +123,7 @@ class BloomingFacade(
             when (newBlooming) {
                 is NewBlooming.FlowerSpot -> ImagePrefix.FLOWERSPOT.value to newBlooming.flowerSpotId
                 is NewBlooming.FlowerEvent -> ImagePrefix.FLOWEREVENT.value to newBlooming.flowerEventId
+                is NewBlooming.FlowerSpotCafe -> ImagePrefix.FLOWERSPOT.value to newBlooming.flowerSpotCafeId
             }
 
         return BloomingImageUploadUrl.from(
