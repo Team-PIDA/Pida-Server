@@ -22,7 +22,7 @@ import java.time.LocalDateTime
 
 class CafeCategoryItemDetailReadStrategyTest {
     @Test
-    fun `카페 상세는 연결된 벚꽃길의 개화 상세를 함께 응답한다`(): Unit =
+    fun `카페 상세는 개화 상세를 함께 응답한다`(): Unit =
         runBlocking {
             val flowerSpotCafeFinder = mockk<FlowerSpotCafeFinder>()
             val bloomingFacade = mockk<BloomingFacade>()
@@ -32,7 +32,6 @@ class CafeCategoryItemDetailReadStrategyTest {
             coEvery { flowerSpotCafeFinder.readBy(20L) } returns
                 FlowerSpotCafe(
                     id = 20L,
-                    flowerSpotId = 3L,
                     name = "벚꽃뷰 카페",
                     address = "서울특별시 송파구 석촌호수로 12",
                     description = "석촌호수 근처 카페",
@@ -42,7 +41,7 @@ class CafeCategoryItemDetailReadStrategyTest {
                     mapUrl = "https://place.map.kakao.com/123456",
                     deletedAt = null,
                 )
-            coEvery { bloomingFacade.readBloomingDetails(flowerSpotId = 3L) } returns
+            coEvery { bloomingFacade.readBloomingDetails(flowerSpotCafeId = 20L) } returns
                 BloomingDetails(
                     totalCount = 5L,
                     nickname = "피다",
@@ -67,7 +66,6 @@ class CafeCategoryItemDetailReadStrategyTest {
 
             result.categoryId shouldBe 2L
             result.categoryLabel shouldBe CategoryLabel.CAFE
-            result.item.flowerSpotId shouldBe 3L
             result.item.thumbnailUrl shouldBe "https://cdn.example.com/cafe-thumbnail.jpg"
             result.item.recentlyVisitedCount shouldBe 5L
             result.item.bloomingStatus shouldBe BloomingStatus.BLOOMED
@@ -88,7 +86,6 @@ class CafeCategoryItemDetailReadStrategyTest {
             coEvery { flowerSpotCafeFinder.readBy(21L) } returns
                 FlowerSpotCafe(
                     id = 21L,
-                    flowerSpotId = 4L,
                     name = "호수뷰 카페",
                     address = "서울특별시 송파구 잠실동",
                     description = "호수 근처 카페",
@@ -98,7 +95,7 @@ class CafeCategoryItemDetailReadStrategyTest {
                     mapUrl = "https://place.map.kakao.com/654321",
                     deletedAt = null,
                 )
-            coEvery { bloomingFacade.readBloomingDetails(flowerSpotId = 4L) } returns
+            coEvery { bloomingFacade.readBloomingDetails(flowerSpotCafeId = 21L) } returns
                 BloomingDetails(
                     totalCount = 1L,
                     nickname = "피다",

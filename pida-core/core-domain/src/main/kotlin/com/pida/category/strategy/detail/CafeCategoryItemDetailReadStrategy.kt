@@ -24,7 +24,7 @@ class CafeCategoryItemDetailReadStrategy(
         itemId: Long,
     ): MapCategoryItemDetail {
         val cafe = flowerSpotCafeFinder.readBy(itemId)
-        val bloomingDetails = bloomingFacade.readBloomingDetails(flowerSpotId = cafe.flowerSpotId)
+        val bloomingDetails = bloomingFacade.readBloomingDetails(flowerSpotCafeId = cafe.id)
         val representativeBloomingStatus = bloomingDetails.representativeBloomingStatus()
         val badges =
             mapCategoryBadgeFinder.findAllGroupedByTarget(
@@ -45,7 +45,6 @@ class CafeCategoryItemDetailReadStrategy(
                     pinPoint = cafe.pinPoint,
                     region = cafe.region,
                     mapUrl = cafe.mapUrl,
-                    flowerSpotId = cafe.flowerSpotId,
                     recentlyVisitedCount = bloomingDetails.totalCount,
                     bloomingStatus = representativeBloomingStatus,
                     badges =

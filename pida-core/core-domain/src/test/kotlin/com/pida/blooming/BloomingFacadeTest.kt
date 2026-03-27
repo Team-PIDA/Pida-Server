@@ -45,6 +45,7 @@ class BloomingFacadeTest {
                         userId = 2L,
                         flowerSpotId = null,
                         flowerEventId = 7L,
+                        flowerSpotCafeId = null,
                         createdAt = LocalDateTime.of(2026, 3, 18, 10, 0),
                     ),
                     Blooming(
@@ -53,6 +54,7 @@ class BloomingFacadeTest {
                         userId = 3L,
                         flowerSpotId = null,
                         flowerEventId = 7L,
+                        flowerSpotCafeId = null,
                         createdAt = LocalDateTime.of(2026, 3, 19, 11, 0),
                     ),
                     Blooming(
@@ -61,6 +63,7 @@ class BloomingFacadeTest {
                         userId = 4L,
                         flowerSpotId = null,
                         flowerEventId = 7L,
+                        flowerSpotCafeId = null,
                         createdAt = LocalDateTime.of(2026, 3, 19, 9, 0),
                     ),
                 )
@@ -117,6 +120,7 @@ class BloomingFacadeTest {
                     userId = 1L,
                     flowerSpotId = 3L,
                     flowerEventId = null,
+                    flowerSpotCafeId = null,
                     createdAt = LocalDateTime.of(2026, 3, 19, 10, 0),
                 )
             every { eventPublisher.publishEvent(BloomingAddedEvent(newBlooming)) } returns Unit
@@ -171,6 +175,7 @@ class BloomingFacadeTest {
                     userId = 2L,
                     flowerSpotId = null,
                     flowerEventId = 7L,
+                    flowerSpotCafeId = null,
                     createdAt = LocalDateTime.of(2026, 3, 19, 11, 0),
                 )
             every { eventPublisher.publishEvent(BloomingAddedEvent(newBlooming)) } returns Unit

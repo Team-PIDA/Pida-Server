@@ -59,7 +59,6 @@ data class MapCategoryItemDetailResponse(
                                     CafeCategoryItemDetailPayloadResponse(
                                         thumbnailUrl = item.thumbnailUrl,
                                         mapUrl = item.mapUrl,
-                                        flowerSpotId = item.flowerSpotId,
                                         recentlyVisitedCount = item.recentlyVisitedCount,
                                     ),
                             )

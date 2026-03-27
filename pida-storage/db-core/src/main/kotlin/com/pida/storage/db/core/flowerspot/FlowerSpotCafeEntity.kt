@@ -8,17 +8,12 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.Index
 import jakarta.persistence.Table
 import org.locationtech.jts.geom.Point
 
 @Entity
-@Table(
-    name = "t_flower_spot_cafe",
-    indexes = [Index(name = "idx_flower_spot_cafe_flower_spot_id_deleted_at", columnList = "flower_spot_id,deleted_at")],
-)
+@Table(name = "t_flower_spot_cafe")
 class FlowerSpotCafeEntity(
-    val flowerSpotId: Long,
     val name: String,
     val address: String?,
     val description: String?,
@@ -33,7 +28,6 @@ class FlowerSpotCafeEntity(
     fun toFlowerSpotCafe(): FlowerSpotCafe =
         FlowerSpotCafe(
             id = id!!,
-            flowerSpotId = flowerSpotId,
             name = name,
             address = address,
             description = description,

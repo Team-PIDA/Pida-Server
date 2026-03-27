@@ -16,6 +16,11 @@ interface BloomingRepository {
         flowerEventId: Long,
     ): Blooming?
 
+    suspend fun findTopByUserIdAndCafeIdDesc(
+        userId: Long,
+        flowerSpotCafeId: Long,
+    ): Blooming?
+
     suspend fun findAllByUserId(userId: Long): List<Blooming>
 
     suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<Blooming>
@@ -24,9 +29,13 @@ interface BloomingRepository {
 
     suspend fun findRecentlyByEventId(eventId: Long): List<Blooming>
 
+    suspend fun findRecentlyByCafeId(cafeId: Long): List<Blooming>
+
     fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming>
 
     fun findRecentByEventIds(eventIds: List<Long>): List<Blooming>
+
+    fun findRecentByCafeIds(cafeIds: List<Long>): List<Blooming>
 
     fun findTodayBloomingByUserId(
         userId: Long,
@@ -36,6 +45,11 @@ interface BloomingRepository {
     fun findTodayEventBloomingByUserId(
         userId: Long,
         flowerEventId: Long,
+    ): Blooming?
+
+    fun findTodayCafeBloomingByUserId(
+        userId: Long,
+        flowerSpotCafeId: Long,
     ): Blooming?
 
     fun findBloomedSpotIdsByFlowerSpotIds(spotIds: List<Long>): List<Long>

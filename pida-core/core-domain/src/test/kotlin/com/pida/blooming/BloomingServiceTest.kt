@@ -26,6 +26,7 @@ class BloomingServiceTest {
                 userId = 10L,
                 flowerSpotId = null,
                 flowerEventId = 20L,
+                flowerSpotCafeId = null,
                 createdAt = LocalDateTime.of(2026, 3, 19, 9, 0),
             )
 
