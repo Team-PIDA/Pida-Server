@@ -7,8 +7,6 @@ interface FlowerSpotCafeRepository {
 
     suspend fun findAllByLocation(location: FlowerSpotLocation): List<FlowerSpotCafe>
 
-    suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<FlowerSpotCafe>
-
     suspend fun save(cafe: FlowerSpotCafe): FlowerSpotCafe
 
     suspend fun updateThumbnailUrl(

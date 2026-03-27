@@ -47,19 +47,11 @@ class FlowerSpotCafeCoreRepository(
                 ).map { it.toFlowerSpotCafe() }
         }
 
-    override suspend fun findAllByFlowerSpotId(flowerSpotId: Long): List<FlowerSpotCafe> =
-        tx.reader.coExecute {
-            flowerSpotCafeJpaRepository
-                .findByFlowerSpotIdAndDeletedAtIsNull(flowerSpotId)
-                .map { it.toFlowerSpotCafe() }
-        }
-
     override suspend fun save(cafe: FlowerSpotCafe): FlowerSpotCafe =
         tx.writer.coExecute {
             val point = cafe.pinPoint as GeoJson.Point
             val entity =
                 FlowerSpotCafeEntity(
-                    flowerSpotId = cafe.flowerSpotId,
                     name = cafe.name,
                     address = cafe.address,
                     description = cafe.description,

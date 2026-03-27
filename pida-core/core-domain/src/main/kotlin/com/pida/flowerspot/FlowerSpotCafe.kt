@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 
 data class FlowerSpotCafe(
     val id: Long,
-    val flowerSpotId: Long,
     val name: String,
     val address: String?,
     val description: String?,
