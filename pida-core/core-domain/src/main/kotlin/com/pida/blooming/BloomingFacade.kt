@@ -1,5 +1,6 @@
 package com.pida.blooming
 
+import com.pida.flowerspot.FlowerSpotService
 import com.pida.reporter.RecentReporterService
 import com.pida.support.aws.ImagePrefix
 import com.pida.support.aws.ImageS3Caller
@@ -20,6 +21,7 @@ class BloomingFacade(
     private val userService: UserService,
     private val imageS3Caller: ImageS3Caller,
     private val eventPublisher: ApplicationEventPublisher,
+    private val flowerSpotService: FlowerSpotService,
 ) {
     suspend fun readBloomingDetailsBySpotId(flowerSpotId: Long): BloomingDetails =
         coroutineScope {
@@ -107,9 +109,19 @@ class BloomingFacade(
                 is NewBlooming.FlowerEvent -> ImagePrefix.FLOWEREVENT.value to newBlooming.flowerEventId
             }
 
-        return BloomingImageUploadUrl.from(
-            imageS3Caller.createUploadUrl(newBlooming.userId, prefix, prefixId),
-        )
+        val imageUploadUrl = imageS3Caller.createUploadUrl(newBlooming.userId, prefix, prefixId)
+
+        when (newBlooming) {
+            is NewBlooming.FlowerSpot -> {
+                flowerSpotService.updatePreviewImageKey(
+                    newBlooming.flowerSpotId,
+                    imageUploadUrl.s3Key,
+                )
+            }
+            is NewBlooming.FlowerEvent -> {}
+        }
+
+        return BloomingImageUploadUrl.from(imageUploadUrl)
     }
 
     private fun buildBloomingDetails(

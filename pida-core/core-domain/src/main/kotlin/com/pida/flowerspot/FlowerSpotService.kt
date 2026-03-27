@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 @Service
 class FlowerSpotService(
     private val flowerSpotFinder: FlowerSpotFinder,
+    private val flowerSpotUpdater: FlowerSpotUpdater,
 ) {
     suspend fun readAllFlowerSpot(
         region: Region?,
@@ -29,4 +30,9 @@ class FlowerSpotService(
 
         return flowerSpotFinder.searchByStreetName(trimmed)
     }
+
+    suspend fun updatePreviewImageKey(
+        spotId: Long,
+        key: String,
+    ) = flowerSpotUpdater.updatePreviewImageKey(spotId, key)
 }

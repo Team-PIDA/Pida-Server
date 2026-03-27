@@ -44,9 +44,11 @@ class ImageS3Processor(
                 Duration.ofSeconds(30), // 만료 시간 최소화
             )
 
+        val s3Key = "$imageFilePath/$imageFileName"
         return S3ImageUrl(
             presignedUrl,
             generateGetUrl(imageFilePath, imageFileName),
+            s3Key,
         )
     }
 
@@ -100,6 +102,12 @@ class ImageS3Processor(
             ).filterNot { it.key().endsWith("/") }
             .maxByOrNull(S3Object::lastModified)
             ?.toImageInfo(imageFilePath, Duration.ofSeconds(30))
+    }
+
+    override fun generatePresignedUrl(s3Key: String): String {
+        val filePath = s3Key.substringBeforeLast("/")
+        val fileName = s3Key.substringAfterLast("/")
+        return generateGetUrl(filePath, fileName)
     }
 
     private fun generateGetUrl(

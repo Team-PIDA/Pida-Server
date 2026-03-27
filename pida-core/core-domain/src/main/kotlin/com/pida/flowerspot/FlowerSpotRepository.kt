@@ -1,6 +1,7 @@
 package com.pida.flowerspot
 
 import com.pida.support.geo.Region
+import java.time.LocalDateTime
 
 interface FlowerSpotRepository {
     suspend fun findBy(spotId: Long): FlowerSpot
@@ -23,4 +24,10 @@ interface FlowerSpotRepository {
     ): List<FlowerSpot>
 
     fun findByStreetNameContaining(streetName: String): List<FlowerSpot>
+
+    suspend fun updatePreviewImageKey(
+        spotId: Long,
+        key: String,
+        uploadedAt: LocalDateTime,
+    )
 }

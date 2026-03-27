@@ -14,6 +14,7 @@ import jakarta.persistence.Index
 import jakarta.persistence.Table
 import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
+import java.time.LocalDateTime
 
 @Entity
 @Table(
@@ -41,6 +42,9 @@ class FlowerSpotEntity(
     @Column(columnDefinition = "varchar(30)")
     val type: FlowerSpotType,
 ) : BaseEntity() {
+    var previewImageKey: String? = null
+    var previewImageUploadedAt: LocalDateTime? = null
+
     fun toFlowerSpot(): FlowerSpot =
         FlowerSpot(
             id = id!!,
@@ -54,5 +58,15 @@ class FlowerSpotEntity(
             kind = kind,
             type = type,
             deletedAt = deletedAt,
+            previewImageKey = previewImageKey,
+            previewImageUploadedAt = previewImageUploadedAt,
         )
+
+    fun updatePreviewImage(
+        key: String,
+        uploadedAt: LocalDateTime,
+    ) {
+        this.previewImageKey = key
+        this.previewImageUploadedAt = uploadedAt
+    }
 }
