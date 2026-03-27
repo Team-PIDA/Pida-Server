@@ -59,7 +59,11 @@ class FlowerSpotFacade(
             val previewDeferred =
                 flowerSpots.map { spot ->
                     async {
-                        spot.id to cachedPreviewImage(spot.id)
+                        spot.id to
+                            imageS3Caller.getPreviewImage(
+                                prefix = ImagePrefix.FLOWERSPOT.value,
+                                prefixId = spot.id,
+                            )
                     }
                 }
 
