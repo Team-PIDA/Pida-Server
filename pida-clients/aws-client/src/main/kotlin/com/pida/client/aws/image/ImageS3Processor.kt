@@ -1,6 +1,7 @@
 package com.pida.client.aws.image
 
 import com.pida.client.aws.config.AwsProperties
+import com.pida.client.aws.s3.AwsS3AsyncClient
 import com.pida.client.aws.s3.AwsS3Client
 import com.pida.support.aws.ImageS3Caller
 import com.pida.support.aws.PresignedUrlRateLimiter
@@ -16,6 +17,7 @@ import java.time.ZoneId
 @Component
 class ImageS3Processor(
     private val awsS3Client: AwsS3Client,
+    private val awsS3AsyncClient: AwsS3AsyncClient,
     private val awsProperties: AwsProperties,
     private val imageFileConstructor: ImageFileConstructor,
     private val rateLimiter: PresignedUrlRateLimiter,
@@ -42,9 +44,11 @@ class ImageS3Processor(
                 Duration.ofSeconds(30), // 만료 시간 최소화
             )
 
+        val s3Key = "$imageFilePath/$imageFileName"
         return S3ImageUrl(
             presignedUrl,
             generateGetUrl(imageFilePath, imageFileName),
+            s3Key,
         )
     }
 
@@ -91,9 +95,19 @@ class ImageS3Processor(
     ): S3ImageInfo? {
         val imageFilePath = imageFileConstructor.imageFilePath(prefix, prefixId)
 
-        return listImageObjects(imageFilePath)
+        return awsS3AsyncClient
+            .listObjects(
+                bucketName = awsProperties.s3.bucket,
+                filePath = imageFilePath,
+            ).filterNot { it.key().endsWith("/") }
             .maxByOrNull(S3Object::lastModified)
             ?.toImageInfo(imageFilePath, Duration.ofSeconds(30))
+    }
+
+    override fun generatePresignedUrl(s3Key: String): String {
+        val filePath = s3Key.substringBeforeLast("/")
+        val fileName = s3Key.substringAfterLast("/")
+        return generateGetUrl(filePath, fileName)
     }
 
     private fun generateGetUrl(

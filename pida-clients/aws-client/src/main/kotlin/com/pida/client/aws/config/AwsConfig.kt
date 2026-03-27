@@ -8,6 +8,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import java.net.URI
@@ -36,6 +37,20 @@ class AwsConfig(
     fun s3Client(): S3Client {
         val client =
             S3Client
+                .builder()
+                .credentialsProvider(credentialProvider())
+                .region(Region.of(awsProperties.region))
+        awsProperties.endpoint?.let {
+            client.endpointOverride(URI.create(awsProperties.endpoint))
+        }
+
+        return client.build()
+    }
+
+    @Bean(destroyMethod = "close")
+    fun s3AsyncClient(): S3AsyncClient {
+        val client =
+            S3AsyncClient
                 .builder()
                 .credentialsProvider(credentialProvider())
                 .region(Region.of(awsProperties.region))

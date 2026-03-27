@@ -8,6 +8,7 @@ import com.pida.support.geo.Region
 import com.pida.support.tx.TransactionTemplates
 import com.pida.support.tx.coExecute
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class FlowerSpotCoreRepository(
@@ -76,4 +77,13 @@ class FlowerSpotCoreRepository(
         flowerSpotJpaRepository
             .findByStreetNameContainingAndDeletedAtIsNull(streetName)
             .map { it.toFlowerSpot() }
+
+    override suspend fun updatePreviewImageKey(
+        spotId: Long,
+        key: String,
+        uploadedAt: LocalDateTime,
+    ) = tx.writer.coExecute {
+        val entity = flowerSpotJpaRepository.findByIdAndDeletedAtIsNullOrElseThrow(spotId)
+        entity.updatePreviewImage(key, uploadedAt)
+    }
 }
