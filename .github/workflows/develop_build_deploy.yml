@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+  workflow_dispatch:
 
 # permission can be added at job level or workflow level
 permissions:
