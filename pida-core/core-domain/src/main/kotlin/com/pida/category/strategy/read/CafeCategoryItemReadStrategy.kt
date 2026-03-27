@@ -38,10 +38,10 @@ class CafeCategoryItemReadStrategy(
             }.let { items ->
                 region?.let { targetRegion -> items.filter { it.region == targetRegion } } ?: items
             }
-        val recentBloomingBySpotId =
+        val recentBloomingByCafeId =
             bloomingService
-                .recentlyBloomingBySpotIds(cafes.map { it.flowerSpotId })
-                .groupBy { it.flowerSpotId }
+                .recentlyBloomingByCafeIds(cafes.map { it.id })
+                .groupBy { it.flowerSpotCafeId }
         val badgesByCafeId =
             mapCategoryBadgeFinder.findAllGroupedByTarget(
                 targetType = MapCategoryBadgeTargetType.FLOWER_SPOT_CAFE,
@@ -49,7 +49,7 @@ class CafeCategoryItemReadStrategy(
             )
 
         return cafes.map { cafe ->
-            val recentBloomings = recentBloomingBySpotId[cafe.flowerSpotId] ?: emptyList()
+            val recentBloomings = recentBloomingByCafeId[cafe.id] ?: emptyList()
             val representativeBloomingStatus =
                 recentBloomings
                     .groupBy { it.status }
@@ -65,7 +65,6 @@ class CafeCategoryItemReadStrategy(
                 pinPoint = cafe.pinPoint,
                 region = cafe.region,
                 mapUrl = cafe.mapUrl,
-                flowerSpotId = cafe.flowerSpotId,
                 recentlyVisitedCount = recentBloomings.size.toLong(),
                 bloomingStatus = representativeBloomingStatus,
                 badges =
