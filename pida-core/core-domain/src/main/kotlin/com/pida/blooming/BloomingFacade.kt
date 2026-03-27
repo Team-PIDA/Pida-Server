@@ -130,14 +130,11 @@ class BloomingFacade(
 
         val imageUploadUrl = imageS3Caller.createUploadUrl(newBlooming.userId, prefix, prefixId)
 
-        when (newBlooming) {
-            is NewBlooming.FlowerSpot -> {
-                flowerSpotService.updatePreviewImageKey(
-                    newBlooming.flowerSpotId,
-                    imageUploadUrl.s3Key,
-                )
-            }
-            is NewBlooming.FlowerEvent -> {}
+        if (newBlooming is NewBlooming.FlowerSpot) {
+            flowerSpotService.updatePreviewImageKey(
+                newBlooming.flowerSpotId,
+                imageUploadUrl.s3Key,
+            )
         }
 
         return BloomingImageUploadUrl.from(imageUploadUrl)
