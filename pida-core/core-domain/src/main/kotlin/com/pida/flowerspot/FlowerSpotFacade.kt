@@ -50,28 +50,22 @@ class FlowerSpotFacade(
         location: FlowerSpotLocation,
     ): List<FlowerSpotDetails> =
         coroutineScope {
-            val point1 = System.currentTimeMillis()
             val flowerSpots = flowerSpotService.readAllFlowerSpot(region, location)
-            logger.info("flowerSpots querying time ${System.currentTimeMillis() - point1}ms")
             if (flowerSpots.isEmpty()) return@coroutineScope emptyList()
 
-            val point2 = System.currentTimeMillis()
             val bloomingDeferred = async { bloomingService.recentlyBloomingBySpotIds(flowerSpots.map { it.id }) }
-            logger.info("bloomingDeferred querying time ${System.currentTimeMillis() - point2}ms")
 
-            val point3 = System.currentTimeMillis()
+            val s3Start = System.currentTimeMillis()
             val previewDeferred =
                 flowerSpots.map { spot ->
                     async {
                         spot.id to cachedPreviewImage(spot.id)
                     }
                 }
-            logger.info("previewDeferred querying time ${System.currentTimeMillis() - point3}ms")
 
-            val point4 = System.currentTimeMillis()
-            val bloomingBySpotId = bloomingDeferred.await().groupBy { it.flowerSpotId }
             val previewBySpotId = previewDeferred.associate { it.await() }
-            logger.info("grouping time ${System.currentTimeMillis() - point4}ms")
+            logger.info("s3 preview fetch time ${System.currentTimeMillis() - s3Start}ms (${flowerSpots.size} spots)")
+            val bloomingBySpotId = bloomingDeferred.await().groupBy { it.flowerSpotId }
 
             flowerSpots.map { flowerSpot ->
                 FlowerSpotDetails.of(
