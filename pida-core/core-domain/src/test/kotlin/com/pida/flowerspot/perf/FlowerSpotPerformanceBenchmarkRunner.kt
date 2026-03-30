@@ -261,6 +261,7 @@ private data class BenchmarkFixture(
                             userId = offset.toLong(),
                             flowerSpotId = spot.id,
                             flowerEventId = null,
+                            flowerSpotCafeId = null,
                             status =
                                 when (offset % 3) {
                                     0 -> BloomingStatus.BLOOMED

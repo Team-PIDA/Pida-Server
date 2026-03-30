@@ -4,7 +4,6 @@ import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
 
 data class NewFlowerSpotCafe(
-    val flowerSpotId: Long,
     val name: String,
     val address: String?,
     val description: String?,
@@ -16,7 +15,6 @@ data class NewFlowerSpotCafe(
     fun toDomain(): FlowerSpotCafe =
         FlowerSpotCafe(
             id = 0,
-            flowerSpotId = flowerSpotId,
             name = name,
             address = address,
             description = description,

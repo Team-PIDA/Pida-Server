@@ -54,6 +54,7 @@ class EventCategoryItemReadStrategyTest {
                         userId = 1L,
                         flowerSpotId = null,
                         flowerEventId = 10L,
+                        flowerSpotCafeId = null,
                         createdAt = LocalDate.of(2026, 3, 19).atStartOfDay(),
                     ),
                 )

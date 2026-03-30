@@ -79,7 +79,7 @@ data class MapCategoryItemResponse(
     )
     val endDate: LocalDate?,
     @field:Schema(
-        description = "벚꽃길 ID (CAFE인 경우에만 포함)",
+        description = "벚꽃길 ID (FLOWER_SPOT인 경우에만 포함)",
         example = "15",
         requiredMode = Schema.RequiredMode.NOT_REQUIRED,
     )

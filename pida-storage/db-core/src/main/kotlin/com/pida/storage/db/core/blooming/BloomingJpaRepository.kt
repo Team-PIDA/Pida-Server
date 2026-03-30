@@ -16,6 +16,11 @@ interface BloomingJpaRepository :
         flowerEventId: Long,
     ): BloomingEntity?
 
+    fun findTopByUserIdAndFlowerSpotCafeIdOrderByCreatedAtDesc(
+        userId: Long,
+        flowerSpotCafeId: Long,
+    ): BloomingEntity?
+
     fun findAllByUserId(userId: Long): List<BloomingEntity>
 
     fun findAllByFlowerSpotId(flowerSpotId: Long): List<BloomingEntity>

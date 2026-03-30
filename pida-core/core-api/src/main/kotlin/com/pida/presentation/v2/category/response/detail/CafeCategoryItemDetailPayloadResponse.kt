@@ -17,12 +17,6 @@ data class CafeCategoryItemDetailPayloadResponse(
     )
     val mapUrl: String?,
     @field:Schema(
-        description = "연결된 벚꽃길 ID",
-        example = "15",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
-    )
-    val flowerSpotId: Long?,
-    @field:Schema(
         description = "최근 방문 횟수",
         example = "12",
         requiredMode = Schema.RequiredMode.NOT_REQUIRED,

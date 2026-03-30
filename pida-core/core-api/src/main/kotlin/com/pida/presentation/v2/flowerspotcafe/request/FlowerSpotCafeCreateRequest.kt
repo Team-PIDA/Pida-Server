@@ -6,8 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "꽃 명소 카페 생성 요청")
 data class FlowerSpotCafeCreateRequest(
-    @Schema(description = "꽃 명소 ID", example = "1")
-    val flowerSpotId: Long,
     @Schema(description = "카페 이름", example = "벚꽃 카페")
     val name: String,
     @Schema(description = "주소", example = "서울특별시 영등포구 여의도동", required = false)
@@ -33,7 +31,6 @@ data class FlowerSpotCafeCreateRequest(
 
     fun toNewFlowerSpotCafe(): NewFlowerSpotCafe =
         NewFlowerSpotCafe(
-            flowerSpotId = flowerSpotId,
             name = name,
             address = address,
             description = description,

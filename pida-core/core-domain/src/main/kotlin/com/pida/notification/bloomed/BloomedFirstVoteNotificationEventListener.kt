@@ -4,6 +4,7 @@ import com.pida.blooming.BloomingAddedEvent
 import com.pida.blooming.BloomingStatus
 import com.pida.blooming.NewBlooming
 import com.pida.flowerevent.FlowerEventRepository
+import com.pida.flowerspot.FlowerSpotCafeRepository
 import com.pida.flowerspot.FlowerSpotRepository
 import com.pida.support.extension.logger
 import com.pida.support.geo.Region
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service
 class BloomedFirstVoteNotificationEventListener(
     private val flowerSpotRepository: FlowerSpotRepository,
     private val flowerEventRepository: FlowerEventRepository,
+    private val flowerSpotCafeRepository: FlowerSpotCafeRepository,
     private val firstVoteChecker: BloomedFirstVoteChecker,
     private val bloomedNotificationService: BloomedNotificationService,
 ) {
@@ -48,6 +50,7 @@ class BloomedFirstVoteNotificationEventListener(
                 when (newBlooming) {
                     is NewBlooming.FlowerSpot -> flowerSpotRepository.findBy(newBlooming.flowerSpotId).region
                     is NewBlooming.FlowerEvent -> flowerEventRepository.findBy(newBlooming.flowerEventId).region
+                    is NewBlooming.FlowerSpotCafe -> flowerSpotCafeRepository.findBy(newBlooming.flowerSpotCafeId).region
                 }
             }
         }.onFailure { error ->

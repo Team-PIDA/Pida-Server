@@ -1,5 +1,6 @@
 package com.pida.blooming
 
+import com.pida.flowerspot.FlowerSpotService
 import com.pida.reporter.RecentReporterService
 import com.pida.support.aws.ImagePrefix
 import com.pida.support.aws.ImageS3Caller
@@ -25,6 +26,7 @@ class BloomingFacadeTest {
             val userService = mockk<UserService>()
             val imageS3Caller = mockk<ImageS3Caller>()
             val eventPublisher = mockk<ApplicationEventPublisher>()
+            val flowerSpotService = mockk<FlowerSpotService>()
             val facade =
                 BloomingFacade(
                     bloomingService = bloomingService,
@@ -32,6 +34,7 @@ class BloomingFacadeTest {
                     userService = userService,
                     imageS3Caller = imageS3Caller,
                     eventPublisher = eventPublisher,
+                    flowerSpotService = flowerSpotService,
                 )
 
             coEvery { bloomingService.recentlyBloomingByEventId(7L) } returns
@@ -42,6 +45,7 @@ class BloomingFacadeTest {
                         userId = 2L,
                         flowerSpotId = null,
                         flowerEventId = 7L,
+                        flowerSpotCafeId = null,
                         createdAt = LocalDateTime.of(2026, 3, 18, 10, 0),
                     ),
                     Blooming(
@@ -50,6 +54,7 @@ class BloomingFacadeTest {
                         userId = 3L,
                         flowerSpotId = null,
                         flowerEventId = 7L,
+                        flowerSpotCafeId = null,
                         createdAt = LocalDateTime.of(2026, 3, 19, 11, 0),
                     ),
                     Blooming(
@@ -58,6 +63,7 @@ class BloomingFacadeTest {
                         userId = 4L,
                         flowerSpotId = null,
                         flowerEventId = 7L,
+                        flowerSpotCafeId = null,
                         createdAt = LocalDateTime.of(2026, 3, 19, 9, 0),
                     ),
                 )
@@ -90,6 +96,7 @@ class BloomingFacadeTest {
             val userService = mockk<UserService>()
             val imageS3Caller = mockk<ImageS3Caller>()
             val eventPublisher = mockk<ApplicationEventPublisher>()
+            val flowerSpotService = mockk<FlowerSpotService>()
             val facade =
                 BloomingFacade(
                     bloomingService = bloomingService,
@@ -97,6 +104,7 @@ class BloomingFacadeTest {
                     userService = userService,
                     imageS3Caller = imageS3Caller,
                     eventPublisher = eventPublisher,
+                    flowerSpotService = flowerSpotService,
                 )
             val newBlooming =
                 NewBlooming.FlowerSpot(
@@ -112,6 +120,7 @@ class BloomingFacadeTest {
                     userId = 1L,
                     flowerSpotId = 3L,
                     flowerEventId = null,
+                    flowerSpotCafeId = null,
                     createdAt = LocalDateTime.of(2026, 3, 19, 10, 0),
                 )
             every { eventPublisher.publishEvent(BloomingAddedEvent(newBlooming)) } returns Unit
@@ -121,7 +130,9 @@ class BloomingFacadeTest {
                 S3ImageUrl(
                     presignedUrl = "spot-upload",
                     presignedGetUrl = "spot-preview",
+                    s3Key = "prod/flowerspot/3/abc.jpeg",
                 )
+            coEvery { flowerSpotService.updatePreviewImageKey(3L, "prod/flowerspot/3/abc.jpeg") } returns Unit
 
             val result = facade.uploadBloomingStatus(newBlooming)
 
@@ -140,6 +151,7 @@ class BloomingFacadeTest {
             val userService = mockk<UserService>()
             val imageS3Caller = mockk<ImageS3Caller>()
             val eventPublisher = mockk<ApplicationEventPublisher>()
+            val flowerSpotService = mockk<FlowerSpotService>()
             val facade =
                 BloomingFacade(
                     bloomingService = bloomingService,
@@ -147,6 +159,7 @@ class BloomingFacadeTest {
                     userService = userService,
                     imageS3Caller = imageS3Caller,
                     eventPublisher = eventPublisher,
+                    flowerSpotService = flowerSpotService,
                 )
             val newBlooming =
                 NewBlooming.FlowerEvent(
@@ -162,6 +175,7 @@ class BloomingFacadeTest {
                     userId = 2L,
                     flowerSpotId = null,
                     flowerEventId = 7L,
+                    flowerSpotCafeId = null,
                     createdAt = LocalDateTime.of(2026, 3, 19, 11, 0),
                 )
             every { eventPublisher.publishEvent(BloomingAddedEvent(newBlooming)) } returns Unit
@@ -171,6 +185,7 @@ class BloomingFacadeTest {
                 S3ImageUrl(
                     presignedUrl = "event-upload",
                     presignedGetUrl = "event-preview",
+                    s3Key = "prod/flowerevent/7/abc.jpeg",
                 )
 
             val result = facade.uploadBloomingStatus(newBlooming)

@@ -26,6 +26,4 @@ interface FlowerSpotCafeJpaRepository : JpaRepository<FlowerSpotCafeEntity, Long
         @Param("neLat") neLat: Double,
         @Param("neLng") neLng: Double,
     ): List<FlowerSpotCafeEntity>
-
-    fun findByFlowerSpotIdAndDeletedAtIsNull(flowerSpotId: Long): List<FlowerSpotCafeEntity>
 }

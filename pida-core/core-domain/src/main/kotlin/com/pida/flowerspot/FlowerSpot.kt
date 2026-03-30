@@ -16,4 +16,6 @@ data class FlowerSpot(
     val kind: FlowerKind,
     val type: FlowerSpotType,
     val deletedAt: LocalDateTime?,
+    val previewImageKey: String? = null,
+    val previewImageUploadedAt: LocalDateTime? = null,
 )

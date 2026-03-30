@@ -5,6 +5,7 @@ import com.pida.blooming.BloomingStatus
 import com.pida.blooming.NewBlooming
 import com.pida.flowerevent.FlowerEvent
 import com.pida.flowerevent.FlowerEventRepository
+import com.pida.flowerspot.FlowerSpotCafeRepository
 import com.pida.flowerspot.FlowerSpotRepository
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
@@ -21,12 +22,14 @@ class BloomedFirstVoteNotificationEventListenerTest {
     fun `꽃 이벤트 첫 만개 투표면 해당 지역 만개 알림을 발송한다`() {
         val flowerSpotRepository = mockk<FlowerSpotRepository>()
         val flowerEventRepository = mockk<FlowerEventRepository>()
+        val flowerSpotCafeRepository = mockk<FlowerSpotCafeRepository>()
         val firstVoteChecker = mockk<BloomedFirstVoteChecker>()
         val bloomedNotificationService = mockk<BloomedNotificationService>()
         val listener =
             BloomedFirstVoteNotificationEventListener(
                 flowerSpotRepository = flowerSpotRepository,
                 flowerEventRepository = flowerEventRepository,
+                flowerSpotCafeRepository = flowerSpotCafeRepository,
                 firstVoteChecker = firstVoteChecker,
                 bloomedNotificationService = bloomedNotificationService,
             )

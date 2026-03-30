@@ -17,6 +17,7 @@ class BloomingService(
     companion object {
         const val BLOOMING_SPOT_KEY = "blooming:spot"
         const val BLOOMING_EVENT_KEY = "blooming:event"
+        const val BLOOMING_CAFE_KEY = "blooming:cafe"
         const val BLOOMING_TTL = 30L
     }
 
@@ -28,6 +29,11 @@ class BloomingService(
                     bloomingFinder.readTopByUserIdAndFlowerEventIdDesc(
                         newBlooming.userId,
                         newBlooming.flowerEventId,
+                    )
+                is NewBlooming.FlowerSpotCafe ->
+                    bloomingFinder.readTopByUserIdAndFlowerSpotCafeIdDesc(
+                        newBlooming.userId,
+                        newBlooming.flowerSpotCafeId,
                     )
             }
         bloomingValidator.addValidate(blooming)
@@ -41,11 +47,16 @@ class BloomingService(
 
     suspend fun recentlyBloomingByEventId(eventId: Long): List<Blooming> = bloomingFinder.readRecentlyBloomingByEventId(eventId)
 
+    suspend fun recentlyBloomingByCafeId(cafeId: Long): List<Blooming> = bloomingFinder.readRecentlyBloomingByCafeId(cafeId)
+
     fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> =
         spotIds.flatMap { spotId -> cachedRecentlyBloomingBySpotId(spotId) }
 
     fun recentlyBloomingByEventIds(eventIds: List<Long>): List<Blooming> =
         eventIds.flatMap { eventId -> cachedRecentlyBloomingByEventId(eventId) }
+
+    fun recentlyBloomingByCafeIds(cafeIds: List<Long>): List<Blooming> =
+        cafeIds.flatMap { cafeId -> cachedRecentlyBloomingByCafeId(cafeId) }
 
     private fun cachedRecentlyBloomingBySpotId(spotId: Long): List<Blooming> =
         Cache.cacheBlocking(
@@ -65,20 +76,29 @@ class BloomingService(
             bloomingFinder.recentlyBloomingByEventIds(listOf(eventId))
         }
 
+    private fun cachedRecentlyBloomingByCafeId(cafeId: Long): List<Blooming> =
+        Cache.cacheBlocking(
+            ttl = BLOOMING_TTL,
+            key = "$BLOOMING_CAFE_KEY:$cafeId",
+            typeReference = object : TypeReference<List<Blooming>>() {},
+        ) {
+            bloomingFinder.recentlyBloomingByCafeIds(listOf(cafeId))
+        }
+
     fun verifyTodayBlooming(
         userId: Long,
         flowerSpotId: Long? = null,
         flowerEventId: Long? = null,
+        flowerSpotCafeId: Long? = null,
     ): Boolean {
         val blooming =
             when {
-                flowerSpotId != null && flowerEventId == null -> bloomingFinder.readTodayBloomingByUserId(userId, flowerSpotId)
-                flowerSpotId == null && flowerEventId != null ->
-                    bloomingFinder.readTodayBloomingByUserIdAndFlowerEventId(
-                        userId,
-                        flowerEventId,
-                    )
-
+                flowerSpotId != null && flowerEventId == null && flowerSpotCafeId == null ->
+                    bloomingFinder.readTodayBloomingByUserId(userId, flowerSpotId)
+                flowerSpotId == null && flowerEventId != null && flowerSpotCafeId == null ->
+                    bloomingFinder.readTodayBloomingByUserIdAndFlowerEventId(userId, flowerEventId)
+                flowerSpotId == null && flowerEventId == null && flowerSpotCafeId != null ->
+                    bloomingFinder.readTodayBloomingByUserIdAndFlowerSpotCafeId(userId, flowerSpotCafeId)
                 else -> throw ErrorException(ErrorType.INVALID_REQUEST)
             }
 
@@ -89,6 +109,7 @@ class BloomingService(
         when (newBlooming) {
             is NewBlooming.FlowerSpot -> cacheRepository.delete("$BLOOMING_SPOT_KEY:${newBlooming.flowerSpotId}")
             is NewBlooming.FlowerEvent -> cacheRepository.delete("$BLOOMING_EVENT_KEY:${newBlooming.flowerEventId}")
+            is NewBlooming.FlowerSpotCafe -> cacheRepository.delete("$BLOOMING_CAFE_KEY:${newBlooming.flowerSpotCafeId}")
         }
     }
 }

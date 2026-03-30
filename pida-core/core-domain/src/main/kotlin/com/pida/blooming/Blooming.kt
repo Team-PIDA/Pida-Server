@@ -8,9 +8,11 @@ data class Blooming(
     val userId: Long,
     val flowerSpotId: Long?,
     val flowerEventId: Long?,
+    val flowerSpotCafeId: Long?,
     val createdAt: LocalDateTime,
 ) {
     init {
-        require((flowerSpotId == null) != (flowerEventId == null))
+        val nonNullCount = listOfNotNull(flowerSpotId, flowerEventId, flowerSpotCafeId).size
+        require(nonNullCount == 1)
     }
 }

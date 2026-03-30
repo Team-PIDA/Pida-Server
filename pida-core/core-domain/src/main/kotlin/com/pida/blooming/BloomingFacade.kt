@@ -1,5 +1,6 @@
 package com.pida.blooming
 
+import com.pida.flowerspot.FlowerSpotService
 import com.pida.reporter.RecentReporterService
 import com.pida.support.aws.ImagePrefix
 import com.pida.support.aws.ImageS3Caller
@@ -20,6 +21,7 @@ class BloomingFacade(
     private val userService: UserService,
     private val imageS3Caller: ImageS3Caller,
     private val eventPublisher: ApplicationEventPublisher,
+    private val flowerSpotService: FlowerSpotService,
 ) {
     suspend fun readBloomingDetailsBySpotId(flowerSpotId: Long): BloomingDetails =
         coroutineScope {
@@ -74,11 +76,29 @@ class BloomingFacade(
     suspend fun readBloomingDetails(
         flowerSpotId: Long? = null,
         flowerEventId: Long? = null,
+        flowerSpotCafeId: Long? = null,
     ): BloomingDetails =
         when {
-            flowerSpotId != null && flowerEventId == null -> readBloomingDetailsBySpotId(flowerSpotId)
-            flowerSpotId == null && flowerEventId != null -> readBloomingDetailsByEventId(flowerEventId)
+            flowerSpotId != null && flowerEventId == null && flowerSpotCafeId == null -> readBloomingDetailsBySpotId(flowerSpotId)
+            flowerSpotId == null && flowerEventId != null && flowerSpotCafeId == null -> readBloomingDetailsByEventId(flowerEventId)
+            flowerSpotId == null && flowerEventId == null && flowerSpotCafeId != null -> readBloomingDetailsByCafeId(flowerSpotCafeId)
             else -> throw ErrorException(ErrorType.INVALID_REQUEST)
+        }
+
+    private suspend fun readBloomingDetailsByCafeId(flowerSpotCafeId: Long): BloomingDetails =
+        coroutineScope {
+            val bloomings = bloomingService.recentlyBloomingByCafeId(flowerSpotCafeId)
+            val latestBlooming = bloomings.maxByOrNull { it.createdAt }
+            val userProfileDeferred =
+                async {
+                    latestBlooming?.userId?.let { userService.getProfile(it) }
+                }
+
+            return@coroutineScope buildBloomingDetails(
+                bloomings = bloomings,
+                nickname = userProfileDeferred.await()?.nickname,
+                updatedAt = latestBlooming?.createdAt,
+            )
         }
 
     private suspend fun readBloomingDetailsByEventId(flowerEventId: Long): BloomingDetails =
@@ -105,11 +125,19 @@ class BloomingFacade(
             when (newBlooming) {
                 is NewBlooming.FlowerSpot -> ImagePrefix.FLOWERSPOT.value to newBlooming.flowerSpotId
                 is NewBlooming.FlowerEvent -> ImagePrefix.FLOWEREVENT.value to newBlooming.flowerEventId
+                is NewBlooming.FlowerSpotCafe -> ImagePrefix.FLOWERSPOT.value to newBlooming.flowerSpotCafeId
             }
 
-        return BloomingImageUploadUrl.from(
-            imageS3Caller.createUploadUrl(newBlooming.userId, prefix, prefixId),
-        )
+        val imageUploadUrl = imageS3Caller.createUploadUrl(newBlooming.userId, prefix, prefixId)
+
+        if (newBlooming is NewBlooming.FlowerSpot) {
+            flowerSpotService.updatePreviewImageKey(
+                newBlooming.flowerSpotId,
+                imageUploadUrl.s3Key,
+            )
+        }
+
+        return BloomingImageUploadUrl.from(imageUploadUrl)
     }
 
     private fun buildBloomingDetails(

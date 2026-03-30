@@ -6,9 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.pida.blooming.Blooming
 import com.pida.blooming.BloomingService
 import com.pida.blooming.BloomingStatus
-import com.pida.support.aws.ImagePrefix
 import com.pida.support.aws.ImageS3Caller
-import com.pida.support.aws.S3ImageInfo
 import com.pida.support.cache.Cache
 import com.pida.support.cache.CacheAdvice
 import com.pida.support.cache.CacheRepository
@@ -35,7 +33,9 @@ class FlowerSpotFacadeTest {
             Cache(CacheAdvice(inMemoryCacheRepository(), cacheObjectMapper()))
             val facade = FlowerSpotFacade(flowerSpotService, bloomingService, imageS3Caller)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
-            val firstSpot = flowerSpot(id = 10L, streetName = "첫 번째 거리")
+            val previewKey = "prod/flowerspot/10/abc.jpeg"
+            val previewUploadedAt = LocalDateTime.of(2026, 3, 20, 12, 0)
+            val firstSpot = flowerSpot(id = 10L, streetName = "첫 번째 거리", previewImageKey = previewKey, previewImageUploadedAt = previewUploadedAt)
             val secondSpot = flowerSpot(id = 20L, streetName = "두 번째 거리")
 
             coEvery { flowerSpotService.readAllFlowerSpot(region = null, location = location) } returns listOf(firstSpot, secondSpot)
@@ -46,6 +46,7 @@ class FlowerSpotFacadeTest {
                         userId = 1L,
                         flowerSpotId = 10L,
                         flowerEventId = null,
+                        flowerSpotCafeId = null,
                         status = BloomingStatus.BLOOMED,
                         createdAt = LocalDateTime.of(2026, 3, 20, 10, 0),
                     ),
@@ -54,6 +55,7 @@ class FlowerSpotFacadeTest {
                         userId = 2L,
                         flowerSpotId = 10L,
                         flowerEventId = null,
+                        flowerSpotCafeId = null,
                         status = BloomingStatus.BLOOMED,
                         createdAt = LocalDateTime.of(2026, 3, 20, 11, 0),
                     ),
@@ -62,16 +64,12 @@ class FlowerSpotFacadeTest {
                         userId = 3L,
                         flowerSpotId = 20L,
                         flowerEventId = null,
+                        flowerSpotCafeId = null,
                         status = BloomingStatus.LITTLE,
                         createdAt = LocalDateTime.of(2026, 3, 20, 9, 0),
                     ),
                 )
-            coEvery { imageS3Caller.getPreviewImage(ImagePrefix.FLOWERSPOT.value, 10L) } returns
-                S3ImageInfo(
-                    url = "https://cdn.example.com/flower-spot-10-preview.jpg",
-                    uploadedAt = LocalDateTime.of(2026, 3, 20, 12, 0),
-                )
-            coEvery { imageS3Caller.getPreviewImage(ImagePrefix.FLOWERSPOT.value, 20L) } returns null
+            every { imageS3Caller.generatePresignedUrl(previewKey) } returns "https://cdn.example.com/flower-spot-10-preview.jpg"
 
             val result = facade.findAllFlowerSpot(region = null, location = location)
 
@@ -83,8 +81,8 @@ class FlowerSpotFacadeTest {
             result.last().bloomingStatus shouldBe BloomingStatus.LITTLE
             result.last().images shouldBe emptyList()
 
-            coVerify(exactly = 1) { imageS3Caller.getPreviewImage(ImagePrefix.FLOWERSPOT.value, 10L) }
-            coVerify(exactly = 1) { imageS3Caller.getPreviewImage(ImagePrefix.FLOWERSPOT.value, 20L) }
+            verify(exactly = 1) { imageS3Caller.generatePresignedUrl(previewKey) }
+            coVerify(exactly = 0) { imageS3Caller.getPreviewImage(any(), any()) }
             coVerify(exactly = 0) { imageS3Caller.getImageUrl(any(), any(), any()) }
         }
 
@@ -111,6 +109,8 @@ class FlowerSpotFacadeTest {
     private fun flowerSpot(
         id: Long,
         streetName: String,
+        previewImageKey: String? = null,
+        previewImageUploadedAt: LocalDateTime? = null,
     ) = FlowerSpot(
         id = id,
         address = "서울특별시 강남구",
@@ -123,6 +123,8 @@ class FlowerSpotFacadeTest {
         kind = FlowerKind.BLOSSOM,
         type = FlowerSpotType.WALKING_TRAIL,
         deletedAt = null,
+        previewImageKey = previewImageKey,
+        previewImageUploadedAt = previewImageUploadedAt,
     )
 
     private fun inMemoryCacheRepository(): CacheRepository =
