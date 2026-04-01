@@ -31,7 +31,18 @@ data class FlowerSpotDetails(
             id = flowerSpot.id,
             address = flowerSpot.address,
             recentlyVisitedCount = bloomings.size.toLong(),
-            bloomingStatus = bloomings.groupBy { it.status }.maxByOrNull { it.value.size }?.key ?: BloomingStatus.NOT_BLOOMED,
+            bloomingStatus =
+                bloomings
+                    .groupBy { it.status }
+                    .entries
+                    .sortedWith(
+                        compareByDescending<Map.Entry<BloomingStatus, List<Blooming>>> { it.value.size }.thenByDescending {
+                            it.value.maxOf { b ->
+                                b.createdAt
+                            }
+                        },
+                    ).firstOrNull()
+                    ?.key ?: BloomingStatus.NOT_BLOOMED,
             streetName = flowerSpot.streetName,
             district = flowerSpot.district,
             description = flowerSpot.description,
