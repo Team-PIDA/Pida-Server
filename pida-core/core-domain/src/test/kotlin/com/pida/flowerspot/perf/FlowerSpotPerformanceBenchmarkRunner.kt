@@ -149,7 +149,11 @@ object FlowerSpotPerformanceBenchmarkRunner {
     private fun representativeStatus(bloomings: List<Blooming>): BloomingStatus =
         bloomings
             .groupBy { it.status }
-            .maxByOrNull { it.value.size }
+            .entries
+            .sortedWith(
+                compareByDescending<Map.Entry<BloomingStatus, List<Blooming>>> { it.value.size }
+                    .thenByDescending { it.value.maxOf { b -> b.createdAt } },
+            ).firstOrNull()
             ?.key ?: BloomingStatus.NOT_BLOOMED
 
     private fun renderReport(
