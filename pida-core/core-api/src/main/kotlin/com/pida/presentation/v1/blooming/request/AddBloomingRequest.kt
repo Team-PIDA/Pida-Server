@@ -10,24 +10,33 @@ import io.swagger.v3.oas.annotations.media.Schema
 data class AddBloomingRequest(
     @Schema(description = "장소 ID", example = "1", nullable = true)
     val flowerSpotId: Long? = null,
-    @Schema(description = "꽃 이벤트 ID", example = "1", nullable = true)
+    @Schema(description = "벚꽃 축제 ID", example = "1", nullable = true)
     val flowerEventId: Long? = null,
+    @Schema(description = "카페 ID", example = "1", nullable = true)
+    val flowerSpotCafeId: Long? = null,
     @Schema(description = "개화 상태", example = "BLOOMED")
     val status: BloomingStatus,
 ) {
     fun toNewBlooming(userId: Long): NewBlooming =
         when {
-            flowerSpotId != null && flowerEventId == null ->
+            flowerSpotId != null && flowerEventId == null && flowerSpotCafeId == null ->
                 NewBlooming.FlowerSpot(
                     userId = userId,
                     flowerSpotId = flowerSpotId,
                     status = status,
                 )
 
-            flowerSpotId == null && flowerEventId != null ->
+            flowerSpotId == null && flowerEventId != null && flowerSpotCafeId == null ->
                 NewBlooming.FlowerEvent(
                     userId = userId,
                     flowerEventId = flowerEventId,
+                    status = status,
+                )
+
+            flowerSpotId == null && flowerEventId == null && flowerSpotCafeId != null ->
+                NewBlooming.FlowerSpotCafe(
+                    userId = userId,
+                    flowerSpotCafeId = flowerSpotCafeId,
                     status = status,
                 )
 
