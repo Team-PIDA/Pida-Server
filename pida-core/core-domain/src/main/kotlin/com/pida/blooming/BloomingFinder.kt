@@ -31,11 +31,11 @@ class BloomingFinder(
 
     suspend fun readRecentlyBloomingByCafeId(cafeId: Long): List<Blooming> = bloomingRepository.findRecentlyByCafeId(cafeId)
 
-    fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> = bloomingRepository.findRecentBySpotIds(spotIds)
+    suspend fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> = bloomingRepository.findRecentBySpotIds(spotIds)
 
-    fun recentlyBloomingByEventIds(eventIds: List<Long>): List<Blooming> = bloomingRepository.findRecentByEventIds(eventIds)
+    suspend fun recentlyBloomingByEventIds(eventIds: List<Long>): List<Blooming> = bloomingRepository.findRecentByEventIds(eventIds)
 
-    fun recentlyBloomingByCafeIds(cafeIds: List<Long>): List<Blooming> = bloomingRepository.findRecentByCafeIds(cafeIds)
+    suspend fun recentlyBloomingByCafeIds(cafeIds: List<Long>): List<Blooming> = bloomingRepository.findRecentByCafeIds(cafeIds)
 
     fun readTodayBloomingByUserId(
         userId: Long,

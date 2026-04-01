@@ -31,11 +31,11 @@ interface BloomingRepository {
 
     suspend fun findRecentlyByCafeId(cafeId: Long): List<Blooming>
 
-    fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming>
+    suspend fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming>
 
-    fun findRecentByEventIds(eventIds: List<Long>): List<Blooming>
+    suspend fun findRecentByEventIds(eventIds: List<Long>): List<Blooming>
 
-    fun findRecentByCafeIds(cafeIds: List<Long>): List<Blooming>
+    suspend fun findRecentByCafeIds(cafeIds: List<Long>): List<Blooming>
 
     fun findTodayBloomingByUserId(
         userId: Long,

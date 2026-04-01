@@ -1,8 +1,5 @@
 package com.pida.blooming
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.pida.support.cache.Cache
-import com.pida.support.cache.CacheRepository
 import com.pida.support.error.ErrorException
 import com.pida.support.error.ErrorType
 import org.springframework.stereotype.Service
@@ -12,15 +9,7 @@ class BloomingService(
     private val bloomingAppender: BloomingAppender,
     private val bloomingValidator: BloomingValidator,
     private val bloomingFinder: BloomingFinder,
-    private val cacheRepository: CacheRepository,
 ) {
-    companion object {
-        const val BLOOMING_SPOT_KEY = "blooming:spot"
-        const val BLOOMING_EVENT_KEY = "blooming:event"
-        const val BLOOMING_CAFE_KEY = "blooming:cafe"
-        const val BLOOMING_TTL = 30L
-    }
-
     suspend fun add(newBlooming: NewBlooming): Blooming {
         val blooming =
             when (newBlooming) {
@@ -38,9 +27,7 @@ class BloomingService(
             }
         bloomingValidator.addValidate(blooming)
 
-        val result = bloomingAppender.add(newBlooming)
-        evictBloomingCache(newBlooming)
-        return result
+        return bloomingAppender.add(newBlooming)
     }
 
     suspend fun recentlyBloomingBySpotId(spotId: Long): List<Blooming> = bloomingFinder.readRecentlyBloomingBySpotId(spotId)
@@ -49,41 +36,14 @@ class BloomingService(
 
     suspend fun recentlyBloomingByCafeId(cafeId: Long): List<Blooming> = bloomingFinder.readRecentlyBloomingByCafeId(cafeId)
 
-    fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> =
-        spotIds.flatMap { spotId -> cachedRecentlyBloomingBySpotId(spotId) }
+    suspend fun recentlyBloomingBySpotIds(spotIds: List<Long>): List<Blooming> =
+        bloomingFinder.recentlyBloomingBySpotIds(spotIds.distinct())
 
-    fun recentlyBloomingByEventIds(eventIds: List<Long>): List<Blooming> =
-        eventIds.flatMap { eventId -> cachedRecentlyBloomingByEventId(eventId) }
+    suspend fun recentlyBloomingByEventIds(eventIds: List<Long>): List<Blooming> =
+        bloomingFinder.recentlyBloomingByEventIds(eventIds.distinct())
 
-    fun recentlyBloomingByCafeIds(cafeIds: List<Long>): List<Blooming> =
-        cafeIds.flatMap { cafeId -> cachedRecentlyBloomingByCafeId(cafeId) }
-
-    private fun cachedRecentlyBloomingBySpotId(spotId: Long): List<Blooming> =
-        Cache.cacheBlocking(
-            ttl = BLOOMING_TTL,
-            key = "$BLOOMING_SPOT_KEY:$spotId",
-            typeReference = object : TypeReference<List<Blooming>>() {},
-        ) {
-            bloomingFinder.recentlyBloomingBySpotIds(listOf(spotId))
-        }
-
-    private fun cachedRecentlyBloomingByEventId(eventId: Long): List<Blooming> =
-        Cache.cacheBlocking(
-            ttl = BLOOMING_TTL,
-            key = "$BLOOMING_EVENT_KEY:$eventId",
-            typeReference = object : TypeReference<List<Blooming>>() {},
-        ) {
-            bloomingFinder.recentlyBloomingByEventIds(listOf(eventId))
-        }
-
-    private fun cachedRecentlyBloomingByCafeId(cafeId: Long): List<Blooming> =
-        Cache.cacheBlocking(
-            ttl = BLOOMING_TTL,
-            key = "$BLOOMING_CAFE_KEY:$cafeId",
-            typeReference = object : TypeReference<List<Blooming>>() {},
-        ) {
-            bloomingFinder.recentlyBloomingByCafeIds(listOf(cafeId))
-        }
+    suspend fun recentlyBloomingByCafeIds(cafeIds: List<Long>): List<Blooming> =
+        bloomingFinder.recentlyBloomingByCafeIds(cafeIds.distinct())
 
     fun verifyTodayBlooming(
         userId: Long,
@@ -103,13 +63,5 @@ class BloomingService(
             }
 
         return bloomingValidator.todayBloomingValidate(blooming)
-    }
-
-    private fun evictBloomingCache(newBlooming: NewBlooming) {
-        when (newBlooming) {
-            is NewBlooming.FlowerSpot -> cacheRepository.delete("$BLOOMING_SPOT_KEY:${newBlooming.flowerSpotId}")
-            is NewBlooming.FlowerEvent -> cacheRepository.delete("$BLOOMING_EVENT_KEY:${newBlooming.flowerEventId}")
-            is NewBlooming.FlowerSpotCafe -> cacheRepository.delete("$BLOOMING_CAFE_KEY:${newBlooming.flowerSpotCafeId}")
-        }
     }
 }
