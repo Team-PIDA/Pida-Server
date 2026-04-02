@@ -8,6 +8,8 @@ import com.pida.support.aws.PresignedUrlRateLimiter
 import com.pida.support.aws.S3ImageInfo
 import com.pida.support.aws.S3ImageUrl
 import com.pida.support.aws.S3UploadResult
+import com.pida.support.resilience.ExternalDependency
+import com.pida.support.resilience.ExternalDependencyPolicy
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.s3.model.S3Object
 import java.time.Duration
@@ -21,6 +23,7 @@ class ImageS3Processor(
     private val awsProperties: AwsProperties,
     private val imageFileConstructor: ImageFileConstructor,
     private val rateLimiter: PresignedUrlRateLimiter,
+    private val externalDependencyPolicy: ExternalDependencyPolicy,
 ) : ImageS3Caller {
     companion object {
         private val SEOUL_ZONE_ID: ZoneId = ZoneId.of("Asia/Seoul")
@@ -56,14 +59,15 @@ class ImageS3Processor(
         prefix: String,
         prefixId: Long,
         fileName: String?,
-    ): List<S3ImageInfo> {
-        val imageFilePath = imageFileConstructor.imageFilePath(prefix, prefixId)
+    ): List<S3ImageInfo> =
+        externalDependencyPolicy.executeSuspend(ExternalDependency.AWS_S3) {
+            val imageFilePath = imageFileConstructor.imageFilePath(prefix, prefixId)
 
-        return fileName
-            ?.let {
-                listOf(presignedGet(imageFilePath, it)) // fileName이 있으면 특정 이미지 조회
-            } ?: listPresignedGets(imageFilePath) // 아니면 해당 경로 아래 모든 이미지 탐색
-    }
+            fileName
+                ?.let {
+                    listOf(presignedGet(imageFilePath, it))
+                } ?: listPresignedGets(imageFilePath)
+        }
 
     override fun uploadImage(
         prefix: String,
@@ -71,38 +75,40 @@ class ImageS3Processor(
         subPath: String,
         contentType: String,
         bytes: ByteArray,
-    ): S3UploadResult {
-        val filePath = imageFileConstructor.imageFilePath(prefix, prefixId)
-        val fileName = imageFileConstructor.imageFileName()
-        val s3Key = "$filePath/$subPath/$fileName"
+    ): S3UploadResult =
+        externalDependencyPolicy.execute(ExternalDependency.AWS_S3) {
+            val filePath = imageFileConstructor.imageFilePath(prefix, prefixId)
+            val fileName = imageFileConstructor.imageFileName()
+            val s3Key = "$filePath/$subPath/$fileName"
 
-        awsS3Client.putObject(
-            bucketName = awsProperties.s3.bucket,
-            key = s3Key,
-            contentType = contentType,
-            bytes = bytes,
-        )
+            awsS3Client.putObject(
+                bucketName = awsProperties.s3.bucket,
+                key = s3Key,
+                contentType = contentType,
+                bytes = bytes,
+            )
 
-        return S3UploadResult(
-            s3Key = s3Key,
-            publicUrl = "${awsProperties.s3.imageOriginUrl}/$s3Key",
-        )
-    }
+            S3UploadResult(
+                s3Key = s3Key,
+                publicUrl = "${awsProperties.s3.imageOriginUrl}/$s3Key",
+            )
+        }
 
     override suspend fun getPreviewImage(
         prefix: String,
         prefixId: Long,
-    ): S3ImageInfo? {
-        val imageFilePath = imageFileConstructor.imageFilePath(prefix, prefixId)
+    ): S3ImageInfo? =
+        externalDependencyPolicy.executeSuspend(ExternalDependency.AWS_S3) {
+            val imageFilePath = imageFileConstructor.imageFilePath(prefix, prefixId)
 
-        return awsS3AsyncClient
-            .listObjects(
-                bucketName = awsProperties.s3.bucket,
-                filePath = imageFilePath,
-            ).filterNot { it.key().endsWith("/") }
-            .maxByOrNull(S3Object::lastModified)
-            ?.toImageInfo(imageFilePath, Duration.ofSeconds(30))
-    }
+            awsS3AsyncClient
+                .listObjects(
+                    bucketName = awsProperties.s3.bucket,
+                    filePath = imageFilePath,
+                ).filterNot { it.key().endsWith("/") }
+                .maxByOrNull(S3Object::lastModified)
+                ?.toImageInfo(imageFilePath, Duration.ofSeconds(30))
+        }
 
     override fun generatePresignedUrl(s3Key: String): String {
         val filePath = s3Key.substringBeforeLast("/")

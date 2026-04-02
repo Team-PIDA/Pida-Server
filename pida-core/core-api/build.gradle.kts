@@ -35,7 +35,10 @@ dependencies {
     sentryAgent(libs.sentry.opentelemetry.agent)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.aop)
+    implementation(libs.spring.boot.starter.actuator)
     implementation(libs.spring.boot.starter.validation)
+    implementation(libs.resilience4j.spring.boot3)
+    implementation(libs.resilience4j.micrometer)
     compileOnly(libs.redisson)
     testImplementation(libs.redisson)
 

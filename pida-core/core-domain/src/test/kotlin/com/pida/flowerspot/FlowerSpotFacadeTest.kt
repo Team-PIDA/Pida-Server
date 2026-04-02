@@ -12,12 +12,15 @@ import com.pida.support.cache.CacheAdvice
 import com.pida.support.cache.CacheRepository
 import com.pida.support.geo.GeoJson
 import com.pida.support.geo.Region
+import com.pida.support.resilience.ExternalDependencyPolicy
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -30,8 +33,10 @@ class FlowerSpotFacadeTest {
             val flowerSpotService = mockk<FlowerSpotService>()
             val bloomingService = mockk<BloomingService>()
             val imageS3Caller = mockk<ImageS3Caller>()
+            val externalDependencyPolicy = mockk<ExternalDependencyPolicy>()
+            every { externalDependencyPolicy.recordFallback(any(), any(), any()) } just runs
             Cache(CacheAdvice(inMemoryCacheRepository(), cacheObjectMapper()))
-            val facade = FlowerSpotFacade(flowerSpotService, bloomingService, imageS3Caller)
+            val facade = FlowerSpotFacade(flowerSpotService, bloomingService, imageS3Caller, externalDependencyPolicy)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
             val previewKey = "prod/flowerspot/10/abc.jpeg"
             val previewUploadedAt = LocalDateTime.of(2026, 3, 20, 12, 0)
@@ -39,7 +44,7 @@ class FlowerSpotFacadeTest {
             val secondSpot = flowerSpot(id = 20L, streetName = "두 번째 거리")
 
             coEvery { flowerSpotService.readAllFlowerSpot(region = null, location = location) } returns listOf(firstSpot, secondSpot)
-            every { bloomingService.recentlyBloomingBySpotIds(listOf(10L, 20L)) } returns
+            coEvery { bloomingService.recentlyBloomingBySpotIds(listOf(10L, 20L)) } returns
                 listOf(
                     Blooming(
                         id = 1L,
@@ -92,8 +97,10 @@ class FlowerSpotFacadeTest {
             val flowerSpotService = mockk<FlowerSpotService>()
             val bloomingService = mockk<BloomingService>()
             val imageS3Caller = mockk<ImageS3Caller>()
+            val externalDependencyPolicy = mockk<ExternalDependencyPolicy>()
+            every { externalDependencyPolicy.recordFallback(any(), any(), any()) } just runs
             Cache(CacheAdvice(inMemoryCacheRepository(), cacheObjectMapper()))
-            val facade = FlowerSpotFacade(flowerSpotService, bloomingService, imageS3Caller)
+            val facade = FlowerSpotFacade(flowerSpotService, bloomingService, imageS3Caller, externalDependencyPolicy)
             val location = FlowerSpotLocation(swLat = null, swLng = null, neLat = null, neLng = null)
 
             coEvery { flowerSpotService.readAllFlowerSpot(region = null, location = location) } returns emptyList()
@@ -101,9 +108,31 @@ class FlowerSpotFacadeTest {
             val result = facade.findAllFlowerSpot(region = null, location = location)
 
             result shouldBe emptyList()
-            verify(exactly = 0) { bloomingService.recentlyBloomingBySpotIds(any()) }
+            coVerify(exactly = 0) { bloomingService.recentlyBloomingBySpotIds(any()) }
             coVerify(exactly = 0) { imageS3Caller.getPreviewImage(any(), any()) }
             coVerify(exactly = 0) { imageS3Caller.getImageUrl(any(), any(), any()) }
+        }
+
+    @Test
+    fun `상세 조회에서 S3 이미지 조회가 실패하면 빈 이미지 목록으로 degrade 한다`(): Unit =
+        runBlocking {
+            val flowerSpotService = mockk<FlowerSpotService>()
+            val bloomingService = mockk<BloomingService>()
+            val imageS3Caller = mockk<ImageS3Caller>()
+            val externalDependencyPolicy = mockk<ExternalDependencyPolicy>()
+            every { externalDependencyPolicy.recordFallback(any(), any(), any()) } just runs
+            Cache(CacheAdvice(inMemoryCacheRepository(), cacheObjectMapper()))
+            val facade = FlowerSpotFacade(flowerSpotService, bloomingService, imageS3Caller, externalDependencyPolicy)
+            val spot = flowerSpot(id = 10L, streetName = "첫 번째 거리")
+
+            coEvery { flowerSpotService.readOneFlowerSpot(10L) } returns spot
+            coEvery { bloomingService.recentlyBloomingBySpotId(10L) } returns emptyList()
+            coEvery { imageS3Caller.getImageUrl(any(), any(), any()) } throws IllegalStateException("s3 unavailable")
+
+            val result = facade.readFlowerSpotDetails(10L)
+
+            result.images shouldBe emptyList()
+            verify(exactly = 1) { externalDependencyPolicy.recordFallback(any(), "empty-image-list", any()) }
         }
 
     private fun flowerSpot(

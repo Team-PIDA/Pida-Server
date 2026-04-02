@@ -3,6 +3,8 @@ package com.pida.place
 import com.pida.flowerspot.FlowerSpotSearchEvent
 import com.pida.flowerspot.FlowerSpotService
 import com.pida.support.geo.Region
+import com.pida.support.resilience.ExternalDependency
+import com.pida.support.resilience.ExternalDependencyPolicy
 import com.pida.user.User
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -16,6 +18,7 @@ class PlaceFacade(
     private val districtService: DistrictService,
     private val landmarkSearchClient: LandmarkSearchClient,
     private val eventPublisher: ApplicationEventPublisher,
+    private val externalDependencyPolicy: ExternalDependencyPolicy,
 ) {
     companion object {
         private const val MAX_DISTRICT_SEARCH_COUNT = 2
@@ -44,13 +47,31 @@ class PlaceFacade(
             val landmarks =
                 if (hasEnough(storedLandmarks)) {
                     // 저장된 랜드마크가 충분한 경우 즉시 응답 후에 비동기적으로 보정
-                    publishLandmarkFetchEvent(query, null)
+                    if (externalDependencyPolicy.isAvailable(ExternalDependency.KAKAO_MAP)) {
+                        publishLandmarkFetchEvent(query, null)
+                    }
                     storedLandmarks
                 } else {
-                    // 저장된 랜드마크가 충분하지 않은 경우, 외부 API 호출 대기
-                    val fetched = landmarkSearchClient.searchByKeyword(query)
-                    publishLandmarkFetchEvent(query, fetched)
-                    fetched.map { it.toLandmark() }.filter { it.region in SEARCH_REGIONS }
+                    if (!externalDependencyPolicy.isAvailable(ExternalDependency.KAKAO_MAP)) {
+                        externalDependencyPolicy.recordFallback(
+                            dependency = ExternalDependency.KAKAO_MAP,
+                            reason = "stored-landmarks-only",
+                        )
+                        storedLandmarks
+                    } else {
+                        runCatching {
+                            val fetched = landmarkSearchClient.searchByKeyword(query)
+                            publishLandmarkFetchEvent(query, fetched)
+                            fetched.map { it.toLandmark() }.filter { it.region in SEARCH_REGIONS }
+                        }.getOrElse { error ->
+                            externalDependencyPolicy.recordFallback(
+                                dependency = ExternalDependency.KAKAO_MAP,
+                                reason = "stored-landmarks-only",
+                                throwable = error,
+                            )
+                            storedLandmarks
+                        }
+                    }
                 }
 
             PlaceSearchResult(

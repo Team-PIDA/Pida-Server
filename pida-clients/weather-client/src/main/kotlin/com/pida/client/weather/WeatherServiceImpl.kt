@@ -3,6 +3,8 @@ package com.pida.client.weather
 import com.pida.support.error.ErrorException
 import com.pida.support.error.ErrorType
 import com.pida.support.extension.logger
+import com.pida.support.resilience.ExternalDependency
+import com.pida.support.resilience.ExternalDependencyPolicy
 import com.pida.weather.PrecipitationType
 import com.pida.weather.SkyCondition
 import com.pida.weather.Weather
@@ -22,6 +24,7 @@ import kotlin.math.abs
 class WeatherServiceImpl(
     private val kmaForecastClient: KmaForecastClient,
     private val kmaForecastCache: KmaForecastCache,
+    private val externalDependencyPolicy: ExternalDependencyPolicy,
 ) : WeatherService {
     private val logger by logger()
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
@@ -129,7 +132,12 @@ class WeatherServiceImpl(
                 "KMA forecast API rate limit exceeded for nx=${location.nx}, ny=${location.ny}, baseDate=$baseDate, baseTime=$baseTime",
                 error,
             )
-            kmaForecastCache.getLatestByGrid(location.nx, location.ny)?.let { staleItems ->
+            staleForecastOrNull(location.nx, location.ny)?.let { staleItems ->
+                externalDependencyPolicy.recordFallback(
+                    dependency = ExternalDependency.KMA_WEATHER,
+                    reason = "stale-forecast-rate-limit",
+                    throwable = error,
+                )
                 logger.warn(
                     "Using stale KMA forecast cache due to rate limit for nx=${location.nx}, ny=${location.ny}",
                 )
@@ -137,10 +145,26 @@ class WeatherServiceImpl(
             }
             throw ErrorException(ErrorType.EXCEED_RATE_LIMIT)
         } catch (error: Exception) {
+            staleForecastOrNull(location.nx, location.ny)?.let { staleItems ->
+                externalDependencyPolicy.recordFallback(
+                    dependency = ExternalDependency.KMA_WEATHER,
+                    reason = "stale-forecast",
+                    throwable = error,
+                )
+                logger.warn(
+                    "Using stale KMA forecast cache due to upstream failure for nx=${location.nx}, ny=${location.ny}",
+                )
+                return staleItems
+            }
             logger.error("Failed to fetch weather forecast", error)
             throw ErrorException(ErrorType.WEATHER_API_CALL_FAILED)
         }
     }
+
+    private fun staleForecastOrNull(
+        nx: Int,
+        ny: Int,
+    ): List<KmaWeatherResponse.Item>? = kmaForecastCache.getLatestByGrid(nx, ny)
 
     /**
      * 예보 일시 파싱 (yyyyMMddHHmm -> LocalDateTime)
