@@ -34,7 +34,7 @@ class ExternalDependencyStateTracker(
             ExternalDependencyState(
                 dependency = dependency,
                 reason = reason,
-                lastError = throwable?.message ?: throwable?.javaClass?.simpleName,
+                lastError = throwable?.javaClass?.simpleName,
                 updatedAt = Instant.now(),
                 fallbackCount = (current?.fallbackCount ?: 0L) + 1,
             )
