@@ -7,6 +7,7 @@ import com.pida.support.aws.S3ImageInfo
 import com.pida.support.geo.Region
 import com.pida.support.resilience.ExternalDependency
 import com.pida.support.resilience.ExternalDependencyPolicy
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
@@ -34,6 +35,7 @@ class FlowerSpotFacade(
                             fileName = null,
                         )
                     }.getOrElse { error ->
+                        if (error is CancellationException) throw error
                         externalDependencyPolicy.recordFallback(
                             dependency = ExternalDependency.AWS_S3,
                             reason = "empty-image-list",
@@ -75,10 +77,13 @@ class FlowerSpotFacade(
 
     private fun previewImagePresignedUrl(flowerSpot: FlowerSpot): S3ImageInfo? =
         flowerSpot.previewImageKey?.let { key ->
+            val uploadedAt = requireNotNull(flowerSpot.previewImageUploadedAt) {
+                "previewImageUploadedAt is required when previewImageKey is set"
+            }
             runCatching {
                 S3ImageInfo(
                     url = imageS3Caller.generatePresignedUrl(key),
-                    uploadedAt = flowerSpot.previewImageUploadedAt!!,
+                    uploadedAt = uploadedAt,
                 )
             }.getOrElse { error ->
                 externalDependencyPolicy.recordFallback(
