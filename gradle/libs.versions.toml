@@ -60,6 +60,9 @@ spring_cloud_openfeign = "4.2.0"
 openfeign_hc5 = "13.1"
 openfeign_micrometer = "13.1"
 
+# Resilience4j
+resilience4j = "2.2.0"
+
 # Bucket4j
 bucket4j = "8.15.0"
 
@@ -186,6 +189,7 @@ epages_restdocs_api_spec_mock_mvc = { module = "com.epages:restdocs-api-spec-moc
 epages_restdocs_api_spec_restassured = { module = "com.epages:restdocs-api-spec-restassured", version.ref = "epages_restdocs_api_spec" }
 
 # Monitoring & Logging Libraries
+micrometer_core = { module = "io.micrometer:micrometer-core" }
 micrometer_tracing_bridge_brave = { module = "io.micrometer:micrometer-tracing-bridge-brave" }
 micrometer_registry_prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
 sentry_spring_boot_starter_jakarta = { module = "io.sentry:sentry-spring-boot-starter-jakarta", version.ref = "sentry" }
@@ -194,9 +198,17 @@ slf4j = { module = "org.slf4j:slf4j-api", version = "2.0.9" }
 
 # AWS Libraries
 aws_sdk_s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
+aws_sdk_url_connection_client = { module = "software.amazon.awssdk:url-connection-client", version.ref = "aws" }
+aws_sdk_netty_nio_client = { module = "software.amazon.awssdk:netty-nio-client", version.ref = "aws" }
 
 # Firebase
 firebase = { module = "com.google.firebase:firebase-admin", version.ref = "firebase" }
+
+# Resilience4j
+resilience4j_circuitbreaker = { module = "io.github.resilience4j:resilience4j-circuitbreaker", version.ref = "resilience4j" }
+resilience4j_bulkhead = { module = "io.github.resilience4j:resilience4j-bulkhead", version.ref = "resilience4j" }
+resilience4j_spring_boot3 = { module = "io.github.resilience4j:resilience4j-spring-boot3", version.ref = "resilience4j" }
+resilience4j_micrometer = { module = "io.github.resilience4j:resilience4j-micrometer", version.ref = "resilience4j" }
 
 # Bucket4j
 bucket4j_core = { module = "com.bucket4j:bucket4j_jdk17-core", version.ref = "bucket4j" }
@@ -206,7 +218,8 @@ caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "c
 
 [bundles]
 line_kotlin_jdsl = ["line_kotlin_jdsl_jpql_dsl", "line_kotlin_jdsl_jpql_render", "line_kotlin_jdsl_spring_data_jpa_support"]
-aws_client = ["aws_sdk_s3"]
+aws_client = ["aws_sdk_s3", "aws_sdk_url_connection_client", "aws_sdk_netty_nio_client"]
+resilience4j = ["resilience4j_circuitbreaker", "resilience4j_bulkhead"]
 openfeign = ["spring_cloud_openfeign", "openfeign_hc5", "openfeign_micrometer"]
 jackson = ["jackson_kotlin", "jackson_datatype_jsr310"]
 testcontainers_postgres = ["test_containers_postgres", "spring_boot_testcontainers", "test_containers_junit_jupiter", "spring_boot_starter_test"]

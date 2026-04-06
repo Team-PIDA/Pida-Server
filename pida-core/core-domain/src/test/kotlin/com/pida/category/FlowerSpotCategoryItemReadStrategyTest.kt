@@ -18,7 +18,6 @@ import com.pida.support.geo.Region
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -65,7 +64,7 @@ class FlowerSpotCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.FLOWER_SPOT) } returns listOf(category)
             coEvery { flowerSpotService.readAllFlowerSpot(region = null, location = location) } returns listOf(flowerSpot)
-            every { bloomingService.recentlyBloomingBySpotIds(listOf(30L)) } returns
+            coEvery { bloomingService.recentlyBloomingBySpotIds(listOf(30L)) } returns
                 listOf(
                     Blooming(
                         id = 1L,
@@ -117,7 +116,7 @@ class FlowerSpotCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.FLOWER_SPOT) } returns listOf(category)
             coEvery { flowerSpotService.readAllFlowerSpot(region = Region.SEOUL, location = location) } returns emptyList()
-            every { bloomingService.recentlyBloomingBySpotIds(emptyList()) } returns emptyList()
+            coEvery { bloomingService.recentlyBloomingBySpotIds(emptyList()) } returns emptyList()
             coEvery {
                 mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT, emptyList())
             } returns emptyMap()

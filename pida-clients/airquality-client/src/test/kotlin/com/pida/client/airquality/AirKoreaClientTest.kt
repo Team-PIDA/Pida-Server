@@ -2,6 +2,7 @@ package com.pida.client.airquality
 
 import com.pida.support.error.ErrorException
 import com.pida.support.error.ErrorType
+import com.pida.support.resilience.ExternalDependencyPolicy
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -13,7 +14,7 @@ class AirKoreaClientTest {
     fun `근접 측정소 조회 성공 시 첫 번째 측정소명을 반환한다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi, passthroughPolicy())
 
         every {
             airKoreaStationApi.getNearbyMsrstnList(
@@ -57,7 +58,7 @@ class AirKoreaClientTest {
     fun `근접 측정소 조회 결과 코드가 실패면 AIR_QUALITY_STATION_NOT_FOUND를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi, passthroughPolicy())
 
         every {
             airKoreaStationApi.getNearbyMsrstnList(
@@ -86,7 +87,7 @@ class AirKoreaClientTest {
     fun `근접 측정소 조회 결과가 비어 있으면 AIR_QUALITY_STATION_NOT_FOUND를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi, passthroughPolicy())
 
         every {
             airKoreaStationApi.getNearbyMsrstnList(
@@ -115,7 +116,7 @@ class AirKoreaClientTest {
     fun `근접 측정소 조회 중 예외가 발생하면 AIR_QUALITY_STATION_NOT_FOUND를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi, passthroughPolicy())
 
         every {
             airKoreaStationApi.getNearbyMsrstnList(
@@ -137,7 +138,7 @@ class AirKoreaClientTest {
     fun `대기질 조회 결과 코드가 실패면 AIR_QUALITY_API_CALL_FAILED를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi, passthroughPolicy())
 
         every {
             airKoreaAirQualityApi.getMsrstnAcctoRltmMesureDnsty(
@@ -165,7 +166,7 @@ class AirKoreaClientTest {
     fun `대기질 조회 중 예외가 발생하면 AIR_QUALITY_API_CALL_FAILED를 던진다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi, passthroughPolicy())
 
         every {
             airKoreaAirQualityApi.getMsrstnAcctoRltmMesureDnsty(
@@ -186,7 +187,7 @@ class AirKoreaClientTest {
     fun `메서드별로 서로 다른 service key를 사용한다`() {
         val airKoreaAirQualityApi = mockk<AirKoreaAirQualityApi>()
         val airKoreaStationApi = mockk<AirKoreaStationApi>()
-        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi)
+        val client = AirKoreaClient("air-quality-key", "station-key", airKoreaAirQualityApi, airKoreaStationApi, passthroughPolicy())
 
         every {
             airKoreaStationApi.getNearbyMsrstnList(
@@ -251,4 +252,9 @@ class AirKoreaClientTest {
         client.getNearbyStation("192968", "4667503")
         client.getAirQualityByStation("종로구")
     }
+
+    private fun passthroughPolicy(): ExternalDependencyPolicy =
+        mockk {
+            every { execute<Any>(any(), any()) } answers { secondArg<() -> Any>().invoke() }
+        }
 }

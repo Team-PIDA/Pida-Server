@@ -1,6 +1,8 @@
 package com.pida.client.weather
 
 import com.pida.support.extension.logger
+import com.pida.support.resilience.ExternalDependency
+import com.pida.support.resilience.ExternalDependencyPolicy
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -20,6 +22,7 @@ class KmaWeatherClient internal constructor(
     @param:Value("\${kma.api.min-request-interval-millis:250}")
     private val minRequestIntervalMillis: Long,
     private val kmaWeatherApi: KmaWeatherApi,
+    private val externalDependencyPolicy: ExternalDependencyPolicy,
 ) : KmaForecastClient {
     private val logger by logger()
     private val nextAvailableRequestAtMillis = AtomicLong(0L)
@@ -43,14 +46,16 @@ class KmaWeatherClient internal constructor(
     ): KmaWeatherResponse {
         throttleRequest()
         logger.info("Fetching Vilage Forecast: baseDate=$baseDate, baseTime=$baseTime, nx=$nx, ny=$ny")
-        return kmaWeatherApi.getVilageForecast(
-            serviceKey = serviceKey,
-            numOfRows = numOfRows,
-            baseDate = baseDate,
-            baseTime = baseTime,
-            nx = nx,
-            ny = ny,
-        )
+        return externalDependencyPolicy.execute(ExternalDependency.KMA_WEATHER) {
+            kmaWeatherApi.getVilageForecast(
+                serviceKey = serviceKey,
+                numOfRows = numOfRows,
+                baseDate = baseDate,
+                baseTime = baseTime,
+                nx = nx,
+                ny = ny,
+            )
+        }
     }
 
     /**

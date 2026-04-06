@@ -6,11 +6,16 @@ import com.pida.support.cache.CacheAdvice
 import com.pida.support.cache.CacheRepository
 import com.pida.support.error.ErrorException
 import com.pida.support.error.ErrorType
+import com.pida.support.resilience.ExternalDependencyPolicy
 import com.pida.weather.WeatherLocation
 import feign.FeignException
 import feign.Request
 import feign.Response
 import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.runs
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -23,7 +28,12 @@ class WeatherServiceImplTest {
     private val objectMapper = jacksonObjectMapper()
     private val cache = Cache(CacheAdvice(cacheRepository, objectMapper))
     private val kmaForecastCache = KmaForecastCache(cache, cacheRepository, objectMapper)
-    private val weatherService = WeatherServiceImpl(kmaForecastClient, kmaForecastCache)
+    private val externalDependencyPolicy = mockk<ExternalDependencyPolicy>()
+    private val weatherService = WeatherServiceImpl(kmaForecastClient, kmaForecastCache, externalDependencyPolicy)
+
+    init {
+        every { externalDependencyPolicy.recordFallback(any(), any(), any()) } just runs
+    }
 
     @Test
     fun `캐시 loader 결과로 내일 최대 강수확률을 계산한다`() {
@@ -68,6 +78,20 @@ class WeatherServiceImplTest {
             }
 
         exception.errorType shouldBe ErrorType.EXCEED_RATE_LIMIT
+    }
+
+    @Test
+    fun `upstream failure가 발생하면 최근 성공 캐시로 degrade 한다`() {
+        val location = weatherLocation()
+        val cachedResponse = weatherResponse(baseDate = "20260321", baseTime = "1400", probabilities = listOf(65))
+
+        kmaForecastClient.enqueueBaseTime("20260321" to "1400")
+        kmaForecastClient.enqueueBaseTime("20260321" to "1700")
+        kmaForecastClient.enqueueResponse("20260321", "1400", 59, 128, cachedResponse)
+        kmaForecastClient.enqueueError("20260321", "1700", 59, 128, IllegalStateException("upstream timeout"))
+
+        weatherService.getTomorrowMaxPrecipitationProbability(location) shouldBe 65
+        weatherService.getTomorrowMaxPrecipitationProbability(location) shouldBe 65
     }
 
     private fun tooManyRequests(): FeignException.TooManyRequests =

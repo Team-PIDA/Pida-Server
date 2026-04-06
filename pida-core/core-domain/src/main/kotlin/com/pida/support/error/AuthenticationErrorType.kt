@@ -1,54 +1,72 @@
 package com.pida.support.error
 
 enum class AuthenticationErrorType(
+    val status: Int,
     val kind: AuthenticationErrorKind,
     val message: String,
     val level: AuthenticationErrorLevel,
 ) {
     /** Common */
-    DEFAULT(AuthenticationErrorKind.INTERNAL_SERVER_ERROR, "예기치 못한 오류가 발생했습니다.", AuthenticationErrorLevel.ERROR),
-    NOT_FOUND_DATA(AuthenticationErrorKind.SERVER_ERROR, "해당 데이터를 찾지 못했습니다.", AuthenticationErrorLevel.INFO),
-    INVALID_REQUEST(AuthenticationErrorKind.CLIENT_ERROR, "잘못된 요청입니다.", AuthenticationErrorLevel.WARN),
+    DEFAULT(500, AuthenticationErrorKind.INTERNAL_SERVER_ERROR, "예기치 못한 오류가 발생했습니다.", AuthenticationErrorLevel.ERROR),
+    NOT_FOUND_DATA(404, AuthenticationErrorKind.SERVER_ERROR, "해당 데이터를 찾지 못했습니다.", AuthenticationErrorLevel.INFO),
+    INVALID_REQUEST(400, AuthenticationErrorKind.CLIENT_ERROR, "잘못된 요청입니다.", AuthenticationErrorLevel.WARN),
 
     /** Authorization */
-    INVALID_KAKAO(AuthenticationErrorKind.CLIENT_ERROR, "카카오 요청에 실패하였습니다.", AuthenticationErrorLevel.INFO),
-    NOT_FOUND_HISTORY(AuthenticationErrorKind.SERVER_ERROR, "히스토리 정보가 존재하지 않습니다.", AuthenticationErrorLevel.INFO),
-    UNAUTHORIZED_TOKEN(AuthenticationErrorKind.AUTHORIZATION, "인증정보가 필요한 요청입니다.", AuthenticationErrorLevel.WARN),
-    INVALID_TOKEN(AuthenticationErrorKind.AUTHORIZATION, "유효하지 않은 토큰입니다.", AuthenticationErrorLevel.WARN),
-    INVALID_KAKAO_TOKEN(AuthenticationErrorKind.AUTHORIZATION, "유효하지 않은 카카오 토큰입니다.", AuthenticationErrorLevel.ERROR),
-    INVALID_APPLE_TOKEN(AuthenticationErrorKind.AUTHORIZATION, "유효하지 않은 애플 토큰입니다.", AuthenticationErrorLevel.ERROR),
-    INVALID_ACCESS_TOKEN(AuthenticationErrorKind.AUTHORIZATION, "유효하지 accessToken 입니다.", AuthenticationErrorLevel.WARN),
+    INVALID_KAKAO(400, AuthenticationErrorKind.CLIENT_ERROR, "카카오 요청에 실패하였습니다.", AuthenticationErrorLevel.INFO),
+    NOT_FOUND_HISTORY(404, AuthenticationErrorKind.SERVER_ERROR, "히스토리 정보가 존재하지 않습니다.", AuthenticationErrorLevel.INFO),
+    UNAUTHORIZED_TOKEN(401, AuthenticationErrorKind.AUTHORIZATION, "인증정보가 필요한 요청입니다.", AuthenticationErrorLevel.WARN),
+    INVALID_TOKEN(401, AuthenticationErrorKind.AUTHORIZATION, "유효하지 않은 토큰입니다.", AuthenticationErrorLevel.WARN),
+    INVALID_KAKAO_TOKEN(401, AuthenticationErrorKind.AUTHORIZATION, "유효하지 않은 카카오 토큰입니다.", AuthenticationErrorLevel.ERROR),
+    INVALID_APPLE_TOKEN(401, AuthenticationErrorKind.AUTHORIZATION, "유효하지 않은 애플 토큰입니다.", AuthenticationErrorLevel.ERROR),
+    INVALID_ACCESS_TOKEN(401, AuthenticationErrorKind.AUTHORIZATION, "유효하지 accessToken 입니다.", AuthenticationErrorLevel.WARN),
     INVALID_REFRESH_TOKEN(
+        401,
         AuthenticationErrorKind.AUTHORIZATION,
         "잘못된 refreshToken 입니다.",
         AuthenticationErrorLevel.WARN,
     ),
+    KAKAO_AUTH_PROVIDER_UNAVAILABLE(
+        503,
+        AuthenticationErrorKind.SERVER_ERROR,
+        "카카오 인증 제공자 호출에 실패했습니다. 잠시 후 다시 시도해주세요.",
+        AuthenticationErrorLevel.ERROR,
+    ),
+    APPLE_AUTH_PROVIDER_UNAVAILABLE(
+        503,
+        AuthenticationErrorKind.SERVER_ERROR,
+        "애플 인증 제공자 호출에 실패했습니다. 잠시 후 다시 시도해주세요.",
+        AuthenticationErrorLevel.ERROR,
+    ),
 
     /** Sign */
-    INVALID_CREDENTIALS(AuthenticationErrorKind.SERVER_ERROR, "아이디 혹은 비밀번호가 올바르지 않습니다.", AuthenticationErrorLevel.WARN),
-    DUPLICATED_USER(AuthenticationErrorKind.CLIENT_ERROR, "이미 존재하는 계정입니다.", AuthenticationErrorLevel.INFO),
+    INVALID_CREDENTIALS(400, AuthenticationErrorKind.SERVER_ERROR, "아이디 혹은 비밀번호가 올바르지 않습니다.", AuthenticationErrorLevel.WARN),
+    DUPLICATED_USER(409, AuthenticationErrorKind.CLIENT_ERROR, "이미 존재하는 계정입니다.", AuthenticationErrorLevel.INFO),
 
-    WITHDRAWAL_USER(AuthenticationErrorKind.AUTHORIZATION, "사용할 수 없는 계정입니다.", AuthenticationErrorLevel.WARN),
-    INVALID_LOGIN_ID_FORMAT(AuthenticationErrorKind.CLIENT_ERROR, "이메일 형식이 올바르지 않습니다.", AuthenticationErrorLevel.INFO),
+    WITHDRAWAL_USER(403, AuthenticationErrorKind.AUTHORIZATION, "사용할 수 없는 계정입니다.", AuthenticationErrorLevel.WARN),
+    INVALID_LOGIN_ID_FORMAT(400, AuthenticationErrorKind.CLIENT_ERROR, "이메일 형식이 올바르지 않습니다.", AuthenticationErrorLevel.INFO),
 
     /** User */
-    INVALID_PASSWORD(AuthenticationErrorKind.CLIENT_ERROR, "기존 비밀번호가 올바르지 않습니다.", AuthenticationErrorLevel.WARN),
+    INVALID_PASSWORD(400, AuthenticationErrorKind.CLIENT_ERROR, "기존 비밀번호가 올바르지 않습니다.", AuthenticationErrorLevel.WARN),
     INVALID_NEW_PASSWORD(
+        400,
         AuthenticationErrorKind.CLIENT_ERROR,
         "새 비밀번호가 기존 비밀번호와 같을 수 없습니다.",
         AuthenticationErrorLevel.WARN,
     ),
     INVALID_NEW_LOGIN_ID(
+        400,
         AuthenticationErrorKind.CLIENT_ERROR,
         "새로 입력한 아이디와 기존 아이디는 같을 수 없습니다.",
         AuthenticationErrorLevel.WARN,
     ),
     APPLE_TOKEN_CLIENT_FAILED(
+        500,
         AuthenticationErrorKind.CLIENT_ERROR,
         "애플 토큰 요청에 실패하였습니다.",
         AuthenticationErrorLevel.ERROR,
     ),
     APPLE_PRIVATE_KEY_ENCODING_FAILED(
+        500,
         AuthenticationErrorKind.CLIENT_ERROR,
         "애플 개인키 인코딩에 실패하였습니다.",
         AuthenticationErrorLevel.ERROR,

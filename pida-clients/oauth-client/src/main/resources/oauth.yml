@@ -6,12 +6,12 @@ spring:
       client:
         config:
           kakao-auth-api:
-            connectTimeOut: 2100
-            readTimeout: 5000
+            connectTimeout: 1000
+            readTimeout: 2000
             loggerLevel: full
           apple-auth-api:
-            connectTimeOut: 2100
-            readTimeout: 5000
+            connectTimeout: 1000
+            readTimeout: 2000
             loggerLevel: full
   compression:
     response:

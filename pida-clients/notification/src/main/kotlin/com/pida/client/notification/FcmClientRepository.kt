@@ -52,7 +52,7 @@ class FcmClientRepository(
                 body = firebaseCloudMessage.body,
                 destination = firebaseCloudMessage.destination,
             )
-        val sendResult = firebaseCloudMessageSender.sendAsync(request).get()
+        val sendResult = firebaseCloudMessageSender.send(request)
         return FirebaseCloudMessage(
             fcmKey = firebaseCloudMessage.fcmKey,
             fcmToken = firebaseCloudMessage.fcmToken,
@@ -60,7 +60,7 @@ class FcmClientRepository(
             body = firebaseCloudMessage.body,
             destination = firebaseCloudMessage.destination,
             tryCount = firebaseCloudMessage.tryCount + 1,
-            sent = sendResult.isNotBlank(),
+            sent = !sendResult.isNullOrBlank(),
         )
     }
 }

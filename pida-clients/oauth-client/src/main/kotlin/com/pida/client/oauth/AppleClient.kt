@@ -10,6 +10,8 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import com.pida.support.error.AuthenticationErrorException
 import com.pida.support.error.AuthenticationErrorType
+import com.pida.support.resilience.ExternalDependency
+import com.pida.support.resilience.ExternalDependencyPolicy
 import org.springframework.stereotype.Component
 import java.text.ParseException
 import java.util.Date
@@ -18,6 +20,8 @@ import java.util.Date
 class AppleClient internal constructor(
     private val appleApi: AppleApi,
     private val appleProperties: AppleProperties,
+    private val applePublicKeysCache: ApplePublicKeysCache,
+    private val externalDependencyPolicy: ExternalDependencyPolicy,
     private val objectMapper: ObjectMapper,
 ) {
     fun getUserInfo(token: String): AppleClientResult {
@@ -63,7 +67,7 @@ class AppleClient internal constructor(
     }
 
     private fun isSignatureValid(signedJWT: SignedJWT): Boolean {
-        val appleKeys = appleApi.getApplePublicKeys().keys
+        val appleKeys = loadApplePublicKeys().keys
         for (key in appleKeys) {
             try {
                 val rsaKey = JWK.parse(objectMapper.writeValueAsString(key)) as RSAKey
@@ -82,4 +86,24 @@ class AppleClient internal constructor(
         }
         return false
     }
+
+    private fun loadApplePublicKeys() =
+        try {
+            applePublicKeysCache.getOrLoad {
+                externalDependencyPolicy.execute(ExternalDependency.APPLE_AUTH) {
+                    appleApi.getApplePublicKeys()
+                }
+            }
+        } catch (exception: Exception) {
+            applePublicKeysCache.getCachedOrNull()?.also {
+                externalDependencyPolicy.recordFallback(
+                    dependency = ExternalDependency.APPLE_AUTH,
+                    reason = "cached-jwk",
+                    throwable = exception,
+                )
+            } ?: throw AuthenticationErrorException(
+                AuthenticationErrorType.APPLE_AUTH_PROVIDER_UNAVAILABLE,
+                exception.message,
+            )
+        }
 }

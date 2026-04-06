@@ -8,6 +8,8 @@ data class AwsProperties(
     val s3: S3Properties,
     val region: String,
     val endpoint: String?,
+    val connectionTimeout: Long,
+    val socketTimeout: Long,
 )
 
 data class CredentialsProperties(

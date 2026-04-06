@@ -1,0 +1,62 @@
+management:
+  endpoint:
+    health:
+      status:
+        order: degraded,down,out-of-service,unknown,up
+  health:
+    circuitbreakers:
+      enabled: false
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 50
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 30s
+        slowCallDurationThreshold: 2s
+        slowCallRateThreshold: 100
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        registerHealthIndicator: false
+    instances:
+      kakao-map:
+        baseConfig: default
+      kakao-oauth:
+        baseConfig: default
+      apple-auth:
+        baseConfig: default
+      kma-weather:
+        baseConfig: default
+        slowCallDurationThreshold: 3s
+      air-korea:
+        baseConfig: default
+        slowCallDurationThreshold: 3s
+      aws-s3:
+        baseConfig: default
+      fcm:
+        baseConfig: default
+        slowCallDurationThreshold: 3s
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 50
+        maxWaitDuration: 0
+    instances:
+      kakao-map:
+        baseConfig: default
+      kakao-oauth:
+        baseConfig: default
+      apple-auth:
+        baseConfig: default
+      kma-weather:
+        baseConfig: default
+      air-korea:
+        baseConfig: default
+      aws-s3:
+        baseConfig: default
+      fcm:
+        baseConfig: default
+        maxConcurrentCalls: 2
