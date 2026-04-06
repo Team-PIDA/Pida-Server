@@ -3,6 +3,9 @@ management:
     web:
       exposure:
         include: health, prometheus
+  endpoint:
+    health:
+      show-details: always
   health:
     defaults:
       enabled: false

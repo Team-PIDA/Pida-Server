@@ -1,3 +1,15 @@
+spring:
+  cloud:
+    discovery:
+      enabled: false
+    openfeign:
+      client:
+        config:
+          kma-weather-api:
+            connectTimeout: 1000
+            readTimeout: 3000
+            loggerLevel: full
+
 kma:
   api:
     base-url: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0

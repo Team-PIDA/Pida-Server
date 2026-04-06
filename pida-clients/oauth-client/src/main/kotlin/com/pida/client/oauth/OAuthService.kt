@@ -14,11 +14,13 @@ class OAuthService(
         try {
             kaKaoClient.getUserInfo(token)
         } catch (e: FeignException) {
-            if (e.status() == 401) {
+            if (e.status() in setOf(400, 401, 403)) {
                 throw AuthenticationErrorException(AuthenticationErrorType.INVALID_KAKAO_TOKEN)
             } else {
-                throw AuthenticationErrorException(AuthenticationErrorType.INVALID_KAKAO_TOKEN, e.message)
+                throw AuthenticationErrorException(AuthenticationErrorType.KAKAO_AUTH_PROVIDER_UNAVAILABLE, e.message)
             }
+        } catch (e: Exception) {
+            throw AuthenticationErrorException(AuthenticationErrorType.KAKAO_AUTH_PROVIDER_UNAVAILABLE, e.message)
         }
 
     fun getAppleUserInfo(token: String): AppleClientResult {

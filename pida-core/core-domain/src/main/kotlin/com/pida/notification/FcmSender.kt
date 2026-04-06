@@ -1,5 +1,6 @@
 package com.pida.notification
 
+import com.pida.support.extension.logger
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
@@ -8,6 +9,8 @@ class FcmSender(
     private val fcmRepository: FcmRepository,
     private val fcmMessageKeyGenerator: FcmMessageKeyGenerator,
 ) {
+    private val logger by logger()
+
     fun sendAll(
         newMessages: Set<NewFirebaseCloudMessage>,
         maxTry: Int = 3,
@@ -63,6 +66,14 @@ class FcmSender(
             addAll(sent)
             addAll(failed)
             addAll(pending)
+        }.also { results ->
+            logger.info(
+                "FCM delivery finished. total={}, sent={}, failed={}, pending={}",
+                results.size,
+                results.count { it.sent },
+                results.count { !it.sent && it.tryCount >= maxTry },
+                results.count { !it.sent && it.tryCount < maxTry },
+            )
         }
     }
 }

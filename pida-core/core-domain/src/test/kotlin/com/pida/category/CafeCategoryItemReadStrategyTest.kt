@@ -17,7 +17,6 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -55,7 +54,7 @@ class CafeCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.CAFE) } returns listOf(category)
             coEvery { flowerSpotCafeFinder.readAll() } returns listOf(cafe)
-            every { bloomingService.recentlyBloomingByCafeIds(listOf(20L)) } returns
+            coEvery { bloomingService.recentlyBloomingByCafeIds(listOf(20L)) } returns
                 listOf(
                     Blooming(
                         id = 1L,
@@ -119,7 +118,7 @@ class CafeCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.CAFE) } returns listOf(category)
             coEvery { flowerSpotCafeFinder.readAllByLocation(location) } returns listOf(cafe)
-            every { bloomingService.recentlyBloomingByCafeIds(listOf(21L)) } returns emptyList()
+            coEvery { bloomingService.recentlyBloomingByCafeIds(listOf(21L)) } returns emptyList()
             coEvery {
                 mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT_CAFE, listOf(21L))
             } returns emptyMap()
@@ -220,7 +219,7 @@ class CafeCategoryItemReadStrategyTest {
 
             coEvery { mapCategoryService.findAllByCategoryLabel(CategoryLabel.CAFE) } returns listOf(category)
             coEvery { flowerSpotCafeFinder.readAll() } returns listOf(seoulCafe, busanCafe)
-            every { bloomingService.recentlyBloomingByCafeIds(listOf(22L)) } returns emptyList()
+            coEvery { bloomingService.recentlyBloomingByCafeIds(listOf(22L)) } returns emptyList()
             coEvery {
                 mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_SPOT_CAFE, listOf(22L))
             } returns emptyMap()

@@ -95,18 +95,18 @@ class BloomingCoreRepository(
             bloomingCustomRepository.recentlyByCafeId(cafeId).map { it.toBlooming() }
         }
 
-    override fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming> =
-        Tx.readable {
+    override suspend fun findRecentBySpotIds(spotIds: List<Long>): List<Blooming> =
+        Tx.coReadable {
             bloomingCustomRepository.recentlyBySpotIds(spotIds).map { it.toBlooming() }
         }
 
-    override fun findRecentByEventIds(eventIds: List<Long>): List<Blooming> =
-        Tx.readable {
+    override suspend fun findRecentByEventIds(eventIds: List<Long>): List<Blooming> =
+        Tx.coReadable {
             bloomingCustomRepository.recentlyByEventIds(eventIds).map { it.toBlooming() }
         }
 
-    override fun findRecentByCafeIds(cafeIds: List<Long>): List<Blooming> =
-        Tx.readable {
+    override suspend fun findRecentByCafeIds(cafeIds: List<Long>): List<Blooming> =
+        Tx.coReadable {
             bloomingCustomRepository.recentlyByCafeIds(cafeIds).map { it.toBlooming() }
         }
 

@@ -4,22 +4,38 @@ import com.google.api.core.ApiFuture
 import com.google.firebase.messaging.ApnsConfig
 import com.google.firebase.messaging.Aps
 import com.google.firebase.messaging.BatchResponse
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
+import com.pida.support.resilience.ExternalDependency
+import com.pida.support.resilience.ExternalDependencyPolicy
 import org.springframework.stereotype.Component
-import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 
 @Component
 class FirebaseCloudMessageSender(
-    private val firebaseMessaging: FirebaseMessaging,
+    private val firebaseMessagingProvider: FirebaseMessagingProvider,
+    private val externalDependencyPolicy: ExternalDependencyPolicy,
 ) {
-    fun sendAsync(fcmSendRequest: FcmSendRequest): Future<String> = firebaseMessaging.sendAsync(toMessage(fcmSendRequest))
+    companion object {
+        private const val FCM_TIMEOUT_SECONDS = 3L
+    }
 
-    fun sendAsync(requests: List<FcmSendRequest>): ApiFuture<BatchResponse> {
-        val messages = requests.map { toMessage(it) }
-        return firebaseMessaging.sendEachAsync(messages)
+    fun send(fcmSendRequest: FcmSendRequest): String? {
+        val firebaseMessaging = firebaseMessagingProvider.getOrNull() ?: return unavailable()
+        return externalDependencyPolicy.execute(ExternalDependency.FCM) {
+            firebaseMessaging
+                .sendAsync(toMessage(fcmSendRequest))
+                .get(FCM_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        }
+    }
+
+    fun sendAsync(requests: List<FcmSendRequest>): ApiFuture<BatchResponse>? {
+        val firebaseMessaging = firebaseMessagingProvider.getOrNull() ?: return unavailable()
+        return externalDependencyPolicy.execute(ExternalDependency.FCM) {
+            val messages = requests.map { toMessage(it) }
+            firebaseMessaging.sendEachAsync(messages)
+        }
     }
 
     private fun toMessage(request: FcmSendRequest): Message =
@@ -52,6 +68,7 @@ class FirebaseCloudMessageSender(
         destination: String,
         fcmTokens: List<String>,
     ): BatchResponse? {
+        val firebaseMessaging = firebaseMessagingProvider.getOrNull() ?: return unavailable()
         val notification =
             Notification
                 .builder()
@@ -77,6 +94,18 @@ class FirebaseCloudMessageSender(
                         ).build(),
                 ).build()
 
-        return firebaseMessaging.sendEachForMulticast(message)
+        return externalDependencyPolicy.execute(ExternalDependency.FCM) {
+            firebaseMessaging
+                .sendEachForMulticastAsync(message)
+                .get(FCM_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        }
+    }
+
+    private fun <T> unavailable(): T? {
+        externalDependencyPolicy.recordFallback(
+            dependency = ExternalDependency.FCM,
+            reason = "messaging-unavailable",
+        )
+        return null
     }
 }

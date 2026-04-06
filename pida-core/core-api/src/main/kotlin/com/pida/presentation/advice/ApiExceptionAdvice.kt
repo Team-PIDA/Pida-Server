@@ -1,5 +1,6 @@
 package com.pida.presentation.advice
 
+import com.pida.support.error.AuthenticationErrorException
 import com.pida.support.error.ErrorException
 import com.pida.support.error.ErrorResponse
 import com.pida.support.error.ErrorType
@@ -90,6 +91,15 @@ class ApiExceptionAdvice : ResponseEntityExceptionHandler() {
     fun handleCustomException(e: ErrorException): ResponseEntity<ApiResponse<ErrorResponse>> {
         log.error("pida CustomException : {}", e.message, e)
         val errorCode: ErrorType = e.errorType
+        val errorResponse = ErrorResponse.of(errorCode.name, errorCode.message)
+        val apiResponse = ApiResponse.fail(errorCode.status, errorResponse)
+        return ResponseEntity.status(errorCode.status).body(apiResponse)
+    }
+
+    @ExceptionHandler(AuthenticationErrorException::class)
+    fun handleAuthenticationErrorException(e: AuthenticationErrorException): ResponseEntity<ApiResponse<ErrorResponse>> {
+        log.error("pida AuthenticationErrorException : {}", e.message, e)
+        val errorCode = e.authenticationErrorType
         val errorResponse = ErrorResponse.of(errorCode.name, errorCode.message)
         val apiResponse = ApiResponse.fail(errorCode.status, errorResponse)
         return ResponseEntity.status(errorCode.status).body(apiResponse)

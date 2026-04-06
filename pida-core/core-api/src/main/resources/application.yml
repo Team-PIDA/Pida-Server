@@ -11,6 +11,7 @@ spring:
       - redis.yml
       - logging.yml
       - monitoring.yml
+      - client-resilience.yml
       - authentication-redis.yml
       - authentication.yml
       - oauth.yml

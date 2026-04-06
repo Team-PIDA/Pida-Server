@@ -3,6 +3,8 @@ package com.pida.client.airquality
 import com.pida.support.error.ErrorException
 import com.pida.support.error.ErrorType
 import com.pida.support.extension.logger
+import com.pida.support.resilience.ExternalDependency
+import com.pida.support.resilience.ExternalDependencyPolicy
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
@@ -17,6 +19,7 @@ class AirKoreaClient internal constructor(
     private val stationServiceKey: String,
     private val airKoreaAirQualityApi: AirKoreaAirQualityApi,
     private val airKoreaStationApi: AirKoreaStationApi,
+    private val externalDependencyPolicy: ExternalDependencyPolicy,
 ) {
     private val logger by logger()
 
@@ -29,10 +32,12 @@ class AirKoreaClient internal constructor(
     fun getAirQualityByStation(stationName: String): AirKoreaResponse =
         try {
             val response =
-                airKoreaAirQualityApi.getMsrstnAcctoRltmMesureDnsty(
-                    serviceKey = airQualityServiceKey,
-                    stationName = stationName,
-                )
+                externalDependencyPolicy.execute(ExternalDependency.AIR_KOREA) {
+                    airKoreaAirQualityApi.getMsrstnAcctoRltmMesureDnsty(
+                        serviceKey = airQualityServiceKey,
+                        stationName = stationName,
+                    )
+                }
 
             if (response.response.header.resultCode != "00") {
                 logger.error("AirKorea API error: ${response.response.header.resultMsg}")
@@ -62,11 +67,13 @@ class AirKoreaClient internal constructor(
 
         return try {
             val response =
-                airKoreaStationApi.getNearbyMsrstnList(
-                    serviceKey = stationServiceKey,
-                    tmX = tmX,
-                    tmY = tmY,
-                )
+                externalDependencyPolicy.execute(ExternalDependency.AIR_KOREA) {
+                    airKoreaStationApi.getNearbyMsrstnList(
+                        serviceKey = stationServiceKey,
+                        tmX = tmX,
+                        tmY = tmY,
+                    )
+                }
 
             if (response.response.header.resultCode != "00") {
                 logger.error("AirKorea station API error: ${response.response.header.resultMsg}")

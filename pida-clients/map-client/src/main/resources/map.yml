@@ -6,8 +6,8 @@ spring:
       client:
         config:
           kakao-map-api:
-            connectTimeOut: 2100
-            readTimeout: 5000
+            connectTimeout: 1000
+            readTimeout: 2000
             loggerLevel: full
           # 추후 naver map api 연동 예정
   compression:
