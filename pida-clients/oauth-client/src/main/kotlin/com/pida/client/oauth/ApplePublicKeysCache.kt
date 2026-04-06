@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class ApplePublicKeysCache(
-    _cache: Cache,
     private val cacheRepository: CacheRepository,
     private val objectMapper: ObjectMapper,
 ) {
