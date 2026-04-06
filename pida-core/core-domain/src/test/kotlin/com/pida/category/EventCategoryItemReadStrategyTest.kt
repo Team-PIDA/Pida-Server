@@ -15,7 +15,6 @@ import com.pida.support.geo.Region
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -46,7 +45,7 @@ class EventCategoryItemReadStrategyTest {
                 )
 
             coEvery { flowerEventFinder.readAllByCategoryId(1L) } returns listOf(event)
-            every { bloomingService.recentlyBloomingByEventIds(listOf(10L)) } returns
+            coEvery { bloomingService.recentlyBloomingByEventIds(listOf(10L)) } returns
                 listOf(
                     Blooming(
                         id = 1L,
@@ -99,7 +98,7 @@ class EventCategoryItemReadStrategyTest {
                 )
 
             coEvery { flowerEventFinder.readAllByCategoryIdAndLocation(1L, location) } returns listOf(event)
-            every { bloomingService.recentlyBloomingByEventIds(listOf(11L)) } returns emptyList<Blooming>()
+            coEvery { bloomingService.recentlyBloomingByEventIds(listOf(11L)) } returns emptyList<Blooming>()
             coEvery {
                 mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_EVENT, listOf(11L))
             } returns emptyMap()
@@ -154,7 +153,7 @@ class EventCategoryItemReadStrategyTest {
                 )
 
             coEvery { flowerEventFinder.readAllByCategoryId(1L) } returns listOf(seoulEvent, busanEvent)
-            every { bloomingService.recentlyBloomingByEventIds(listOf(12L)) } returns emptyList()
+            coEvery { bloomingService.recentlyBloomingByEventIds(listOf(12L)) } returns emptyList()
             coEvery {
                 mapCategoryBadgeFinder.findAllGroupedByTarget(MapCategoryBadgeTargetType.FLOWER_EVENT, listOf(12L))
             } returns emptyMap()

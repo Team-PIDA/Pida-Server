@@ -48,9 +48,9 @@ class PlaceFacadeTest {
             val result = facade.search("강남", null)
 
             result.landmarks shouldContainExactly listOf(storedLandmark)
-            verify(exactly = 1) { eventPublisher.publishEvent(match { it is FlowerSpotSearchEvent }) }
+            verify(exactly = 1) { eventPublisher.publishEvent(match<Any> { it is FlowerSpotSearchEvent }) }
             verify(exactly = 0) { landmarkSearchClient.searchByKeyword(any()) }
-            verify(exactly = 0) { eventPublisher.publishEvent(match { it is LandmarkFetchEvent }) }
+            verify(exactly = 0) { eventPublisher.publishEvent(match<Any> { it is LandmarkFetchEvent }) }
         }
 
     companion object {
